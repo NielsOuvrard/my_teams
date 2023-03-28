@@ -23,10 +23,7 @@ void command_handler(server **serv, client *current_client, int sd)
 char **get_command(int sd)
 {
     char buffer[1024] = {0};
-    // int valread = read(sd, buffer, 1024);
     recv(sd, buffer, 1024, 0);
     char **command = my_str_to_word_array(buffer);
-    for (int i = 0; command[i] != NULL; i++)
-        printf("%s\n", command[i]);
     return command;
 }

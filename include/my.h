@@ -76,4 +76,3 @@ void *load_library_function(void *lib, char *function_name);
 //checks
 bool args_check(char **command, int nb_args, int sd);
 bool user_connected(client *current_client, char *uuid);
-
