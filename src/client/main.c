@@ -37,20 +37,20 @@ int main(int ac, char *av[]) {
 
     // Send some data
     while (1) {
-        printf("Enter message: ");
-        fgets(message, sizeof(message), stdin);
-        if (send(sock, message, strlen(message), 0) < 0) {
-            puts("Send failed");
-            return 1;
-        }
 
         // Receive a reply from the server
         if (recv(sock, server_reply, 2000, 0) < 0) {
             puts("recv failed");
             break;
         }
-
         printf("Server reply: %s\n", server_reply);
+
+        printf("Enter message: ");
+        fgets(message, sizeof(message), stdin);
+        if (send(sock, message, strlen(message), 0) < 0) {
+            puts("Send failed");
+            return 1;
+        }
     }
 
     close(sock);

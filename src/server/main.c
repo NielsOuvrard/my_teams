@@ -15,14 +15,8 @@ void server_loop(server **serv, client **clients)
             perror("select");
             exit(EXIT_FAILURE);
         }
-        printf("New connection\n");
         handle_new_connection(serv, clients, copy_fds);
         client_communication(serv, clients, copy_fds);
-        // if (client_communication(serv, clients, copy_fds) == 1) {
-        //     free((*serv)->buffer);
-        //     (*serv)->buffer = malloc(sizeof(char) * 1024);
-        //     memset((*serv)->buffer, 0, 1024);
-        // }
     }
 }
 
@@ -43,16 +37,17 @@ int main(int ac, char **av)
     if (ac == 2 && strcmp(av[1], "-help") == 0) {
         printf("USAGE: ./myteams_server port\n\n");
         printf("\tport is the port number on which the server");
-        printf(" socket listens.\n");
+        printf(" socloginket listens.\n");
         return 0;
     } else if (ac != 2) {
         printf("./myteams -help\n");
         return 84;
-    } else {
-        for (int i = 0; av[1][i] != '\0'; i++)
-            if (isdigit(av[1][i]) == 0)
-                return 84;
-        my_teams(atoi(av[1]));
     }
+    for (int i = 0; av[1][i] != '\0'; i++) {
+        if (isdigit(av[1][i]) == 0) {
+            return 84;
+        }
+    }
+    my_teams(atoi(av[1]));
     return 0;
 }

@@ -40,8 +40,9 @@ server *construct_struct(int port)
     FD_ZERO(&serv->readfds);
     FD_SET(serv->socket_fd, &serv->readfds);
     serv->max_fds = serv->socket_fd;
-    serv->buffer = malloc(sizeof(char) * 1024);
-    memset(serv->buffer, 0, 1024);
+    serv->lib = load_library();
+    // serv->buffer = malloc(sizeof(char) * 1024);
+    // memset(serv->buffer, 0, 1024);
     serv->root_dir = getcwd(NULL, 0);
     return serv;
 }
