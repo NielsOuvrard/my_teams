@@ -10,7 +10,6 @@
 void command_handler(server **serv, client **cli_list,
 client *current_client, int sd)
 {
-    printf("%s\n", current_client->uuid_text);
     if (strcmp((*serv)->command[0], "/login") == 0) {
         login_handler(serv, current_client, sd);
         return;

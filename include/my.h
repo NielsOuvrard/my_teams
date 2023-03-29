@@ -46,7 +46,6 @@ typedef struct server_t {
     char **command;
     int addlen;
     void *lib;
-    client *saved_cli;
     struct sockaddr_in address;
     fd_set readfds;
 } server;
@@ -74,6 +73,9 @@ char **get_command(int sd);
 
 char **my_str_to_word_array(char *str);
 
+//preload users
+void preload_users(server *serv);
+
 //login
 void login_handler(server **serv, client *current_client, int sd);
 
@@ -96,3 +98,8 @@ void write_in_file(char *file, char *str);
 //user or users
 void users_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
+
+//load infos
+char **load_infos(char *file_path);
+char **find_content(char *file_path, char *loking_for);
+char **read_folder_files(char *path, char *loking_for);

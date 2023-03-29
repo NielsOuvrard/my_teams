@@ -19,7 +19,6 @@ client *current_client, int sd)
             (*cli_list)[i].username, (*cli_list)[i].uuid_text,
             (*cli_list)[i].is_logged);
             send(sd, str, strlen(str), 0);
-            printf("%s\n", str);
         }
     }
 }

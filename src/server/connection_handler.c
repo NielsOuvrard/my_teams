@@ -22,42 +22,59 @@ void logout_handler(server **serv, client *current_client, int sd)
     remove_client(current_client, sd);
 }
 
-void check_if_login_with_existing_user(server **serv,
-client *current_client, int sd)
+void parse_user_data_login(char **usr, client *current_client)
 {
-    current_client->username = strdup((*serv)->command[1]);
-    current_client->is_logged = true;
-    for (int i = 0; i != MAX_CLIENTS; i++) {
-        if ((*serv)->saved_cli[i].username != NULL &&
-        strcmp((*serv)->saved_cli[i].username, (*serv)->command[1]) == 0) {
-            current_client->uuid_text = strdup((*serv)->saved_cli[i].uuid_text);
-            current_client->already_subscribed = true;
-            return;
+    for (int i = 0; usr[i] != NULL; i++) {
+        char **user_parsed = my_str_to_word_array(usr[0]);
+        if (strcmp(user_parsed[0], "##USER") == 0) {
+            current_client->username = strdup(user_parsed[1]);
+            i++;
+            continue;
+        }
+        if (strcmp(user_parsed[0], "##UUID") == 0) {
+            current_client->uuid_text = strdup(user_parsed[1]);
+            i++;
+            continue;
         }
     }
-    uuid_generate(current_client->uuid);
-    uuid_unparse(current_client->uuid, current_client->uuid_text);
+    current_client->already_subscribed = true;
 }
 
-void login_handler(server **serv, client *current_client, int sd)
+void execute_function_login(server **serv, client *current_client, int i)
 {
-    char str[100];
-    if (args_check((*serv)->command, 2, sd) == false ||
-    user_connected(current_client) == true)
-        return;
-    check_if_login_with_existing_user(serv, current_client, sd);
     void *function;
-    sprintf(str, "##UUID %s ##USER %s\n",
-    current_client->uuid_text, current_client->username);
-    if (check_user_already_subscribed(current_client) == false) {
-        function =
-        load_library_function((*serv)->lib, "server_event_user_created");
-        ((void (*)(char *, char *))function)(current_client->uuid_text,
-        (*serv)->command[1]);
-        write_in_file("./data/.users", str);
+    if (i == 0) {
+        function = load_library_function((*serv)->lib,
+        "server_event_user_created");
+        ((void (*)(char const *, char const *))function)
+        (current_client->uuid_text, current_client->username);
+    } else if (i == 1) {
+        function = load_library_function((*serv)->lib,
+        "server_event_user_logged_in");
+        ((void (*)(char *))function)(current_client->uuid_text);
     }
-    function = load_library_function((*serv)->lib,
-    "server_event_user_logged_in");
-    ((void (*)(char *))function)(current_client->uuid_text);
+}
+
+void login_handler(server **serv, client *cur_client, int sd)
+{
+    char **usr, *file = strdup("data/users/"), str[1024];
+    void *function;
+    if (args_check((*serv)->command, 2, sd) == false ||
+    user_connected(cur_client) == true) return;
+    if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
+        parse_user_data_login(usr, cur_client);
+        sprintf(str, "##UUID\n%s##USER %s\n", cur_client->uuid_text,
+        cur_client->username);
+    } else {
+        cur_client->username = strdup((*serv)->command[1]);
+        uuid_generate(cur_client->uuid);
+        uuid_unparse(cur_client->uuid, cur_client->uuid_text);
+        execute_function_login(serv, cur_client, 0);
+        sprintf(str, "##UUID\n%s##USER %s\n", cur_client->uuid_text,
+        cur_client->username);
+        write_in_file(strcat(file, cur_client->uuid_text), str);
+    }
+    cur_client->is_logged = true;
+    execute_function_login(serv, cur_client, 1);
     send(sd, str, strlen(str), 0);
 }
