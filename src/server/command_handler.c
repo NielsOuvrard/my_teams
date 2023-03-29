@@ -7,14 +7,20 @@
 
 #include "my.h"
 
-void command_handler(server **serv, client *current_client, int sd)
+void command_handler(server **serv, client **cli_list,
+client *current_client, int sd)
 {
+    printf("%s\n", current_client->uuid_text);
     if (strcmp((*serv)->command[0], "/login") == 0) {
         login_handler(serv, current_client, sd);
         return;
     }
     if (strcmp((*serv)->command[0], "/logout") == 0) {
         logout_handler(serv, current_client, sd);
+        return;
+    }
+    if (strcmp((*serv)->command[0], "/users") == 0) {
+        users_list_handler(serv, cli_list, current_client, sd);
         return;
     }
     send(sd, "590 Invalid command.\n", 21, 0);

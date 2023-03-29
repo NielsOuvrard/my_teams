@@ -41,6 +41,7 @@ server *construct_struct(int port)
     FD_SET(serv->socket_fd, &serv->readfds);
     serv->max_fds = serv->socket_fd;
     serv->lib = load_library();
-    serv->root_dir = getcwd(NULL, 0);
+    serv->saved_cli = malloc(sizeof(client) * (MAX_CLIENTS + 1));
+    initialize_client(&serv->saved_cli);
     return serv;
 }
