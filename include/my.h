@@ -95,6 +95,7 @@ bool check_user_already_subscribed(client *current_client);
 
 //file
 void write_in_file(char *file, char *str);
+void replace_line_file(char *find, char *new, char *file);
 
 //user or users
 void users_list_handler(server **serv, client **cli_list,

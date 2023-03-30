@@ -19,6 +19,8 @@ void logout_handler(server **serv, client *current_client, int sd)
     send(sd, "200 Logout ok.\n", 15, 0);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
+    char *file_path = strdup(strcat("data/users/", current_client->uuid_text));
+    replace_line_file("##STATUS 1", "##STATUS 0", file_path);
     remove_client(current_client, sd);
 }
 
@@ -38,6 +40,8 @@ void parse_user_data_login(char **usr, client *current_client)
         }
     }
     current_client->already_subscribed = true;
+    char *file_path = strdup(strcat("data/users/", current_client->uuid_text));
+    replace_line_file("##STATUS 0", "##STATUS 1", file_path);
 }
 
 void execute_function_login(server **serv, client *current_client, int i)
@@ -72,7 +76,7 @@ void login_handler(server **serv, client *cur_client, int sd)
         uuid_generate(cur_client->uuid);
         uuid_unparse(cur_client->uuid, cur_client->uuid_text);
         execute_function_login(serv, cur_client, 0);
-        sprintf(str, "##UUID %s\n##USER %s\n", cur_client->uuid_text,
+        sprintf(str, "##UUID %s\n##USER %s\n##STATUS 1", cur_client->uuid_text,
         cur_client->username);
         write_in_file(strcat(file, cur_client->uuid_text), str);
     }
