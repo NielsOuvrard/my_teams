@@ -70,7 +70,7 @@ void login_handler(server **serv, client *cur_client, int sd)
         uuid_generate(cur_client->uuid);
         uuid_unparse(cur_client->uuid, cur_client->uuid_text);
         execute_function_login(serv, cur_client, 0);
-        sprintf(str, "##UUID\n%s##USER %s\n", cur_client->uuid_text,
+        sprintf(str, "##UUID%s\n##USER %s\n", cur_client->uuid_text,
         cur_client->username);
         write_in_file(strcat(file, cur_client->uuid_text), str);
     }
