@@ -33,8 +33,8 @@ void loop(int sock)
 
 void help (void)
 {
-    printf("USAGE: ./client ip port\n");
-    printf("\tip\tis the server ip address on which the server socket listens.\n");
+    printf("USAGE: ./client ip port\n\tip");
+    printf("\tis the server ip address on which the server socket listens.\n");
     printf("\tport\tis the port number on which the server socket listens.\n");
 }
 

@@ -67,8 +67,7 @@ void execute_function_login(server **serv, client *current_client, int i)
 void login_handler(server **serv, client *cur_client, int sd)
 {
     char **usr, str[1024];
-    char *file = malloc(sizeof(char) * 1024);
-    strcpy(file, "data/users/");
+    char *file = malloc(sizeof(char) * 1024); strcpy(file, "data/users/");
     if (args_check((*serv)->command, 2, sd) == false ||
     user_connected(cur_client) == true) return;
     if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
