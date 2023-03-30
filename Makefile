@@ -26,5 +26,6 @@ fclean:
 	rm -rf $(NAME2)
 	rm -rf *.o
 	rm -rf vgcore*
+	rm -rf data/users/*
 
 re: fclean all
