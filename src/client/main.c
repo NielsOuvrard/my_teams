@@ -31,7 +31,14 @@ void loop(int sock)
     }
 }
 
-int main(int ac, char *av[])
+void help (void)
+{
+    printf("USAGE: ./client ip port\n");
+    printf("\tip\tis the server ip address on which the server socket listens.\n");
+    printf("\tport\tis the port number on which the server socket listens.\n");
+}
+
+int client (int ac, char **av)
 {
     int sock;
     struct sockaddr_in server;
@@ -49,5 +56,16 @@ int main(int ac, char *av[])
     printf("Connected to server\n");
     loop(sock);
     close(sock);
-    return 0;
+}
+
+int main(int ac, char *av[])
+{
+    if (ac == 2 && !strncmp(av[1], "-help", 5)) {
+        help();
+        return 0;
+    } else if (ac != 3) {
+        printf("./myteams_client -help\n");
+        return 84;
+    }
+    return client(ac, av);
 }
