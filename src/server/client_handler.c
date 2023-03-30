@@ -13,6 +13,12 @@ void initialize_client(client **clients)
         (*clients)[i].socket = -1;
         (*clients)[i].uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
         (*clients)[i].username = NULL;
+        (*clients)[i].is_logged = false;
+        (*clients)[i].already_subscribed = false;
+        (*clients)[i].address.sin_family = AF_INET;
+        (*clients)[i].address.sin_port = htons(0);
+        (*clients)[i].address.sin_addr.s_addr = htonl(INADDR_ANY);
+        uuid_clear((*clients)[i].uuid);
     }
 }
 

@@ -55,22 +55,24 @@ void execute_function_login(server **serv, client *current_client, int i)
     }
 }
 
+// ? free(file);
 void login_handler(server **serv, client *cur_client, int sd)
 {
-    char **usr, *file = strdup("data/users/"), str[1024];
-    void *function;
+    char **usr, str[1024];
+    char *file = malloc(sizeof(char) * 1024);
+    strcpy(file, "data/users/");
     if (args_check((*serv)->command, 2, sd) == false ||
     user_connected(cur_client) == true) return;
     if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
         parse_user_data_login(usr, cur_client);
-        sprintf(str, "##UUID\n%s##USER %s\n", cur_client->uuid_text,
+        sprintf(str, "##UUID %s\n##USER %s\n", cur_client->uuid_text,
         cur_client->username);
     } else {
         cur_client->username = strdup((*serv)->command[1]);
         uuid_generate(cur_client->uuid);
         uuid_unparse(cur_client->uuid, cur_client->uuid_text);
         execute_function_login(serv, cur_client, 0);
-        sprintf(str, "##UUID%s\n##USER %s\n", cur_client->uuid_text,
+        sprintf(str, "##UUID %s\n##USER %s\n", cur_client->uuid_text,
         cur_client->username);
         write_in_file(strcat(file, cur_client->uuid_text), str);
     }

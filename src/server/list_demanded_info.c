@@ -15,13 +15,15 @@ void preload_infos(server *serv, char *file_path)
     size_t len = 0;
     void *function;
     FILE *fd = fopen(file_path, "r");
-    char **infos = malloc(sizeof(char *) * 1);
+    char **infos = NULL;
     int i = 0;
     while (getline(&line, &len, fd) != -1) {
-        infos[i] = strdup(line);
+        char *tmp = strdup(line);
         infos = realloc(infos, sizeof(char *) * (i + 1));
+        infos[i] = tmp;
         i++;
     }
+    infos = realloc(infos, sizeof(char *) * (i + 1));
     infos[i] = NULL;
     function =
     load_library_function(serv->lib, "server_event_user_loaded");
