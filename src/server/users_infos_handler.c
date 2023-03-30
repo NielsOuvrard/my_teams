@@ -14,7 +14,7 @@ client *current_client, int sd)
     if (user_not_connected(current_client) == true)
         return;
     for (int i = 0; i != MAX_CLIENTS; i++) {
-        if ((*cli_list)[i].socket != -1 || (*cli_list)[i].username != NULL) {
+        if ((*cli_list)[i].socket != -1) {
             sprintf(str, "##USER %s ##UUID %s ##STATUS %d",
             (*cli_list)[i].username, (*cli_list)[i].uuid_text,
             (*cli_list)[i].is_logged);

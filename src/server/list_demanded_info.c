@@ -7,6 +7,8 @@
 
 #include "my.h"
 
+//make it generic
+
 void preload_infos(server *serv, char *file_path)
 {
     char *line = NULL;
@@ -40,7 +42,7 @@ void folder_files(server *serv, char *path)
         exit(84);
     }
     while ((ent = readdir(dir)) != NULL) {
-        if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
+        if (strncmp(ent->d_name, ".", 1) != 0) {
             snprintf(file_path, sizeof(file_path), "%s/%s", path, ent->d_name);
             preload_infos(serv, file_path);
         }

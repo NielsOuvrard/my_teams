@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <uuid/uuid.h>
 #include <dlfcn.h>
+#include <stdarg.h>
 
 typedef struct client_t {
     int socket;
