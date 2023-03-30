@@ -9,6 +9,8 @@
 
 void logout_handler(server **serv, client *current_client, int sd)
 {
+    char *file = malloc(sizeof(char) * 1024);
+    strcpy(file, "data/users/");
     if (args_check((*serv)->command, 1, sd) == false)
         return;
     if (user_not_connected(current_client) == true)
@@ -19,13 +21,15 @@ void logout_handler(server **serv, client *current_client, int sd)
     send(sd, "200 Logout ok.\n", 15, 0);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
-    char *file_path = strdup(strcat("data/users/", current_client->uuid_text));
-    replace_line_file("##STATUS 1", "##STATUS 0", file_path);
+    replace_line_file("##STATUS 1", "##STATUS 0",
+    strcat(file, current_client->uuid_text));
     remove_client(current_client, sd);
 }
 
 void parse_user_data_login(char **usr, client *current_client)
 {
+    char *file = malloc(sizeof(char) * 1024);
+    strcpy(file, "data/users/");
     for (int i = 0; usr[i] != NULL; i++) {
         char **user_parsed = my_str_to_word_array(usr[0]);
         if (strcmp(user_parsed[0], "##USER") == 0) {
@@ -40,8 +44,8 @@ void parse_user_data_login(char **usr, client *current_client)
         }
     }
     current_client->already_subscribed = true;
-    char *file_path = strdup(strcat("data/users/", current_client->uuid_text));
-    replace_line_file("##STATUS 0", "##STATUS 1", file_path);
+    replace_line_file("##STATUS 0", "##STATUS 1",
+    strcat(file, current_client->uuid_text));
 }
 
 void execute_function_login(server **serv, client *current_client, int i)
