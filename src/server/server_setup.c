@@ -29,6 +29,27 @@ void initialize_server(int socket_fd, struct sockaddr_in address)
     }
 }
 
+fct_server_t *array_struct(void)
+{
+    char *commandes[NB_COMMANDS] = {
+        "/login", "/logout", "/users", "/user", "/send", "/messages",
+        "/userinfo", "/subscribe", "/subscribed", "/unsubscribe", "/use",
+        "/create", "/list", "/info"
+    };
+    command_func fptr[NB_COMMANDS] = {
+        &login_function, &logout_function, &users_function, &user_function,
+        &send_function, &messages_function, &subscribe_function,
+        &subscribed_function, &unsubscribe_function, &use_function,
+        &create_function, &list_function, &info_function, &help_function,
+    };
+    fct_server_t *fct = malloc(sizeof(fct_server_t) * (NB_COMMANDS + 1));
+    for (int i = 0; i < NB_COMMANDS; i++) {
+        fct[i].name = commandes[i];
+        fct[i].fct = fptr[i];
+    }
+    return fct;
+}
+
 server *construct_struct(int port)
 {
     server *serv = malloc(sizeof(server));
@@ -41,5 +62,6 @@ server *construct_struct(int port)
     FD_SET(serv->socket_fd, &serv->readfds);
     serv->max_fds = serv->socket_fd;
     serv->lib = load_library();
+    serv->fct = array_struct();
     return serv;
 }

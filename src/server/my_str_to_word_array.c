@@ -7,6 +7,12 @@
 
 #include "my.h"
 
+void print_map(char **map)
+{
+    for (int i = 0; map[i] != NULL; i++)
+        printf("%s\n", map[i]);
+}
+
 int is_alpha(char c)
 {
     if (c >= 33 && c <= 127)
