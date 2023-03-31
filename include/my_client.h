@@ -29,6 +29,8 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
+#include "logging_client.h"
+
 char **my_str_to_word_array(char *str);
 
 void print_map(char **map);
