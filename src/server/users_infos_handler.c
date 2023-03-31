@@ -30,4 +30,5 @@ client *current_client, int sd)
         return;
     (*serv)->to_do = strdup("send");
     get_folder_files(*serv, "data/users/", NULL, sd);
+    // CODE_400
 }

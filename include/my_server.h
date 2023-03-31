@@ -30,6 +30,37 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
+#define NB_CLI_FUNCT 29
+// int client_event_logged_in(char const *user_uuid, const char *user_name);
+// int client_event_logged_out(char const *user_uuid, const char *user_name);
+// int client_event_private_message_received(
+// int client_event_thread_reply_received(
+// int client_event_team_created(
+// int client_event_channel_created(
+// int client_event_thread_created(
+// int client_print_users(
+// int client_print_teams(
+// int client_team_print_channels(
+// int client_channel_print_threads(
+// int client_thread_print_replies(
+// int client_private_message_print_messages(
+// int client_error_unknown_team(char const *team_uuid);
+// int client_error_unknown_channel(char const *channel_uuid);
+// int client_error_unknown_thread(char const *thread_uuid);
+// int client_error_unknown_user(char const *user_uuid);
+// int client_error_unauthorized(void);
+// int client_error_already_exist(void);
+// int client_print_user(
+// int client_print_team(
+// int client_print_channel(
+// int client_print_thread(
+// int client_print_team_created(
+// int client_print_channel_created(
+// int client_print_thread_created(
+// int client_print_reply_created(
+// int client_print_subscribed(char const *user_uuid, char const *team_uuid);
+// int client_print_unsubscribed(char const *user_uuid, char const *team_uuid);
+
 #define CODE_200 "200 Command okay.\r\n"
 #define CODE_214 "214 Help message.\r\n"
 #define CODE_220 "220 Service ready for new user.\r\n"
@@ -119,6 +150,11 @@ typedef struct server_t {
 
 void command_handler(server **serv, client **cli_list,
 client *current_client, int sd);
+
+// int fct(char const *);
+// int fct(char const *, const char *);
+// int fct(char const *, const char *, const char *);
+// int fct(char const *, const char *, const char *, const char *, const char *);
 
 // * Command functions
 // • /login [“user_name”] : set the user_name used by client

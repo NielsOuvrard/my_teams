@@ -7,7 +7,7 @@
 
 #include "my_client.h"
 
-void print_map(char **map)
+void print_array(char **map)
 {
     for (int i = 0; map[i] != NULL; i++)
         printf("%s\n", map[i]);

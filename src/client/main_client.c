@@ -45,6 +45,8 @@ int client_funct (int ac, char **av)
     }
     printf("Connected to server\n");
     cli.lib = load_library();
+    cli.data_lib = load_library_data(cli);
+    cli.funct_client = array_struct();
     loop(&cli);
     close(cli.sock);
 }

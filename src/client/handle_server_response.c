@@ -14,32 +14,17 @@ void free_my_array (char **array)
     free(array);
 }
 
-// void handle_server_response(client *cli)
-// {
-//     char server_reply[2000];
-//     // whie protocol received == 250
-//     {
-//         if (recv(cli->sock, server_reply, 2000, 0) < 0) {
-//             puts("recv failed");
-//             return;
-//             // check func to exec
-//             // 600 cleint
-//         }
-//         char **array = my_str_parse(server_reply, " \n");
-//         if (strcmp(array[0], "##UUID") == 0) {
-//             char *infos[2];
-//             infos[0] = array[1];
-//             infos[1] = array[3];
-//             exec_function_2(cli, infos, "client_event_logged_in");
-//             printf("You are now logged in as %s\n", array[3]);
-//         }
-//         // array[1] = UUID
-//         // array[3] = name
-//         // array[5] = description / status
-//         // print_map(array);
-//         free_my_array(array);
-//     }
-// }
+int check_all_functions (client *cli, char **array)
+{
+    for (int i = 0; i < NB_COMMANDS; i++) {
+        if (strncmp(array[0], cli->funct_client[i].name,
+        strlen(cli->funct_client[i].name)) == 0) {
+            return cli->funct_client[i].fct(cli, array);
+        }
+    }
+}
+
+// print_array(array);
 void handle_server_response(client *cli)
 {
     char server_reply[2000];
@@ -48,14 +33,9 @@ void handle_server_response(client *cli)
             puts("recv failed");
             return;
         }
-        char **array = my_str_parse(server_reply, " \n");
-        if (strcmp(array[0], "##UUID") == 0) {
-            char *infos[2];
-            infos[0] = array[1];
-            infos[1] = array[3];
-            exec_function_2(cli, infos, "client_event_logged_in");
-            printf("You are now logged in as %s\n", array[3]);
-        }
+        char **array = my_str_parse(server_reply, "\n");
+        printf("Server reply :\n");
+        check_all_functions(cli, array);
         free_my_array(array);
     }
 }
