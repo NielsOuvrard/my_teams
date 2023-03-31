@@ -9,6 +9,8 @@
 
 void logout_handler(server **serv, client *cur_cli, int sd)
 {
+    char *file = malloc(sizeof(char) * 1024);
+    strcpy(file, "data/users/");
     if (args_check((*serv)->command, 1, sd) == false)
         return;
     if (user_not_connected(cur_cli) == true)
@@ -28,6 +30,8 @@ void logout_handler(server **serv, client *cur_cli, int sd)
 
 void parse_user_data_login(char **usr, client *cur_cli)
 {
+    char *file = malloc(sizeof(char) * 1024);
+    strcpy(file, "data/users/");
     for (int i = 0; usr[i] != NULL; i++) {
         char **user_parsed = my_str_to_word_array(usr[0]);
         if (strcmp(user_parsed[0], "##USER") == 0) {
@@ -67,8 +71,7 @@ void execute_function_login(server **serv, client *current_client, int i)
 void login_handler(server **serv, client *cur_client, int sd)
 {
     char **usr, str[1024];
-    char *file = malloc(sizeof(char) * 1024);
-    strcpy(file, "data/users/");
+    char *file = malloc(sizeof(char) * 1024); strcpy(file, "data/users/");
     if (args_check((*serv)->command, 2, sd) == false ||
     user_connected(cur_client) == true) return;
     if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
