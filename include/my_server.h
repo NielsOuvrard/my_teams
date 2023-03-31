@@ -154,7 +154,8 @@ client *current_client, int sd);
 // int fct(char const *);
 // int fct(char const *, const char *);
 // int fct(char const *, const char *, const char *);
-// int fct(char const *, const char *, const char *, const char *, const char *);
+// int fct(char const *, const char *, const char *,
+// const char *, const char *);
 
 // * Command functions
 // • /login [“user_name”] : set the user_name used by client

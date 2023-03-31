@@ -76,7 +76,8 @@ typedef int (*fct_3)(char const *, const char *, const char *);
 typedef int (*fct_4)(char const *, const char *, const char *, const char *);
 typedef int (*fct_5)(char const *, time_t, const char *);
 typedef int (*fct_6)(char const *, const char *, time_t, const char *);
-typedef int (*fct_7)(char const *, const char *, time_t, const char *, const char *);
+typedef int (*fct_7)(char const *, const char *, time_t, const char *,
+const char *);
 typedef int (*fct_8)(char const *, const char *, int);
 
 typedef struct fct_lib {

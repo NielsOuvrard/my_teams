@@ -22,6 +22,7 @@ client *current_client, int sd)
     send_info(usr, sd);
 }
 
+// CODE_400
 void users_list_handler(server **serv, client **cli_list,
 client *current_client, int sd)
 {
@@ -30,5 +31,4 @@ client *current_client, int sd)
         return;
     (*serv)->to_do = strdup("send");
     get_folder_files(*serv, "data/users/", NULL, sd);
-    // CODE_400
 }

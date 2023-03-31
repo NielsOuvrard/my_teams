@@ -28,14 +28,12 @@ int check_all_functions (client *cli, char **array)
 void handle_server_response(client *cli)
 {
     char server_reply[2000];
-    {
-        if (recv(cli->sock, server_reply, 2000, 0) < 0) {
-            puts("recv failed");
-            return;
-        }
-        char **array = my_str_parse(server_reply, "\n");
-        printf("Server reply :\n");
-        check_all_functions(cli, array);
-        free_my_array(array);
+    if (recv(cli->sock, server_reply, 2000, 0) < 0) {
+        puts("recv failed");
+        return;
     }
+    char **array = my_str_parse(server_reply, "\n");
+    printf("Server reply :\n");
+    check_all_functions(cli, array);
+    free_my_array(array);
 }
