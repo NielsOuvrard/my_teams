@@ -31,8 +31,33 @@
 
 #include "logging_client.h"
 
+typedef int (*function_2)(char const *, char const *);
+typedef int (*function_3)(char const *, char const *, char const *);
+
+typedef struct client_t {
+    void *lib;
+    int sock;
+} client;
+
 char **my_str_to_word_array(char *str);
 
 void print_map(char **map);
 
 char *loop_get_message(void);
+
+void handle_server_response(client *cli);
+
+char **my_str_parse (char *str, char *part);
+
+void print_map(char **map);
+
+
+// * dll
+
+void *load_library(void);
+
+void *load_library_function(void *lib, char *function_name);
+
+void exec_function_2(client *cli, char **infos, char *func_name);
+
+void exec_function_3(client *cli, char **infos, char *func_name);
