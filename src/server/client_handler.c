@@ -5,7 +5,7 @@
 ** client_handler
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void initialize_client(client **clients)
 {

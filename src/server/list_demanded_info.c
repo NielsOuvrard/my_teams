@@ -5,7 +5,7 @@
 ** preload_users
 */
 
-#include "my.h"
+#include "my_server.h"
 
 char **get_infos(server *serv, char *file_path)
 {

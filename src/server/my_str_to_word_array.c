@@ -5,7 +5,7 @@
 ** my_str_to_word_array
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void print_map(char **map)
 {

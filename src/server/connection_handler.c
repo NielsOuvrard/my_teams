@@ -5,7 +5,7 @@
 ** connection_handler
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void logout_handler(server **serv, client *cur_cli, int sd)
 {

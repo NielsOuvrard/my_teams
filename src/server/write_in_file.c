@@ -5,7 +5,7 @@
 ** write_in_file
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void replace_line_file(char *find, char *new, char *file)
 {

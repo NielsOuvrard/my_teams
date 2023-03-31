@@ -5,7 +5,7 @@
 ** server_setup
 */
 
-#include "my.h"
+#include "my_server.h"
 
 int create_socket(void)
 {

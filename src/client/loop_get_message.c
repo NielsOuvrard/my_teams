@@ -5,12 +5,7 @@
 ** main
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include "my_client.h"
 
 char *get_message(void)
 {

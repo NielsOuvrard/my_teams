@@ -5,7 +5,7 @@
 ** main
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void server_loop(server **serv, client **clients)
 {

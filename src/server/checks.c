@@ -5,7 +5,7 @@
 ** user_check
 */
 
-#include "my.h"
+#include "my_server.h"
 
 bool args_check(char **command, int nb_args, int sd)
 {

@@ -5,7 +5,7 @@
 ** infos_users_handler
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void users_list_handler(server **serv, client **cli_list,
 client *current_client, int sd)

@@ -5,7 +5,7 @@
 ** command_1
 */
 
-#include "my.h"
+#include "my_server.h"
 
 int messages_function       (server **serv, client **cli_list,
                             client *current_client, int sd)

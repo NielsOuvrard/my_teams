@@ -5,7 +5,7 @@
 ** load_infos
 */
 
-#include "my.h"
+#include "my_server.h"
 
 char **load_infos(char *file_path)
 {

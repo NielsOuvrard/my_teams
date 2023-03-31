@@ -5,7 +5,7 @@
 ** DLLoader
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void *load_library(void)
 {

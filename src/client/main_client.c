@@ -5,14 +5,7 @@
 ** main
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-
-char *loop_get_message(void);
+#include "my_client.h"
 
 void loop(int sock)
 {

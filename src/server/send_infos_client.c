@@ -5,7 +5,7 @@
 ** send_infos_client
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void send_info(char **infos, int sd)
 {

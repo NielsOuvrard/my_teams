@@ -5,7 +5,7 @@
 ** exec_fuctions
 */
 
-#include "my.h"
+#include "my_server.h"
 
 void exec_function_2(server *serv, char **infos, char *func_name)
 {
