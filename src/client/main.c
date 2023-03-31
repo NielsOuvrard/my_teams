@@ -12,18 +12,39 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+char *get_message(void)
+{
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    if (getline(&line, &len, stdin) == -1)
+        return NULL;
+    return line;
+}
+
+char *loop_get_message(void)
+{
+    char *message;
+    printf("Enter message: ");
+    if (!(message = get_message()))
+        return NULL;
+    if (message[0] == '\n')
+        return loop_get_message();
+    return message;
+}
+
 void loop(int sock)
 {
-    char message[1000], server_reply[2000];
+    char *message;
+    char server_reply[2000];
     while (1) {
         if (recv(sock, server_reply, 2000, 0) < 0) {
             puts("recv failed");
             break;
         }
         printf("Server reply: %s\n", server_reply);
-
-        printf("Enter message: ");
-        fgets(message, sizeof(message), stdin);
+        if (!(message = loop_get_message()))
+            return;
         if (send(sock, message, strlen(message), 0) < 0) {
             puts("Send failed");
             return;
