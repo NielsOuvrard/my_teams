@@ -12,26 +12,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-char *get_message(void)
-{
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
-    if (getline(&line, &len, stdin) == -1)
-        return NULL;
-    return line;
-}
-
-char *loop_get_message(void)
-{
-    char *message;
-    printf("Enter message: ");
-    if (!(message = get_message()))
-        return NULL;
-    if (message[0] == '\n')
-        return loop_get_message();
-    return message;
-}
+char *loop_get_message(void);
 
 void loop(int sock)
 {
