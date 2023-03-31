@@ -13,6 +13,9 @@ NAME1 = myteams_server
 
 NAME2 = myteams_cli
 
+client:
+	gcc $(SRC2) -o $(NAME2) -I./include
+
 all:
 	gcc $(SRC1) -o $(NAME1) -I./include -luuid -g3
 	gcc $(SRC2) -o $(NAME2) -I./include
