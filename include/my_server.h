@@ -30,6 +30,88 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
+#define NB_CLI_FUNCT 29
+// int client_event_logged_in(char const *user_uuid, const char *user_name);
+// int client_event_logged_out(char const *user_uuid, const char *user_name);
+// int client_event_private_message_received(
+// int client_event_thread_reply_received(
+// int client_event_team_created(
+// int client_event_channel_created(
+// int client_event_thread_created(
+// int client_print_users(
+// int client_print_teams(
+// int client_team_print_channels(
+// int client_channel_print_threads(
+// int client_thread_print_replies(
+// int client_private_message_print_messages(
+// int client_error_unknown_team(char const *team_uuid);
+// int client_error_unknown_channel(char const *channel_uuid);
+// int client_error_unknown_thread(char const *thread_uuid);
+// int client_error_unknown_user(char const *user_uuid);
+// int client_error_unauthorized(void);
+// int client_error_already_exist(void);
+// int client_print_user(
+// int client_print_team(
+// int client_print_channel(
+// int client_print_thread(
+// int client_print_team_created(
+// int client_print_channel_created(
+// int client_print_thread_created(
+// int client_print_reply_created(
+// int client_print_subscribed(char const *user_uuid, char const *team_uuid);
+// int client_print_unsubscribed(char const *user_uuid, char const *team_uuid);
+
+#define CODE_200 "200 Command okay.\r\n"
+#define CODE_214 "214 Help message.\r\n"
+#define CODE_220 "220 Service ready for new user.\r\n"
+// ? #define CODE_221 "221 Service closing control connection.\r\n"
+// ? #define CODE_226 "226 Closing data connection.\r\n"
+
+// * event
+#define CODE_230 "230 User logged in, proceed.\r\n"
+#define CODE_231 "231 User logged out\r\n"
+#define CODE_232 "232 Private message received\r\n"
+#define CODE_233 "233 A new reply is posted in a thread\r\n"
+#define CODE_234 "234 A new team is created\r\n"
+#define CODE_235 "235 A new channel is created\r\n"
+#define CODE_236 "236 A new thread is created\r\n"
+// #define CODE_305 "305 A new user is subscribed to a team\r\n"
+// #define CODE_306 "306 A user is unsubscribed from a team\r\n"
+// #define CODE_307 "307 A new user is created\r\n"
+// #define CODE_308 "308 A user is deleted\r\n"
+
+// * print
+#define CODE_400 "400 print users\r\n"
+#define CODE_401 "401 print teams\r\n"
+#define CODE_402 "402 print team channels\r\n"
+#define CODE_403 "403 print channel threads\r\n"
+#define CODE_404 "404 print thread replies\r\n"
+#define CODE_405 "405 print private messages\r\n"
+#define CODE_406 "406 print user\r\n"
+#define CODE_407 "407 print team\r\n"
+#define CODE_408 "408 print channel\r\n"
+#define CODE_409 "409 print thread\r\n"
+#define CODE_410 "410 print team created\r\n"
+#define CODE_411 "411 print channel created\r\n"
+#define CODE_412 "412 print thread created\r\n"
+#define CODE_413 "413 print reply created\r\n"
+#define CODE_414 "414 print subscribed\r\n"
+#define CODE_415 "415 print unsubscribed\r\n"
+
+// * error
+#define CODE_510 "510 Unknown team.\r\n"
+#define CODE_511 "511 Unknown channel.\r\n"
+#define CODE_512 "512 Unknown thread.\r\n"
+#define CODE_513 "513 Unknown user.\r\n"
+#define CODE_514 "514 Unauthorized.\r\n"
+#define CODE_515 "515 The resource already exist.\r\n"
+// #define CODE_500 "500 Syntax error, command unrecognized.\r\n"
+// #define CODE_501 "501 Syntax error in parameters or arguments.\r\n"
+// #define CODE_502 "502 Command not implemented.\r\n"
+// #define CODE_503 "503 Bad sequence of commands.\r\n"
+// #define CODE_504 "504 Command not implemented for that parameter.\r\n"
+// #define CODE_530 "530 Not logged in.\r\n"
+
 typedef struct client_t client;
 typedef struct server_t server;
 
@@ -68,6 +150,11 @@ typedef struct server_t {
 
 void command_handler(server **serv, client **cli_list,
 client *current_client, int sd);
+
+// int fct(char const *);
+// int fct(char const *, const char *);
+// int fct(char const *, const char *, const char *);
+// int fct(char const *, const char *, const char *, const char *, const char *);
 
 // * Command functions
 // • /login [“user_name”] : set the user_name used by client
@@ -178,6 +265,8 @@ void replace_line_file(char *find, char *new, char *file);
 
 //user or users
 void users_list_handler(server **serv, client **cli_list,
+client *current_client, int sd);
+void user_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
 
 //load infos

@@ -9,8 +9,7 @@
 
 void exec_function_2(server *serv, char **infos, char *func_name)
 {
-    void *function =
-    load_library_function(serv->lib, func_name);
+    void *function = load_library_function(serv->lib, func_name);
     ((int (*)(char const *, char const *))function)
     (my_str_to_word_array(infos[0])[1],
     my_str_to_word_array(infos[1])[1]);
@@ -18,8 +17,7 @@ void exec_function_2(server *serv, char **infos, char *func_name)
 
 void exec_function_3(server *serv, char **infos, char *func_name)
 {
-    void *function =
-    load_library_function(serv->lib, func_name);
+    void *function = load_library_function(serv->lib, func_name);
     ((int (*)(char const *, char const *, char const *))function)
     (my_str_to_word_array(infos[0])[1],
     my_str_to_word_array(infos[1])[1], my_str_to_word_array(infos[2])[1]);

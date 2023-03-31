@@ -17,8 +17,8 @@ client:
 	gcc $(SRC2) -o $(NAME2) -I./include
 
 all:
-	gcc $(SRC1) -o $(NAME1) -I./include -luuid -g3
-	gcc $(SRC2) -o $(NAME2) -I./include
+	@ gcc $(SRC1) -o $(NAME1) -I./libs/myteams -I./include -luuid -g3
+	@ gcc $(SRC2) -o $(NAME2) -I./libs/myteams -I./include
 
 clean:
 	rm -rf $(NAME1)
