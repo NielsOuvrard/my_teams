@@ -22,7 +22,7 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
     char *file_path = malloc(strlen(cur_cli->uuid_text) + 13);
-    strcat(file_path, "data/users/");
+    strcpy(file_path, "data/users/");
     strcat(file_path, cur_cli->uuid_text);
     replace_line_file("##STATUS 1", "##STATUS 0", file_path);
     remove_client(cur_cli, sd);
@@ -47,7 +47,7 @@ void parse_user_data_login(char **usr, client *cur_cli)
     }
     cur_cli->already_subscribed = true;
     char *file_path = malloc(strlen(cur_cli->uuid_text) + 13);
-    strcat(file_path, "data/users/");
+    strcpy(file_path, "data/users/");
     strcat(file_path, cur_cli->uuid_text);
     replace_line_file("##STATUS 0", "##STATUS 1", file_path);
 }

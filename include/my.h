@@ -30,9 +30,6 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
-
-
-
 typedef struct client_t client;
 typedef struct server_t server;
 
