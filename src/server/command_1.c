@@ -31,6 +31,7 @@ int users_function          (server **serv, client **cli_list,
 int user_function           (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
+    user_list_handler(serv, cli_list, current_client, sd);
     return 0;
 }
 

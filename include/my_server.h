@@ -179,6 +179,8 @@ void replace_line_file(char *find, char *new, char *file);
 //user or users
 void users_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
+void user_list_handler(server **serv, client **cli_list,
+client *current_client, int sd);
 
 //load infos
 char **load_infos(char *file_path);
