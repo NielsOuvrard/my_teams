@@ -2,5 +2,5 @@ vgcore*
 myteams_*
 .vscode
 test.txt
-/data/users/*
-/data/teams/*
+# /data/users/*
+# /data/teams/*
