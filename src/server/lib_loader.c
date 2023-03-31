@@ -9,7 +9,7 @@
 
 void *load_library(void)
 {
-    void *lib = dlopen("./libs/libmyteams.so", RTLD_LAZY);
+    void *lib = dlopen("./libs/myteams/libmyteams.so", RTLD_NOW);
     return lib;
 }
 
