@@ -21,7 +21,7 @@ client:
 	gcc $(SRC2) -o $(NAME2) -I./libs/myteams -I./include -g3
 
 server:
-	gcc $(SRC2) -o $(NAME2) -I./libs/myteams -I./include -g3
+	gcc $(SRC1) -o $(NAME1) -I./libs/myteams -I./include -luuid -g3
 
 clean:
 	rm -rf $(NAME1)
