@@ -31,26 +31,6 @@
 #include <stdarg.h>
 
 
-// - functions
-// • /help : show help
-// • /login [“user_name”] : set the user_name used by client
-// • /logout : disconnect the client from the server
-// • /users : get the list of all users that exist on the domain
-// • /user [“user_uuid”] : get details about the requested user
-// • /send [“user_uuid”] [“message_body”] : send a message to specific user
-// • /messages [“user_uuid”] : list all messages exchanged with the specified
-//      user
-// • /subscribe [“team_uuid”] : subscribe to the events of a team and its sub
-//      directories (enable reception of all events from a team)
-// • /subscribed ?[“team_uuid”] : list all subscribed teams or list all users
-//      subscribed to a team
-// • /unsubscribe [“team_uuid”] : unsubscribe from a team
-// • /use ?[“team_uuid”] ?[“channel_uuid”] ?[“thread_uuid”] : Sets the
-//      command context to a team/channel/thread
-// • /create : based on the context, create the sub resource (see below)
-// • /list : based on the context, list all the sub resources (see below)
-// • /info : based on the context, display details of the current resource
-//      (see below
 
 
 typedef struct client_t client;
@@ -92,32 +72,64 @@ void command_handler(server **serv, client **cli_list,
 client *current_client, int sd);
 
 // * Command functions
+// • /login [“user_name”] : set the user_name used by client
 int login_function          (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /logout : disconnect the client from the server
 int logout_function         (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /users : get the list of all users that exist on the domain
 int users_function          (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /user [“user_uuid”] : get details about the requested user
 int user_function           (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /send [“user_uuid”] [“message_body”] : send a message to specific user
 int send_function           (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /messages [“user_uuid”] : list all messages exchanged with the specified
+//      user
 int messages_function       (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /subscribe [“team_uuid”] : subscribe to the events of a team and its sub
+//      directories (enable reception of all events from a team)
 int subscribe_function      (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /subscribed ?[“team_uuid”] : list all subscribed teams or list all users
+//      subscribed to a team
 int subscribed_function     (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /unsubscribe [“team_uuid”] : unsubscribe from a team
 int unsubscribe_function    (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /use ?[“team_uuid”] ?[“channel_uuid”] ?[“thread_uuid”] : Sets the
+//      command context to a team/channel/thread
 int use_function            (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /create : based on the context, create the sub resource (see below)
 int create_function         (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /list : based on the context, list all the sub resources (see below)
 int list_function           (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /info : based on the context, display details of the current resource
+//      (see below
 int info_function           (server **serv, client **cli_list,
                             client *current_client, int sd);
+
+// • /help : show help
 int help_function           (server **serv, client **cli_list,
                             client *current_client, int sd);
 
