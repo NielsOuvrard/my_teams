@@ -13,6 +13,6 @@ client *current_client, int sd)
     char str[1024];
     if (user_not_connected(current_client) == true)
         return;
-    get_folder_files(*serv, "data/users/", NULL, sd,
-    "send");
+    (*serv)->to_do = strdup("send");
+    get_folder_files(*serv, "data/users/", NULL, sd);
 }

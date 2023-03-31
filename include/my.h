@@ -60,6 +60,7 @@ typedef struct server_t {
     char **command;
     int addlen;
     void *lib;
+    char *to_do;
     struct sockaddr_in address;
     fd_set readfds;
     fct_server_t *fct;
@@ -185,4 +186,11 @@ char **find_content(char *file_path, char *loking_for);
 char **read_folder_files(char *path, char *loking_for);
 
 void get_folder_files(server *serv, char *path, char *func_name,
-int nbr_args, char *to_do);
+int nbr_args);
+
+//exec func
+void exec_function_2(server *serv, char **infos, char *func_name);
+void exec_function_3(server *serv, char **infos, char *func_name);
+
+//send
+void send_info(char **infos, int sd);

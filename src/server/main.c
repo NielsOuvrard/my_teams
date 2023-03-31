@@ -26,8 +26,8 @@ void my_teams(int port)
     client *clients = malloc(sizeof(client) * (MAX_CLIENTS + 1));
     initialize_client(&clients);
     initialize_server(serv->socket_fd, serv->address);
-    get_folder_files(serv, "data/users", "server_event_user_loaded", 2,
-    "exec");
+    serv->to_do = strdup("exec");
+    get_folder_files(serv, "data/users", "server_event_user_loaded", 2);
     server_loop(&serv, &clients);
     close(serv->socket_fd);
     shutdown(serv->socket_fd, SHUT_RDWR);
