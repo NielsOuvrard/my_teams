@@ -186,3 +186,6 @@ client *current_client, int sd);
 char **load_infos(char *file_path);
 char **find_content(char *file_path, char *loking_for);
 char **read_folder_files(char *path, char *loking_for);
+
+void get_folder_files(server *serv, char *path, char *func_name,
+int nbr_args, char *to_do);
