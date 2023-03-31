@@ -30,6 +30,57 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
+#define CODE_200 "200 Command okay.\r\n"
+#define CODE_214 "214 Help message.\r\n"
+#define CODE_220 "220 Service ready for new user.\r\n"
+// ? #define CODE_221 "221 Service closing control connection.\r\n"
+// ? #define CODE_226 "226 Closing data connection.\r\n"
+
+// * event
+#define CODE_230 "230 User logged in, proceed.\r\n"
+#define CODE_231 "231 User logged out\r\n"
+#define CODE_232 "232 Private message received\r\n"
+#define CODE_233 "233 A new reply is posted in a thread\r\n"
+#define CODE_234 "234 A new team is created\r\n"
+#define CODE_235 "235 A new channel is created\r\n"
+#define CODE_236 "236 A new thread is created\r\n"
+// #define CODE_305 "305 A new user is subscribed to a team\r\n"
+// #define CODE_306 "306 A user is unsubscribed from a team\r\n"
+// #define CODE_307 "307 A new user is created\r\n"
+// #define CODE_308 "308 A user is deleted\r\n"
+
+// * print
+#define CODE_400 "400 print users\r\n"
+#define CODE_401 "401 print teams\r\n"
+#define CODE_402 "402 print team channels\r\n"
+#define CODE_403 "403 print channel threads\r\n"
+#define CODE_404 "404 print thread replies\r\n"
+#define CODE_405 "405 print private messages\r\n"
+#define CODE_406 "406 print user\r\n"
+#define CODE_407 "407 print team\r\n"
+#define CODE_408 "408 print channel\r\n"
+#define CODE_409 "409 print thread\r\n"
+#define CODE_410 "410 print team created\r\n"
+#define CODE_411 "411 print channel created\r\n"
+#define CODE_412 "412 print thread created\r\n"
+#define CODE_413 "413 print reply created\r\n"
+#define CODE_414 "414 print subscribed\r\n"
+#define CODE_415 "415 print unsubscribed\r\n"
+
+// * error
+#define CODE_510 "510 Unknown team.\r\n"
+#define CODE_511 "511 Unknown channel.\r\n"
+#define CODE_512 "512 Unknown thread.\r\n"
+#define CODE_513 "513 Unknown user.\r\n"
+#define CODE_514 "514 Unauthorized.\r\n"
+#define CODE_515 "515 The resource already exist.\r\n"
+// #define CODE_500 "500 Syntax error, command unrecognized.\r\n"
+// #define CODE_501 "501 Syntax error in parameters or arguments.\r\n"
+// #define CODE_502 "502 Command not implemented.\r\n"
+// #define CODE_503 "503 Bad sequence of commands.\r\n"
+// #define CODE_504 "504 Command not implemented for that parameter.\r\n"
+// #define CODE_530 "530 Not logged in.\r\n"
+
 typedef struct client_t client;
 typedef struct server_t server;
 
