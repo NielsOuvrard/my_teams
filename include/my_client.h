@@ -33,7 +33,7 @@
 
 #define NB_CLI_FUNCT 29
 
-#define LIST_FUNC  \
+#define LIST_CLI_FUNC  \
     "client_event_logged_in", \
     "client_event_logged_out", \
     "client_event_private_message_received", \
@@ -64,7 +64,38 @@
     "client_print_subscribed", \
     "client_print_unsubscribed"
 
-// #define LIST_CODE
+#define CODE_200 "200 help"
+#define CODE_201 "201 login"
+#define CODE_202 "202 logout"
+#define CODE_203 "203 users"
+#define CODE_204 "204 user"
+#define CODE_205 "205 send"
+#define CODE_206 "206 messages"
+#define CODE_207 "207 subscribe"
+#define CODE_208 "208 subscribed"
+#define CODE_209 "209 unsubscribe"
+#define CODE_210 "210 use"
+#define CODE_300 "300 create"
+#define CODE_400 "400 list"
+#define CODE_500 "500 info"
+
+#define LIST_CODE "200", "201", "202", "203", "204", "205", "206", "207", \
+    "208", "209", "210", "300", "400", "500",
+
+#define LIST_FUNC \
+    &help_function, &login_function, &logout_function, &users_function, \
+    &user_function, &send_function, &messages_function, &subscribe_function, \
+    &subscribed_function, &unsubscribe_function, &use_function, \
+    &create_function, &list_function, &info_function,
+
+#define LIST_COMMANDS \
+    "/help", "/login", "/logout", "/users", "/user", "/send", "/messages", \
+    "/subscribe", "/subscribed", "/unsubscribe", "/use", "/create", \
+    "/list", "/info"
+
+    // "230", "231", "232", "233", "234", "235", "236", "400", "401", "402", \
+    // "403", "404", "405", "406", "407", "408", "409", "410", "411", "412", \
+    // "413", "414", "415", "510", "511", "512", "513", "514", "515"
 
 #define LIST_TYPE_FUNC  \
     2,2,2,4,3,3,6,8,3,3,7,6,5,1,1,1,1,0,0,8,3,3,7,3,3,7,6,2,2
@@ -92,6 +123,7 @@ typedef int (*command_func)(/* ? */);
 
 typedef struct fct_client {
     char *name;
+    char *code;
     command_func fct;
 } fct_client_t;
 

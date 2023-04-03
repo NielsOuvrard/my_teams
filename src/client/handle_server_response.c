@@ -17,14 +17,15 @@ void free_my_array (char **array)
 int check_all_functions (client *cli, char **array)
 {
     for (int i = 0; i < NB_COMMANDS; i++) {
-        if (strncmp(array[0], cli->funct_client[i].name,
-        strlen(cli->funct_client[i].name)) == 0) {
+        if (strncmp(array[0], cli->funct_client[i].code,
+        strlen(cli->funct_client[i].code)) == 0) {
             return cli->funct_client[i].fct(cli, array);
         }
     }
 }
 
 // print_array(array);
+// printf("Server reply : %s\n", array[0]);
 void handle_server_response(client *cli)
 {
     char server_reply[2000];
@@ -33,7 +34,6 @@ void handle_server_response(client *cli)
         return;
     }
     char **array = my_str_parse(server_reply, "\n");
-    printf("Server reply :\n");
     check_all_functions(cli, array);
     free_my_array(array);
 }

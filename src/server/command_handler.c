@@ -14,6 +14,7 @@ client *current_client, int sd)
         return;
     for (int i = 0; i < NB_COMMANDS; i++) {
         if (strcmp((*serv)->fct[i].name, (*serv)->command[0]) == 0) {
+            printf("Command received: %s\n", (*serv)->command[0]);
             (*serv)->fct[i].fct(serv, cli_list, current_client, sd);
             return;
         }

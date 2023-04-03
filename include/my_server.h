@@ -30,87 +30,75 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
-#define NB_CLI_FUNCT 29
-// int client_event_logged_in(char const *user_uuid, const char *user_name);
-// int client_event_logged_out(char const *user_uuid, const char *user_name);
-// int client_event_private_message_received(
-// int client_event_thread_reply_received(
-// int client_event_team_created(
-// int client_event_channel_created(
-// int client_event_thread_created(
-// int client_print_users(
-// int client_print_teams(
-// int client_team_print_channels(
-// int client_channel_print_threads(
-// int client_thread_print_replies(
-// int client_private_message_print_messages(
-// int client_error_unknown_team(char const *team_uuid);
-// int client_error_unknown_channel(char const *channel_uuid);
-// int client_error_unknown_thread(char const *thread_uuid);
-// int client_error_unknown_user(char const *user_uuid);
-// int client_error_unauthorized(void);
-// int client_error_already_exist(void);
-// int client_print_user(
-// int client_print_team(
-// int client_print_channel(
-// int client_print_thread(
-// int client_print_team_created(
-// int client_print_channel_created(
-// int client_print_thread_created(
-// int client_print_reply_created(
-// int client_print_subscribed(char const *user_uuid, char const *team_uuid);
-// int client_print_unsubscribed(char const *user_uuid, char const *team_uuid);
+// • /help : show help
+// • /login [“user_name”] : set the user_name used by client
+// • /logout : disconnect the client from the server
+// • /users : get the list of all users that exist on the domain
+// • /user [“user_uuid”] : get details about the requested user
+// • /send [“user_uuid”] [“message_body”] : send a message to specific user
+// • /messages [“user_uuid”] : list all messages exchanged with the specified user
+// • /subscribe [“team_uuid”] : subscribe to the events of a team and its sub directories (enable reception
+//  of all events from a team)
+// • /subscribed ?[“team_uuid”] : list all subscribed teams or list all users subscribed to a team
+// • /unsubscribe [“team_uuid”] : unsubscribe from a team
+// • /use ?[“team_uuid”] ?[“channel_uuid”] ?[“thread_uuid”] : Sets the command context to a team/channel/thread
 
-#define CODE_200 "200 Command okay.\r\n"
-#define CODE_214 "214 Help message.\r\n"
-#define CODE_220 "220 Service ready for new user.\r\n"
-// ? #define CODE_221 "221 Service closing control connection.\r\n"
-// ? #define CODE_226 "226 Closing data connection.\r\n"
 
-// * event
-#define CODE_230 "230 User logged in, proceed.\r\n"
-#define CODE_231 "231 User logged out\r\n"
-#define CODE_232 "232 Private message received\r\n"
-#define CODE_233 "233 A new reply is posted in a thread\r\n"
-#define CODE_234 "234 A new team is created\r\n"
-#define CODE_235 "235 A new channel is created\r\n"
-#define CODE_236 "236 A new thread is created\r\n"
-// #define CODE_305 "305 A new user is subscribed to a team\r\n"
-// #define CODE_306 "306 A user is unsubscribed from a team\r\n"
-// #define CODE_307 "307 A new user is created\r\n"
-// #define CODE_308 "308 A user is deleted\r\n"
+// When the context is not defined (/use):
+// • /create [“team_name”] [“team_description”] : create a new team
+// When team_uuid is defined (/use “team_uuid”):
+// • /create [“channel_name”] [“channel_description”] : create a new channel
+// When team_uuid and channel_uuid are defined (/use “team_uuid” “channel_uuid”):
+// • /create [“thread_title”] [“thread_message”] : create a new thread
+// When team_uuid, channel_uuid and thread_uuid are defined (/use “team_uuid” “channel_uuid” “thread_uuid”):
+// • /create [“comment_body”] : create a new reply
 
-// * print
-#define CODE_400 "400 print users\r\n"
-#define CODE_401 "401 print teams\r\n"
-#define CODE_402 "402 print team channels\r\n"
-#define CODE_403 "403 print channel threads\r\n"
-#define CODE_404 "404 print thread replies\r\n"
-#define CODE_405 "405 print private messages\r\n"
-#define CODE_406 "406 print user\r\n"
-#define CODE_407 "407 print team\r\n"
-#define CODE_408 "408 print channel\r\n"
-#define CODE_409 "409 print thread\r\n"
-#define CODE_410 "410 print team created\r\n"
-#define CODE_411 "411 print channel created\r\n"
-#define CODE_412 "412 print thread created\r\n"
-#define CODE_413 "413 print reply created\r\n"
-#define CODE_414 "414 print subscribed\r\n"
-#define CODE_415 "415 print unsubscribed\r\n"
+// When the context is not defined (/use):
+// • /list : list all existing teams
+// When team_uuid is defined (/use “team_uuid”):
+// • /list : list all existing channels
+// When team_uuid and channel_uuid are defined (/use “team_uuid” “channel_uuid”):
+// • /list : list all existing threads
+// When team_uuid, channel_uuid and thread_uuid are defined (/use “team_uuid” “channel_uuid” “thread_uuid”):
+// • /list : list all existing replies
 
-// * error
-#define CODE_510 "510 Unknown team.\r\n"
-#define CODE_511 "511 Unknown channel.\r\n"
-#define CODE_512 "512 Unknown thread.\r\n"
-#define CODE_513 "513 Unknown user.\r\n"
-#define CODE_514 "514 Unauthorized.\r\n"
-#define CODE_515 "515 The resource already exist.\r\n"
-// #define CODE_500 "500 Syntax error, command unrecognized.\r\n"
-// #define CODE_501 "501 Syntax error in parameters or arguments.\r\n"
-// #define CODE_502 "502 Command not implemented.\r\n"
-// #define CODE_503 "503 Bad sequence of commands.\r\n"
-// #define CODE_504 "504 Command not implemented for that parameter.\r\n"
-// #define CODE_530 "530 Not logged in.\r\n"
+// When the context is not defined (/use):
+// • /info : display currently logged-in user details
+// When team_uuid is defined (/use “team_uuid”):
+// • /info : display currently selected team details
+// When team_uuid and channel_uuid are defined (/use “team_uuid” “channel_uuid”):
+// • /info : display currently selected channel details
+// When team_uuid, channel_uuid and thread_uuid are defined (/use “team_uuid” “channel_uuid” “thread_uuid”):
+// • /info : display currently selected thread details
+
+#define CODE_200 "200 help"
+#define CODE_201 "201 login"
+#define CODE_202 "202 logout"
+#define CODE_203 "203 users"
+#define CODE_204 "204 user"
+#define CODE_205 "205 send"
+#define CODE_206 "206 messages"
+#define CODE_207 "207 subscribe"
+#define CODE_208 "208 subscribed"
+#define CODE_209 "209 unsubscribe"
+#define CODE_210 "210 use"
+
+#define CODE_300 "300 create"
+#define CODE_400 "400 list"
+#define CODE_500 "500 info"
+
+#define NB_COMMANDS 14
+
+#define COMMANDS_NAME \
+    "/help", "/login", "/logout", "/users", "/user", \
+    "/send", "/messages", "/subscribe", "/subscribed", \
+    "/unsubscribe", "/use", "/create", "/list", "/info"
+
+#define COMMANDS_FCT \
+    &help_function, &login_function, &logout_function, &users_function, \
+    &user_function, &send_function, &messages_function, &subscribe_function, \
+    &subscribed_function, &unsubscribe_function, &use_function, \
+    &create_function, &list_function, &info_function, \
 
 typedef struct client_t client;
 typedef struct server_t server;
@@ -118,7 +106,6 @@ typedef struct server_t server;
 typedef int (*command_func)(server **serv, client **cli_list,
 client *current_client, int sd);
 
-#define NB_COMMANDS 14
 
 typedef struct fct_server {
     char *name;
@@ -284,3 +271,34 @@ void exec_function_3(server *serv, char **infos, char *func_name);
 
 //send
 void send_info(char **infos, int sd);
+
+// #define NB_CLI_FUNCT 29
+// client_event_logged_in
+// client_event_logged_out
+// client_event_private_message_received
+// client_event_thread_reply_received
+// client_event_team_created
+// client_event_channel_created
+// client_event_thread_created
+// client_print_users
+// client_print_teams
+// client_team_print_channels
+// client_channel_print_threads
+// client_thread_print_replies
+// client_private_message_print_messages
+// client_error_unknown_team
+// client_error_unknown_channel
+// client_error_unknown_thread
+// client_error_unknown_user
+// client_error_unauthorized
+// client_error_already_exist
+// client_print_user
+// client_print_team
+// client_print_channel
+// client_print_thread
+// client_print_team_created
+// client_print_channel_created
+// client_print_thread_created
+// client_print_reply_created
+// client_print_subscribed
+// client_print_unsubscribed

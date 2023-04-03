@@ -31,17 +31,8 @@ void initialize_server(int socket_fd, struct sockaddr_in address)
 
 fct_server_t *array_struct(void)
 {
-    char *commandes[NB_COMMANDS] = {
-        "/login", "/logout", "/users", "/user", "/send", "/messages",
-        "/userinfo", "/subscribe", "/subscribed", "/unsubscribe", "/use",
-        "/create", "/list", "/info"
-    };
-    command_func fptr[NB_COMMANDS] = {
-        &login_function, &logout_function, &users_function, &user_function,
-        &send_function, &messages_function, &subscribe_function,
-        &subscribed_function, &unsubscribe_function, &use_function,
-        &create_function, &list_function, &info_function, &help_function,
-    };
+    char *commandes[NB_COMMANDS] = { COMMANDS_NAME };
+    command_func fptr[NB_COMMANDS] = { COMMANDS_FCT };
     fct_server_t *fct = malloc(sizeof(fct_server_t) * (NB_COMMANDS + 1));
     for (int i = 0; i < NB_COMMANDS; i++) {
         fct[i].name = commandes[i];

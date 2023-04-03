@@ -24,5 +24,9 @@ int info_function           (client *cli, char **array)
 
 int help_function           (client *cli, char **array)
 {
+    printf("list commandes :\n\thelp\n\tlogin\n\t\
+logout\n\tusers\n\tuser\n\tsend\n\tmessages\n\t\
+subscribe\n\tsubscribed\n\tunsubscribe\n\tuse\n\t\
+create\n\tlist\n\tinfo\n");
     return 0;
 }

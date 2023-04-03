@@ -7,8 +7,6 @@
 
 #include "my_client.h"
 
-// #define NB_CLI_FUNCT 29
-
 // client_event_logged_in
 // client_event_logged_out
 // client_event_private_message_received
@@ -40,8 +38,8 @@
 // client_print_unsubscribed
 fct_lib_t *load_library_data (client cli)
 {
-    char *funct_name[NB_CLI_FUNCT] = {LIST_FUNC};
-    int nb_args[NB_CLI_FUNCT] = {LIST_TYPE_FUNC};
+    char *funct_name[NB_CLI_FUNCT] = { LIST_CLI_FUNC };
+    int nb_args[NB_CLI_FUNCT] = { LIST_TYPE_FUNC };
     fct_lib_t *data_lib = malloc(sizeof(fct_lib_t) * NB_CLI_FUNCT);
     for (int i = 0; i < NB_CLI_FUNCT; i++) {
         data_lib[i].name = funct_name[i];
@@ -53,21 +51,14 @@ fct_lib_t *load_library_data (client cli)
 
 fct_client_t *array_struct(void)
 {
-    char *commandes[NB_COMMANDS] = {
-        "/login", "/logout", "/users", "/user", "/send", "/messages",
-        "/userinfo", "/subscribe", "/subscribed", "/unsubscribe", "/use",
-        "/create", "/list", "/info"
-    };
-    command_func fptr[NB_COMMANDS] = {
-        &login_function, &logout_function, &users_function, &user_function,
-        &send_function, &messages_function, &subscribe_function,
-        &subscribed_function, &unsubscribe_function, &use_function,
-        &create_function, &list_function, &info_function, &help_function,
-    };
+    char *commandes[NB_COMMANDS] = { LIST_COMMANDS };
+    char *code[NB_COMMANDS] = { LIST_CODE };
+    command_func fptr[NB_COMMANDS] = { LIST_FUNC };
     fct_client_t *fct = malloc(sizeof(fct_client_t) * NB_COMMANDS);
     for (int i = 0; i < NB_COMMANDS; i++) {
         fct[i].name = commandes[i];
         fct[i].fct = fptr[i];
+        fct[i].code = code[i];
     }
     return fct;
 }

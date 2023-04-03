@@ -19,7 +19,7 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     void *function =
     load_library_function((*serv)->lib, "server_event_user_logged_out");
     ((void (*)(char *))function)(cur_cli->uuid_text);
-    send(sd, "/logout\n", strlen("/logout\n"), 0);
+    send(sd, CODE_202, strlen(CODE_202), 0);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
     char *file_path = malloc(strlen(cur_cli->uuid_text) + 13);
@@ -78,7 +78,7 @@ void login_handler(server **serv, client *client, int sd)
     user_connected(client) == true) return;
     if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
         parse_user_data_login(usr, client);
-        sprintf(str, "/login\n%s\n%s\n", client->uuid_text, client->username);
+        sprintf(str, "%s\n%s\n%s\n", CODE_201, client->uuid_text, client->username);
     } else {
         client->username = strdup((*serv)->command[1]);
         uuid_generate(client->uuid);
@@ -87,7 +87,7 @@ void login_handler(server **serv, client *client, int sd)
         sprintf(str, "##UUID %s\n##USER %s\n##STATUS 1\n", client->uuid_text,
         client->username);
         write_in_file(strcat(file, client->uuid_text), str);
-        sprintf(str, "/login\n%s\n%s\n", client->uuid_text, client->username);
+        sprintf(str, "%s\n%s\n%s\n", CODE_201, client->uuid_text, client->username);
     }
     client->is_logged = true;
     execute_function_login(serv, client, 1);

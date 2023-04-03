@@ -28,5 +28,6 @@ int info_function           (server **serv, client **cli_list,
 int help_function           (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
+    send(sd, CODE_200, strlen(CODE_200), 0);
     return 0;
 }
