@@ -75,18 +75,32 @@
 #define CODE_208 "208 subscribed"
 #define CODE_209 "209 unsubscribe"
 #define CODE_210 "210 use"
-#define CODE_300 "300 create"
-#define CODE_400 "400 list"
-#define CODE_500 "500 info"
+#define CODE_211 "211 create"
+#define CODE_212 "212 list"
+#define CODE_213 "213 info"
+// error
+#define CODE_500 "500 unknown_team"
+#define CODE_501 "501 unknown_channel"
+#define CODE_502 "502 unknown_thread"
+#define CODE_503 "503 unknown_user"
+#define CODE_504 "504 unauthorized"
+#define CODE_505 "505 already_exist"
+
+#define NB_COMMANDS 20
 
 #define LIST_CODE "200", "201", "202", "203", "204", "205", "206", "207", \
-    "208", "209", "210", "300", "400", "500",
+    "208", "209", "210", "211", "212", "213", "500", "501", "502", "503", \
+    "504", "505"
 
 #define LIST_FUNC \
     &help_function, &login_function, &logout_function, &users_function, \
     &user_function, &send_function, &messages_function, &subscribe_function, \
     &subscribed_function, &unsubscribe_function, &use_function, \
-    &create_function, &list_function, &info_function,
+    &create_function, &list_function, &info_function, \
+    &unknown_team_function, &unknown_channel_function, \
+    &unknown_thread_function, &unknown_user_function, \
+    &unauthorized_function, &already_exist_function
+
 
 #define LIST_COMMANDS \
     "/help", "/login", "/logout", "/users", "/user", "/send", "/messages", \
@@ -119,7 +133,6 @@ typedef struct fct_lib {
 
 typedef int (*command_func)(/* ? */);
 
-#define NB_COMMANDS 14
 
 typedef struct fct_client {
     char *name;
@@ -128,6 +141,12 @@ typedef struct fct_client {
 } fct_client_t;
 
 typedef struct client_t {
+    char *name;
+    char *uuid;
+    char *team;
+    char *channel;
+    char *thread;
+    bool is_connected;
     void *lib;
     int sock;
     fct_lib_t *data_lib;
@@ -201,6 +220,20 @@ int info_function           (client *cli, char **array);
 
 // • /help : show help
 int help_function           (client *cli, char **array);
+
+// error
+
+int unknown_team_function   (client *cli, char **array);
+
+int unknown_channel_function(client *cli, char **array);
+
+int unknown_thread_function (client *cli, char **array);
+
+int unknown_user_function   (client *cli, char **array);
+
+int unauthorized_function   (client *cli, char **array);
+
+int already_exist_function  (client *cli, char **array);
 
 
 // int client_event_logged_in(char const *user_uuid, const char *user_name);

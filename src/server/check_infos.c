@@ -58,9 +58,11 @@ char **read_folder_files(char *path, char *looking_for)
     }
     while ((ent = readdir(dir)) != NULL) {
         if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
-            snprintf(file_path, sizeof(file_path), "%s/%s", path, ent->d_name);
+            snprintf(file_path, sizeof(file_path), "%s%s", path, ent->d_name);
             infos = find_content(file_path, looking_for);
         }
+        if (infos != NULL)
+            break;
     }
     closedir(dir);
     return infos;

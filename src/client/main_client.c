@@ -32,6 +32,7 @@ int help (void)
 int client_funct (int ac, char **av)
 {
     client cli;
+    cli.is_connected = false;
     struct sockaddr_in server;
     cli.sock = socket(AF_INET, SOCK_STREAM, 0);
     if (cli.sock == -1)

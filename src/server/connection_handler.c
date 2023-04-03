@@ -7,13 +7,10 @@
 
 #include "my_server.h"
 
-// send(sd, CODE_231, strlen(CODE_231), 0);
+// CODE_202 = "202 Logged out."
 void logout_handler(server **serv, client *cur_cli, int sd)
 {
-    char *file = malloc(sizeof(char) * 1024);
-    strcpy(file, "data/users/");
-    if (args_check((*serv)->command, 1, sd) == false ||
-        user_not_connected(cur_cli) == true)
+    if (!args_check((*serv)->command, 1, sd) || user_not_connected(cur_cli))
         return;
     void *function =
     load_library_function((*serv)->lib, "server_event_user_logged_out");
@@ -25,6 +22,7 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     free(to_send);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
+    cur_cli->is_logged = false;
     char *file_path = malloc(strlen(cur_cli->uuid_text) + 13);
     strcpy(file_path, "data/users/");
     strcat(file_path, cur_cli->uuid_text);
@@ -34,18 +32,16 @@ void logout_handler(server **serv, client *cur_cli, int sd)
 
 void parse_user_data_login(char **usr, client *cur_cli)
 {
-    char *file = malloc(sizeof(char) * 1024);
-    strcpy(file, "data/users/");
     for (int i = 0; usr[i] != NULL; i++) {
-        char **user_parsed = my_str_to_word_array(usr[0]);
+        char **user_parsed = my_str_to_word_array(usr[i]);
         if (strcmp(user_parsed[0], "##USER") == 0) {
             cur_cli->username = strdup(user_parsed[1]);
-            i++;
+            usr[i] && usr[i + 1] ? i++ : 0;
             continue;
         }
         if (strcmp(user_parsed[0], "##UUID") == 0) {
             cur_cli->uuid_text = strdup(user_parsed[1]);
-            i++;
+            usr[i] && usr[i + 1] ? i++ : 0;
             continue;
         }
     }
@@ -72,13 +68,13 @@ void execute_function_login(server **serv, client *current_client, int i)
 }
 
 // ? free(file);
-// sprintf(str, "%s\n%s\n%s\n", CODE_230, client->uuid_text, client->username);
+// printf("Send to client : |%s|\n", str);
 void login_handler(server **serv, client *cli, int sd)
 {
     char **usr, str[1024];
     char *file = malloc(sizeof(char) * 1024); strcpy(file, "data/users/");
-    if (args_check((*serv)->command, 2, sd) == false ||
-    user_connected(cli) == true) return;
+    if (!args_check((*serv)->command, 2, sd) || user_connected(cli))
+        return;
     if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
         parse_user_data_login(usr, cli);
         sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);

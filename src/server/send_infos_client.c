@@ -10,6 +10,7 @@
 void send_info(char **infos, int sd)
 {
     char *str = malloc(sizeof(char) * 1024);
+    str[0] = '\0';
     for (int i = 0; infos[i] != NULL; i++) {
         str = strcat(str, infos[i]);
     }

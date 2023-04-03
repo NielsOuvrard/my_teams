@@ -19,6 +19,12 @@ client *current_client, int sd)
         send(sd, "590 User not found.\n", 20, 0);
         return;
     }
+    char *infos[5];
+    infos[0] = CODE_204;
+    infos[1] = "\n";
+    infos[2] = usr[1];
+    infos[3] = usr[3];
+    infos[4] = NULL;
     send_info(usr, sd);
 }
 

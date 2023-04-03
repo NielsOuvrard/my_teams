@@ -10,13 +10,22 @@
 // 0 = client_event_logged_in
 int login_function          (client *cli, char **array)
 {
+    cli->is_connected = 1;
+    cli->uuid = strdup(array[1]);
+    cli->name = strdup(array[2]);
     fct_2 fonction = cli->data_lib[0].fct;
     return fonction(array[1], array[2]);
 }
 
-// 1 = client_event_logged_out
+// 1 = client_event_logged_out, type 3
+// 17 = client_error_unauthorized, type 0
 int logout_function         (client *cli, char **array)
 {
+    if (cli->is_connected == 1) {
+        cli->is_connected = 0;
+        free(cli->uuid);
+        free(cli->name);
+    }
     fct_2 fonction = cli->data_lib[1].fct;
     return fonction(array[1], array[2]);
 }
@@ -27,7 +36,6 @@ int users_function          (client *cli, char **array)
 {
     fct_8 fonction = cli->data_lib[7].fct;
     return fonction(array[1], array[2], 0);
-    return 0;
 }
 
 // 19 = client_print_user

@@ -7,35 +7,6 @@
 
 #include "my_client.h"
 
-// client_event_logged_in
-// client_event_logged_out
-// client_event_private_message_received
-// client_event_thread_reply_received
-// client_event_team_created
-// client_event_channel_created
-// client_event_thread_created
-// client_print_users
-// client_print_teams
-// client_team_print_channels
-// client_channel_print_threads
-// client_thread_print_replies
-// client_private_message_print_messages
-// client_error_unknown_team
-// client_error_unknown_channel
-// client_error_unknown_thread
-// client_error_unknown_user
-// client_error_unauthorized
-// client_error_already_exist
-// client_print_user
-// client_print_team
-// client_print_channel
-// client_print_thread
-// client_print_team_created
-// client_print_channel_created
-// client_print_thread_created
-// client_print_reply_created
-// client_print_subscribed
-// client_print_unsubscribed
 fct_lib_t *load_library_data (client cli)
 {
     char *funct_name[NB_CLI_FUNCT] = { LIST_CLI_FUNC };

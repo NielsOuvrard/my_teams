@@ -20,10 +20,11 @@ bool args_check(char **command, int nb_args, int sd)
     return true;
 }
 
+// an error exist for that ?
 bool user_connected(client *current_client)
 {
     if (current_client->is_logged == true) {
-        send(current_client->socket, "200 User already logged in.\n", 28, 0);
+        send(current_client->socket, "User already logged in.\n", 28, 0);
         return true;
     }
     return false;
@@ -32,7 +33,9 @@ bool user_connected(client *current_client)
 bool user_not_connected(client *current_client)
 {
     if (current_client->is_logged == false) {
-        send(current_client->socket, "210 U need to be connect.\n", 23, 0);
+        char msg[100];
+        sprintf(msg, "%s\nU need to be connect.\n", CODE_504);
+        send(current_client->socket, msg, strlen(msg), 0);
         return true;
     }
     return false;

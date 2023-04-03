@@ -41,10 +41,15 @@
 #define CODE_208 "208 subscribed"
 #define CODE_209 "209 unsubscribe"
 #define CODE_210 "210 use"
-
-#define CODE_300 "300 create"
-#define CODE_400 "400 list"
-#define CODE_500 "500 info"
+#define CODE_211 "211 create"
+#define CODE_212 "212 list"
+#define CODE_213 "213 info"
+#define CODE_500 "500 client_error_unknown_team"
+#define CODE_501 "501 client_error_unknown_channel"
+#define CODE_502 "502 client_error_unknown_thread"
+#define CODE_503 "503 client_error_unknown_user"
+#define CODE_504 "504 client_error_unauthorized"
+#define CODE_505 "505 client_error_already_exist"
 
 #define NB_COMMANDS 14
 
