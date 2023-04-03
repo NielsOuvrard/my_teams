@@ -70,26 +70,26 @@ void execute_function_login(server **serv, client *current_client, int i)
 
 // ? free(file);
 // sprintf(str, "%s\n%s\n%s\n", CODE_230, client->uuid_text, client->username);
-void login_handler(server **serv, client *client, int sd)
+void login_handler(server **serv, client *cli, int sd)
 {
     char **usr, str[1024];
     char *file = malloc(sizeof(char) * 1024); strcpy(file, "data/users/");
     if (args_check((*serv)->command, 2, sd) == false ||
-    user_connected(client) == true) return;
+    user_connected(cli) == true) return;
     if ((usr = read_folder_files(file, (*serv)->command[1])) != NULL) {
-        parse_user_data_login(usr, client);
-        sprintf(str, "%s\n%s\n%s\n", CODE_201, client->uuid_text, client->username);
+        parse_user_data_login(usr, cli);
+        sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
     } else {
-        client->username = strdup((*serv)->command[1]);
-        uuid_generate(client->uuid);
-        uuid_unparse(client->uuid, client->uuid_text);
-        execute_function_login(serv, client, 0);
-        sprintf(str, "##UUID %s\n##USER %s\n##STATUS 1\n", client->uuid_text,
-        client->username);
-        write_in_file(strcat(file, client->uuid_text), str);
-        sprintf(str, "%s\n%s\n%s\n", CODE_201, client->uuid_text, client->username);
+        cli->username = strdup((*serv)->command[1]);
+        uuid_generate(cli->uuid);
+        uuid_unparse(cli->uuid, cli->uuid_text);
+        execute_function_login(serv, cli, 0);
+        sprintf(str, "##UUID %s\n##USER %s\n##STATUS 1\n", cli->uuid_text,
+        cli->username);
+        write_in_file(strcat(file, cli->uuid_text), str);
+        sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
     }
-    client->is_logged = true;
-    execute_function_login(serv, client, 1);
+    cli->is_logged = true;
+    execute_function_login(serv, cli, 1);
     send(sd, str, strlen(str), 0);
 }

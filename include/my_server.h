@@ -30,47 +30,6 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
-// • /help : show help
-// • /login [“user_name”] : set the user_name used by client
-// • /logout : disconnect the client from the server
-// • /users : get the list of all users that exist on the domain
-// • /user [“user_uuid”] : get details about the requested user
-// • /send [“user_uuid”] [“message_body”] : send a message to specific user
-// • /messages [“user_uuid”] : list all messages exchanged with the specified user
-// • /subscribe [“team_uuid”] : subscribe to the events of a team and its sub directories (enable reception
-//  of all events from a team)
-// • /subscribed ?[“team_uuid”] : list all subscribed teams or list all users subscribed to a team
-// • /unsubscribe [“team_uuid”] : unsubscribe from a team
-// • /use ?[“team_uuid”] ?[“channel_uuid”] ?[“thread_uuid”] : Sets the command context to a team/channel/thread
-
-
-// When the context is not defined (/use):
-// • /create [“team_name”] [“team_description”] : create a new team
-// When team_uuid is defined (/use “team_uuid”):
-// • /create [“channel_name”] [“channel_description”] : create a new channel
-// When team_uuid and channel_uuid are defined (/use “team_uuid” “channel_uuid”):
-// • /create [“thread_title”] [“thread_message”] : create a new thread
-// When team_uuid, channel_uuid and thread_uuid are defined (/use “team_uuid” “channel_uuid” “thread_uuid”):
-// • /create [“comment_body”] : create a new reply
-
-// When the context is not defined (/use):
-// • /list : list all existing teams
-// When team_uuid is defined (/use “team_uuid”):
-// • /list : list all existing channels
-// When team_uuid and channel_uuid are defined (/use “team_uuid” “channel_uuid”):
-// • /list : list all existing threads
-// When team_uuid, channel_uuid and thread_uuid are defined (/use “team_uuid” “channel_uuid” “thread_uuid”):
-// • /list : list all existing replies
-
-// When the context is not defined (/use):
-// • /info : display currently logged-in user details
-// When team_uuid is defined (/use “team_uuid”):
-// • /info : display currently selected team details
-// When team_uuid and channel_uuid are defined (/use “team_uuid” “channel_uuid”):
-// • /info : display currently selected channel details
-// When team_uuid, channel_uuid and thread_uuid are defined (/use “team_uuid” “channel_uuid” “thread_uuid”):
-// • /info : display currently selected thread details
-
 #define CODE_200 "200 help"
 #define CODE_201 "201 login"
 #define CODE_202 "202 logout"
@@ -271,34 +230,3 @@ void exec_function_3(server *serv, char **infos, char *func_name);
 
 //send
 void send_info(char **infos, int sd);
-
-// #define NB_CLI_FUNCT 29
-// client_event_logged_in
-// client_event_logged_out
-// client_event_private_message_received
-// client_event_thread_reply_received
-// client_event_team_created
-// client_event_channel_created
-// client_event_thread_created
-// client_print_users
-// client_print_teams
-// client_team_print_channels
-// client_channel_print_threads
-// client_thread_print_replies
-// client_private_message_print_messages
-// client_error_unknown_team
-// client_error_unknown_channel
-// client_error_unknown_thread
-// client_error_unknown_user
-// client_error_unauthorized
-// client_error_already_exist
-// client_print_user
-// client_print_team
-// client_print_channel
-// client_print_thread
-// client_print_team_created
-// client_print_channel_created
-// client_print_thread_created
-// client_print_reply_created
-// client_print_subscribed
-// client_print_unsubscribed
