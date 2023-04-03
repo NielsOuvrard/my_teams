@@ -11,6 +11,7 @@ int login_function          (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
     login_handler(serv, current_client, sd);
+    printf("Client %d logged in.\n", sd);
     return 0;
 }
 
@@ -18,6 +19,7 @@ int logout_function         (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
     logout_handler(serv, current_client, sd);
+    printf("Client %d logged out.\n", sd);
     return 0;
 }
 
@@ -25,6 +27,7 @@ int users_function          (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
     users_list_handler(serv, cli_list, current_client, sd);
+    printf("Client %d asked for users list.\n", sd);
     return 0;
 }
 

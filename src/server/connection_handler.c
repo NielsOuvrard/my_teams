@@ -12,14 +12,17 @@ void logout_handler(server **serv, client *cur_cli, int sd)
 {
     char *file = malloc(sizeof(char) * 1024);
     strcpy(file, "data/users/");
-    if (args_check((*serv)->command, 1, sd) == false)
-        return;
-    if (user_not_connected(cur_cli) == true)
+    if (args_check((*serv)->command, 1, sd) == false ||
+        user_not_connected(cur_cli) == true)
         return;
     void *function =
     load_library_function((*serv)->lib, "server_event_user_logged_out");
     ((void (*)(char *))function)(cur_cli->uuid_text);
-    send(sd, CODE_202, strlen(CODE_202), 0);
+    char *to_send = malloc(sizeof(char) * 1024);
+    sprintf(to_send, "%s\n%s\n%s", CODE_202, cur_cli->uuid_text,
+    cur_cli->username);
+    send(sd, to_send, strlen(to_send), 0);
+    free(to_send);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
     char *file_path = malloc(strlen(cur_cli->uuid_text) + 13);

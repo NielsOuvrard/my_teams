@@ -25,7 +25,6 @@ int check_all_functions (client *cli, char **array)
 }
 
 // print_array(array);
-// printf("Server reply : %s\n", array[0]);
 void handle_server_response(client *cli)
 {
     char server_reply[2000];
@@ -34,6 +33,9 @@ void handle_server_response(client *cli)
         return;
     }
     char **array = my_str_parse(server_reply, "\n");
+    printf("Server reply : |");
+    print_array(array);
+    printf("|\n");
     check_all_functions(cli, array);
     free_my_array(array);
 }
