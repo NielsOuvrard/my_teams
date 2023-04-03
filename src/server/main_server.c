@@ -20,14 +20,31 @@ void server_loop(server **serv, client **clients)
     }
 }
 
+// 7 "server_event_user_loaded"
+void load_all_users (server *serv, client **clients)
+{
+    DIR *dir = open_data_users();
+    struct dirent *ent;
+    char file_path[1024];
+    while ((ent = readdir(dir)) != NULL) {
+        if (strncmp(ent->d_name, ".", 1) != 0) {
+            sprintf(file_path, "%s/%s", "data/users", ent->d_name);
+            char *username = filepath_to_str(file_path);
+            fct_2 function = serv->array_fct[7];
+            function(ent->d_name, username);
+            free(username);
+        }
+    }
+    closedir(dir);
+}
+
 void my_teams(int port)
 {
     server *serv = construct_struct(port);
     client *clients = malloc(sizeof(client) * (MAX_CLIENTS + 1));
     initialize_client(&clients);
     initialize_server(serv->socket_fd, serv->address);
-    serv->to_do = strdup("exec");
-    get_folder_files(serv, "data/users", "server_event_user_loaded", 2);
+    load_all_users(serv, &clients);
     server_loop(&serv, &clients);
     close(serv->socket_fd);
     shutdown(serv->socket_fd, SHUT_RDWR);

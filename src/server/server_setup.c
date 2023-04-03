@@ -41,6 +41,17 @@ fct_server_t *array_struct(void)
     return fct;
 }
 
+void **array_fct(void)
+{
+    void *lib = load_library();
+    char *names_functs[NB_SERVER_FUNCT] = { LIST_SERV_FUNC };
+    void **array_fct = malloc(sizeof(void *) * NB_SERVER_FUNCT);
+    for (int i = 0; i < NB_SERVER_FUNCT; i++) {
+        array_fct[i] = dlsym(lib, names_functs[i]);
+    }
+    return array_fct;
+}
+
 server *construct_struct(int port)
 {
     server *serv = malloc(sizeof(server));
@@ -52,7 +63,7 @@ server *construct_struct(int port)
     FD_ZERO(&serv->readfds);
     FD_SET(serv->socket_fd, &serv->readfds);
     serv->max_fds = serv->socket_fd;
-    serv->lib = load_library();
     serv->fct = array_struct();
+    serv->array_fct = array_fct();
     return serv;
 }

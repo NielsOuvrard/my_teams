@@ -51,6 +51,27 @@
 #define CODE_504 "504 client_error_unauthorized"
 #define CODE_505 "505 client_error_already_exist"
 
+#define NB_SERVER_FUNCT 11
+
+#define LIST_SERV_FUNC \
+    "server_event_team_created", \
+    "server_event_channel_created", \
+    "server_event_thread_created", \
+    "server_event_reply_created", \
+    "server_event_user_subscribed", \
+    "server_event_user_unsubscribed", \
+    "server_event_user_created", \
+    "server_event_user_loaded", \
+    "server_event_user_logged_in", \
+    "server_event_user_logged_out", \
+    "server_event_private_message_sended"
+
+typedef int (*fct_1)(char const *);
+typedef int (*fct_2)(char const *, const char *);
+typedef int (*fct_3)(char const *, const char *, const char *);
+typedef int (*fct_4)(char const *, const char *, const char *, \
+                     const char *, const char *);
+
 #define NB_COMMANDS 14
 
 #define COMMANDS_NAME \
@@ -92,8 +113,8 @@ typedef struct server_t {
     int port;
     char **command;
     int addlen;
-    void *lib;
-    char *to_do;
+    // void *lib; // useless ?
+    void **array_fct;
     struct sockaddr_in address;
     fd_set readfds;
     fct_server_t *fct;
@@ -102,11 +123,6 @@ typedef struct server_t {
 void command_handler(server **serv, client **cli_list,
 client *current_client, int sd);
 
-// int fct(char const *);
-// int fct(char const *, const char *);
-// int fct(char const *, const char *, const char *);
-// int fct(char const *, const char *, const char *,
-// const char *, const char *);
 
 // * Command functions
 // • /login [“user_name”] : set the user_name used by client
@@ -180,17 +196,35 @@ void add_client(client **clients, int socket_fd, struct sockaddr_in address);
 
 server *construct_struct(int port);
 
+DIR *open_data_users(void);
+
+char **get_infos(server *serv, char *file_path);
+
 void initialize_server(int socket_fd, struct sockaddr_in address);
 
 void initialize_client(client **clients);
+
+int client_is_logged(client **clients, char *uuid_text);
 
 int create_socket(void);
 
 char **get_command(int sd);
 
+// * Utils
+
 char **my_str_to_word_array(char *str);
 
+char *filepath_to_str(char *filepath);
+
+void free_my_array (char **array);
+
 void print_map(char **map);
+
+int nmb_char_in_array (char **array);
+
+int array_len (char **array);
+
+void send_info_client (char **infos, int sd);
 
 //preload users
 void preload_users(server *serv);
@@ -224,14 +258,14 @@ client *current_client, int sd);
 //load infos
 char **load_infos(char *file_path);
 char **find_content(char *file_path, char *loking_for);
-char **read_folder_files(char *path, char *loking_for);
+char **read_folder_files(char *path, char *loking_for, char **filename);
 
 void get_folder_files(server *serv, char *path, char *func_name,
 int nbr_args);
 
-//exec func
-void exec_function_2(server *serv, char **infos, char *func_name);
-void exec_function_3(server *serv, char **infos, char *func_name);
+// //exec func
+// void exec_function_2(server *serv, char **infos, char *func_name);
+// void exec_function_3(server *serv, char **infos, char *func_name);
 
 //send
 void send_info(char **infos, int sd);

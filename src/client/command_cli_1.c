@@ -34,8 +34,16 @@ int logout_function         (client *cli, char **array)
 // user status
 int users_function          (client *cli, char **array)
 {
-    fct_8 fonction = cli->data_lib[7].fct;
-    return fonction(array[1], array[2], 0);
+    for (int i = 1; array[i] != NULL; i += 3) {
+        if (array[i + 1] == NULL || array[i + 2] == NULL)
+            return 0;
+        char *uuid = array[i];
+        char *name = array[i + 1];
+        char *status = array[i + 2];
+        fct_8 fonction = cli->data_lib[7].fct;
+        fonction(uuid, name, atoi(status));
+    }
+    return 0;
 }
 
 // 19 = client_print_user
@@ -43,7 +51,7 @@ int users_function          (client *cli, char **array)
 int user_function           (client *cli, char **array)
 {
     fct_8 fonction = cli->data_lib[19].fct;
-    return fonction(array[1], array[2], 0);
+    return fonction(array[1], array[2], atoi(array[3]));
 }
 
 int send_function           (client *cli, char **array)

@@ -7,6 +7,32 @@
 
 #include "my_server.h"
 
+DIR *open_data_users(void)
+{
+    DIR *dir;
+    if ((dir = opendir("data/users/")) == NULL) {
+        perror("opendir");
+        exit(84);
+    }
+    return dir;
+}
+
+char *filepath_to_str(char *filepath)
+{
+    int fp = open(filepath, O_RDONLY);
+    if (!fp)
+        return NULL;
+    int buff_size = 32000, offset = 0, len = 0;
+    char *buff = malloc(sizeof(char) * buff_size);
+    while ((len = read(fp, buff + offset, buff_size - offset)) > 0)
+        offset += len;
+    close(fp);
+    if (len < 0)
+        return NULL;
+    buff[offset] = '\0';
+    return buff;
+}
+
 char **load_infos(char *file_path)
 {
     char *line = NULL;
@@ -46,23 +72,21 @@ char **find_content(char *file_path, char *loking_for)
     return infos;
 }
 
-char **read_folder_files(char *path, char *looking_for)
+char **read_folder_files(char *path, char *looking_for, char **filename)
 {
-    DIR *dir;
+    DIR *dir = open_data_users();
     struct dirent *ent;
     char **infos = NULL;
     char file_path[1024];
-    if ((dir = opendir(path)) == NULL) {
-        perror("opendir");
-        exit(84);
-    }
     while ((ent = readdir(dir)) != NULL) {
         if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
             snprintf(file_path, sizeof(file_path), "%s%s", path, ent->d_name);
             infos = find_content(file_path, looking_for);
+            if (*filename != NULL)
+                free(*filename);
+            *filename = strdup(ent->d_name);
         }
-        if (infos != NULL)
-            break;
+        if (infos != NULL) break;
     }
     closedir(dir);
     return infos;

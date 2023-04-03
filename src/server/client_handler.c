@@ -12,6 +12,7 @@ void initialize_client(client **clients)
     for (int i = 0; i < MAX_CLIENTS; i++) {
         (*clients)[i].socket = -1;
         (*clients)[i].uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
+        (*clients)[i].uuid_text[0] = '\0';
         (*clients)[i].username = NULL;
         (*clients)[i].is_logged = false;
         (*clients)[i].already_subscribed = false;
@@ -29,7 +30,7 @@ void add_client(client **clients, int socket_fd, struct sockaddr_in address)
             (*clients)[i].socket = socket_fd;
             (*clients)[i].address = address;
             (*clients)[i].username = NULL;
-            break;
+            return;
         }
     }
 }
@@ -43,7 +44,7 @@ void remove_client(client *clients, int client_fd)
             clients->uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
             clients->username = NULL;
             clients->is_logged = false;
-            break;
+            return;
         }
     }
 }
