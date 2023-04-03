@@ -82,8 +82,7 @@ char **read_folder_files(char *path, char *looking_for, char **filename)
         if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
             snprintf(file_path, sizeof(file_path), "%s%s", path, ent->d_name);
             infos = find_content(file_path, looking_for);
-            if (*filename != NULL)
-                free(*filename);
+            *filename != NULL ? free(*filename) : 0;
             *filename = strdup(ent->d_name);
         }
         if (infos != NULL) break;
