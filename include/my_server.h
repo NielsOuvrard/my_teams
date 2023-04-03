@@ -70,7 +70,7 @@ typedef int (*fct_1)(char const *);
 typedef int (*fct_2)(char const *, const char *);
 typedef int (*fct_3)(char const *, const char *, const char *);
 typedef int (*fct_4)(char const *, const char *, const char *, \
-                     const char *, const char *);
+    const char *, const char *);
 
 #define NB_COMMANDS 14
 
