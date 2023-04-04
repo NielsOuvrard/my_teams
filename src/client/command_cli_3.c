@@ -33,6 +33,6 @@ create\n\tlist\n\tinfo\n");
 
 int already_exist_function  (client *cli, char **array)
 {
-    fct_0 fonction = cli->data_lib[18].fct;
-    return fonction();
+    fct_0 function = cli->data_lib[18].fct;
+    return function();
 }
