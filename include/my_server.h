@@ -244,6 +244,7 @@ bool args_check(char **command, int nb_args, int sd);
 bool user_connected(client *current_client);
 bool user_not_connected(client *current_client);
 bool check_user_already_subscribed(client *current_client);
+bool check_file_exist(char *file_path);
 
 //file
 void write_in_file(char *file, char *str);

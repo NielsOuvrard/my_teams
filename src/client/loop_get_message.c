@@ -20,7 +20,6 @@ char *get_message(void)
 char *loop_get_message(void)
 {
     char *message;
-    printf("$ ");
     if (!(message = get_message()))
         return NULL;
     if (message[0] == '\n')

@@ -33,9 +33,6 @@ void handle_server_response(client *cli)
         return;
     }
     char **array = my_str_parse(server_reply, "\n");
-    printf("Server reply : |");
-    print_array(array);
-    printf("|\n");
     check_all_functions(cli, array);
     free_my_array(array);
 }
