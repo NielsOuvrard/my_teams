@@ -27,7 +27,8 @@ int logout_function         (client *cli, char **array)
         free(cli->name);
     }
     fct_2 fonction = cli->data_lib[1].fct;
-    return fonction(array[1], array[2]);
+    fonction(array[1], array[2]);
+    exit(0);
 }
 
 // 7 = client_print_users
