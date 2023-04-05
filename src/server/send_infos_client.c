@@ -22,7 +22,7 @@ int array_len (char **array)
     return i;
 }
 
-void send_info_client (char **infos, int sd)
+int send_info_client (char **infos, int sd)
 {
     char *str = malloc(sizeof(char) *
     (nmb_char_in_array(infos) + array_len(infos) + 1));
@@ -33,6 +33,7 @@ void send_info_client (char **infos, int sd)
     }
     send(sd, str, strlen(str), 0);
     free(str);
+    return 0;
 }
 
 void send_info(char **infos, int sd)

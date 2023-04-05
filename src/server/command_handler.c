@@ -28,3 +28,9 @@ char **get_command(int sd)
     char **command = my_str_to_word_array(buffer);
     return command;
 }
+
+void error_sql(server *serv, char *error)
+{
+    fprintf(stderr, error, sqlite3_errmsg(serv->users_db));
+    exit (84);
+}

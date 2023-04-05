@@ -10,7 +10,8 @@
 void change_status_user (server **serv, const char *uuid_text, int status)
 {
     char request[1024];
-    sprintf(request, "UPDATE users SET connected = %d WHERE uuid = %s", status, uuid_text);
+    sprintf(request, "UPDATE users SET connected = %d WHERE uuid = %s",
+    status, uuid_text);
     sqlite3_prepare_v2((*serv)->users_db, request, -1, &(*serv)->stmt, NULL);
 }
 
@@ -34,61 +35,73 @@ void logout_handler(server **serv, client *cur_cli, int sd)
 void execute_function_login(server **serv, client *current_client, int i)
 {
     if (i == 0)
-        server_event_user_created(current_client->uuid_text, current_client->username);
+        server_event_user_created(current_client->uuid_text,
+        current_client->username);
     else if (i == 1)
         server_event_user_logged_in(current_client->uuid_text);
 }
 
-// ? free(file);
-// printf("Send to client : |%s|\n", str);
-void login_handler(server **serv, client *cli, int sd)
+// if the user exists
+int user_exists(server **serv, client *cli, char *str)
+{
+    int result = sqlite3_prepare_v2((*serv)->users_db,
+    "SELECT * FROM users WHERE username = ?;", -1, &(*serv)->stmt, NULL);
+    if (result != SQLITE_OK) {
+        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+    }
+    sqlite3_bind_text((*serv)->stmt, 1,
+    (*serv)->command[1], -1, SQLITE_STATIC);
+    if (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
+        cli->uuid_text = strdup(sqlite3_column_text((*serv)->stmt, 1));
+        cli->username = strdup(sqlite3_column_text((*serv)->stmt, 2));
+        sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
+    }
+    change_status_user(serv, cli->uuid_text, 1);
+}
+
+// If the user doesn't exist
+int user_doesnt_exist(server **serv, client *cli, char *str)
+{
+    cli->username = strdup((*serv)->command[1]);
+    uuid_generate(cli->uuid);
+    uuid_unparse(cli->uuid, cli->uuid_text);
+    execute_function_login(serv, cli, 0);
+    sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
+    int result = sqlite3_prepare_v2((*serv)->users_db,
+    "INSERT INTO users (uuid, username, connected) VALUES (?, ?, ?);",
+    -1, &(*serv)->stmt, NULL);
+    if (result != SQLITE_OK)
+        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+    sqlite3_bind_text((*serv)->stmt, 1, cli->uuid_text, -1, SQLITE_STATIC);
+    sqlite3_bind_text((*serv)->stmt, 2, cli->username, -1, SQLITE_STATIC);
+    sqlite3_bind_int((*serv)->stmt, 3, 1);
+    result = sqlite3_step((*serv)->stmt);
+    if (result != SQLITE_DONE)
+        return fprintf(stderr, "Failed to insert data: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+}
+
+int login_handler(server **se, client *cli, int sd)
 {
     char str[1024];
-    if (!args_check((*serv)->command, 2, sd) || user_connected(cli))
-        return;
-    int result = sqlite3_prepare_v2((*serv)->users_db, "SELECT COUNT(*) FROM users WHERE username = ?;", -1, &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK) {
-        fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg((*serv)->users_db));
-        return;
-    }
-    sqlite3_bind_text((*serv)->stmt, 1, (*serv)->command[1], -1, SQLITE_STATIC);
-    if (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
-        result = sqlite3_column_int((*serv)->stmt, 0);
-    }
-    if (result > 0) {
-        result = sqlite3_prepare_v2((*serv)->users_db, "SELECT * FROM users WHERE username = ?;", -1, &(*serv)->stmt, NULL);
-        if (result != SQLITE_OK) {
-            fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg((*serv)->users_db));
-            return;
-        }
-        sqlite3_bind_text((*serv)->stmt, 1, (*serv)->command[1], -1, SQLITE_STATIC);
-        if (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
-            cli->uuid_text = strdup(sqlite3_column_text((*serv)->stmt, 1));
-            cli->username = strdup(sqlite3_column_text((*serv)->stmt, 2));
-            sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
-        }
-        change_status_user(serv, cli->uuid_text, 1);
-    } else {
-        cli->username = strdup((*serv)->command[1]);
-        uuid_generate(cli->uuid);
-        uuid_unparse(cli->uuid, cli->uuid_text);
-        execute_function_login(serv, cli, 0);
-        sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
-        result = sqlite3_prepare_v2((*serv)->users_db, "INSERT INTO users (uuid, username, connected) VALUES (?, ?, ?);", -1, &(*serv)->stmt, NULL);
-        if (result != SQLITE_OK) {
-            fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg((*serv)->users_db));
-            return;
-        }
-        sqlite3_bind_text((*serv)->stmt, 1, cli->uuid_text, -1, SQLITE_STATIC);
-        sqlite3_bind_text((*serv)->stmt, 2, cli->username, -1, SQLITE_STATIC);
-        sqlite3_bind_int((*serv)->stmt, 3, 1);
-        result = sqlite3_step((*serv)->stmt);
-        if (result != SQLITE_DONE) {
-            fprintf(stderr, "Failed to insert data: %s\n", sqlite3_errmsg((*serv)->users_db));
-            return;
-        }
-    }
+    if (!args_check((*se)->command, 2, sd) || user_connected(cli))
+        return 0;
+    int result = sqlite3_prepare_v2((*se)->users_db,
+    "SELECT COUNT(*) FROM users WHERE username = ?;", -1,
+    &(*se)->stmt, NULL);
+    if (result != SQLITE_OK)
+        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        sqlite3_errmsg((*se)->users_db));
+    sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
+    if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
+        result = sqlite3_column_int((*se)->stmt, 0);
+    if (result > 0)
+        user_exists(se, cli, str);
+    else
+        user_doesnt_exist(se, cli, str);
     cli->is_logged = true;
-    execute_function_login(serv, cli, 1);
+    execute_function_login(se, cli, 1);
     send(sd, str, strlen(str), 0);
 }

@@ -54,6 +54,8 @@
 #define CODE_504 "504 client_error_unauthorized"
 #define CODE_505 "505 client_error_already_exist"
 
+#define CREATE_DB "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);"
+
 #define NB_COMMANDS 14
 
 #define COMMANDS_NAME \
@@ -175,6 +177,8 @@ int create_socket(void);
 
 char **get_command(int sd);
 
+void error_sql(server *serv, char *error);
+
 // * Utils
 
 char **my_str_to_word_array(char *str);
@@ -189,13 +193,13 @@ int nmb_char_in_array (char **array);
 
 int array_len (char **array);
 
-void send_info_client (char **infos, int sd);
+int send_info_client (char **infos, int sd);
 
 //preload users
 void preload_users(server *serv);
 
 //login
-void login_handler(server **serv, client *current_client, int sd);
+int login_handler(server **serv, client *current_client, int sd);
 
 //logout
 void logout_handler(server **serv, client *current_client, int sd);

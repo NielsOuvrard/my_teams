@@ -20,50 +20,39 @@ void server_loop(server **serv, client **clients)
     }
 }
 
-void load_all_users(server *serv)
+int load_all_users(server *serv)
 {
-    int result = sqlite3_prepare_v2(serv->users_db, "SELECT * FROM users;", -1, &serv->stmt, NULL);
-    char *uuid, *username;
-    if (result != SQLITE_OK) {
-        fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(serv->users_db));
-        return;
-    }
+    int result = sqlite3_prepare_v2(serv->users_db, "SELECT * FROM users;",
+    -1, &serv->stmt, NULL);
+    if (result != SQLITE_OK)
+        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        sqlite3_errmsg(serv->users_db));
     while (sqlite3_step(serv->stmt) == SQLITE_ROW) {
-        server_event_user_loaded(sqlite3_column_text(serv->stmt, 1), sqlite3_column_text(serv->stmt, 2));
+        return server_event_user_loaded(sqlite3_column_text(serv->stmt, 1),
+        sqlite3_column_text(serv->stmt, 2));
     }
     result = sqlite3_finalize(serv->stmt);
-    if (result != SQLITE_OK) {
-        fprintf(stderr, "Failed to finalize statement: %s\n", sqlite3_errmsg(serv->users_db));
-        return;
-    }
+    if (result != SQLITE_OK)
+        return fprintf(stderr, "Failed to finalize statement: %s\n",
+        sqlite3_errmsg(serv->users_db));
 }
+
 
 void initialize_db(server **serv)
 {
     int result;
-    if (sqlite3_open("data/users.db", &(*serv)->users_db) != SQLITE_OK) {
-        fprintf(stderr, "Can't open database: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
-        exit (84);
-    }
-    result = sqlite3_prepare_v2((*serv)->users_db, "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);", -1, &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK) {
-        fprintf(stderr, "Failed to execute statement: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
-        exit (84);
-    }
+    if (sqlite3_open("data/users.db", &(*serv)->users_db) != SQLITE_OK)
+        error_sql(*serv, "Can't open database: %s\n");
+    result = sqlite3_prepare_v2((*serv)->users_db, CREATE_DB, -1,
+    &(*serv)->stmt, NULL);
+    if (result != SQLITE_OK)
+        error_sql(*serv, "Failed to prepare statement: %s\n");
     result = sqlite3_step((*serv)->stmt);
-    if (result != SQLITE_DONE) {
-        fprintf(stderr, "Failed to execute statement: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
-        exit (84);
-    }
+    if (result != SQLITE_DONE)
+        error_sql(*serv, "Failed to execute statement: %s\n");
     result = sqlite3_finalize((*serv)->stmt);
-    if (result != SQLITE_OK) {
-        fprintf(stderr, "Failed to finalize statement: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
-        exit (84);
-    }
+    if (result != SQLITE_OK)
+        error_sql(*serv, "Failed to finalize statement: %s\n");
 }
 
 void my_teams(int port)
