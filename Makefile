@@ -26,7 +26,7 @@ server:
 	gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -lsqlite3 -g3 $(LIB) -DSQLITE_THREADSAFE=0
 
 clean:
-	$rm -rf $(BIN_CLIENT)
+	rm -rf $(BIN_CLIENT)
 	rm -rf $(BIN_SERVER)
 
 fclean:
