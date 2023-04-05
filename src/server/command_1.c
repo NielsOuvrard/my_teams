@@ -77,7 +77,7 @@ int send_function           (server **serv, client **cli_list,
                             client *curr_cli, int sd)
 {
     char **usr, path[1024], *filename = NULL;
-    if (user_not_connected(curr_cli) ||!args_check((*serv)->command, 3, sd))
+    if (user_not_connected(curr_cli) || !args_check((*serv)->command, 3, sd))
         return 0;
     char *infos[5];
     sprintf(path, "%s%s", "data/users/", (*serv)->command[1]);

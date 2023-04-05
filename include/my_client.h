@@ -166,4 +166,3 @@ int unknown_user_function   (client *cli, char **array);
 int unauthorized_function   (client *cli, char **array);
 
 int already_exist_function  (client *cli, char **array);
-

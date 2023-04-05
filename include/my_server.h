@@ -54,7 +54,8 @@
 #define CODE_504 "504 client_error_unauthorized"
 #define CODE_505 "505 client_error_already_exist"
 
-#define CREATE_DB "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);"
+#define CREATE_DB "CREATE TABLE IF NOT EXISTS users \
+(id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);"
 
 #define NB_COMMANDS 14
 
