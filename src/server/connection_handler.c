@@ -8,13 +8,11 @@
 #include "my_server.h"
 
 // CODE_202 = "202 Logged out."
-// 9 = server_event_user_logged_out
 void logout_handler(server **serv, client *cur_cli, int sd)
 {
     if (!args_check((*serv)->command, 1, sd) || user_not_connected(cur_cli))
         return;
-    fct_1 function = (*serv)->array_fct[9];
-    function(cur_cli->uuid_text);
+    server_event_user_logged_out(cur_cli->uuid_text);
     char *to_send = malloc(sizeof(char) * 1024);
     sprintf(to_send, "%s\n%s\n%s", CODE_202, cur_cli->uuid_text,
     cur_cli->username);
@@ -25,18 +23,12 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     cur_cli->is_logged = false;
 }
 
-// 6 "server_event_user_created"
-// 8 "server_event_user_logged_in"
 void execute_function_login(server **serv, client *current_client, int i)
 {
-    void *function;
-    if (i == 0) {
-        fct_2 function = (*serv)->array_fct[6];
-        function(current_client->uuid_text, current_client->username);
-    } else if (i == 1) {
-        fct_1 function = (*serv)->array_fct[8];
-        function(current_client->uuid_text);
-    }
+    if (i == 0)
+        server_event_user_created(current_client->uuid_text, current_client->username);
+    else if (i == 1)
+        server_event_user_logged_in(current_client->uuid_text);
 }
 
 // ? free(file);

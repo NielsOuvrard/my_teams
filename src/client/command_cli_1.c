@@ -13,8 +13,7 @@ int login_function          (client *cli, char **array)
     cli->is_connected = 1;
     cli->uuid = strdup(array[1]);
     cli->name = strdup(array[2]);
-    fct_2 function = cli->data_lib[0].fct;
-    return function(array[1], array[2]);
+    return client_event_logged_in(array[1], array[2]);
 }
 
 // 1 = client_event_logged_out, type 3
@@ -26,8 +25,8 @@ int logout_function         (client *cli, char **array)
         free(cli->uuid);
         free(cli->name);
     }
-    fct_2 function = cli->data_lib[1].fct;
-    function(array[1], array[2]);
+
+    client_event_logged_out(array[1], array[2]);
     exit(0);
 }
 
@@ -41,8 +40,7 @@ int users_function          (client *cli, char **array)
         char *uuid = array[i];
         char *name = array[i + 1];
         char *status = array[i + 2];
-        fct_8 function = cli->data_lib[7].fct;
-        function(uuid, name, atoi(status));
+        client_print_users(uuid, name, atoi(status));
     }
     return 0;
 }
@@ -51,8 +49,7 @@ int users_function          (client *cli, char **array)
 // client_error_unknown_user
 int user_function           (client *cli, char **array)
 {
-    fct_8 function = cli->data_lib[19].fct;
-    return function(array[1], array[2], atoi(array[3]));
+    return client_print_user(array[1], array[2], atoi(array[3]));
 }
 
 int send_function           (client *cli, char **array)

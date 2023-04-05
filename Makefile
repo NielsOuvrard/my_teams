@@ -9,27 +9,28 @@ SRC1 = $(shell find src/server/*.c)
 
 SRC2 = $(shell find src/client/*.c)
 
-NAME1 = myteams_server
+BIN_CLIENT = myteams_server
+LIB = -L./libs/myteams -lmyteams
+BIN_SERVER = myteams_cli
+INCLUDE = -I./include -I./libs/myteams
 
-NAME2 = myteams_cli
+# export LD_LIBRARY_PATH=/home/grafox/TEK2/NWP/B-NWP-400-MAR-4-1-myteams-niels.ouvrard/libs/myteams
 
-all:
-	@ gcc $(SRC1) -o $(NAME1) -I./libs/myteams -I./include -luuid -g3
-	@ gcc $(SRC2) -o $(NAME2) -I./libs/myteams -I./include -g3
+all: client server
 
 client:
-	gcc $(SRC2) -o $(NAME2) -I./libs/myteams -I./include -g3
+	gcc $(SRC2) -o $(BIN_SERVER) $(INCLUDE) -g3 $(LIB)
 
 server:
-	gcc $(SRC1) -o $(NAME1) -I./libs/myteams -I./include -luuid -g3
+	gcc $(SRC1) -o $(BIN_CLIENT) $(INCLUDE) -luuid -g3 $(LIB)
 
 clean:
-	rm -rf $(NAME1)
-	rm -rf $(NAME2)
+	$rm -rf $(BIN_CLIENT)
+	rm -rf $(BIN_SERVER)
 
 fclean:
-	rm -rf $(NAME1)
-	rm -rf $(NAME2)
+	rm -rf $(BIN_CLIENT)
+	rm -rf $(BIN_SERVER)
 	rm -rf *.o
 	rm -rf vgcore*
 	rm -rf data/users/*

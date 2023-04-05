@@ -7,19 +7,6 @@
 
 #include "my_client.h"
 
-fct_lib_t *load_library_data (client cli)
-{
-    char *funct_name[NB_CLI_FUNCT] = { LIST_CLI_FUNC };
-    int nb_args[NB_CLI_FUNCT] = { LIST_TYPE_FUNC };
-    fct_lib_t *data_lib = malloc(sizeof(fct_lib_t) * NB_CLI_FUNCT);
-    for (int i = 0; i < NB_CLI_FUNCT; i++) {
-        data_lib[i].name = funct_name[i];
-        data_lib[i].type = nb_args[i];
-        data_lib[i].fct = load_library_function(cli.lib, funct_name[i]);
-    }
-    return data_lib;
-}
-
 fct_client_t *array_struct(void)
 {
     char *commandes[NB_COMMANDS] = { LIST_COMMANDS };

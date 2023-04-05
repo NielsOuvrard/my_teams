@@ -20,7 +20,6 @@ void server_loop(server **serv, client **clients)
     }
 }
 
-// 7 "server_event_user_loaded"
 void load_all_users (server *serv, client **clients)
 {
     DIR *dir = open_data_users();
@@ -30,8 +29,7 @@ void load_all_users (server *serv, client **clients)
         if (strncmp(ent->d_name, ".", 1) != 0) {
             sprintf(file_path, "%s/%s", "data/users", ent->d_name);
             char *username = filepath_to_str(file_path);
-            fct_2 function = serv->array_fct[7];
-            function(ent->d_name, username);
+            server_event_user_loaded(ent->d_name, username);
             free(username);
         }
     }

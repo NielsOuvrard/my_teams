@@ -12,6 +12,8 @@
 #define MAX_DESCRIPTION_LENGTH 255
 #define MAX_BODY_LENGTH 512
 
+#include "logging_server.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,27 +53,6 @@
 #define CODE_504 "504 client_error_unauthorized"
 #define CODE_505 "505 client_error_already_exist"
 
-#define NB_SERVER_FUNCT 11
-
-#define LIST_SERV_FUNC \
-    "server_event_team_created", \
-    "server_event_channel_created", \
-    "server_event_thread_created", \
-    "server_event_reply_created", \
-    "server_event_user_subscribed", \
-    "server_event_user_unsubscribed", \
-    "server_event_user_created", \
-    "server_event_user_loaded", \
-    "server_event_user_logged_in", \
-    "server_event_user_logged_out", \
-    "server_event_private_message_sended"
-
-typedef int (*fct_1)(char const *);
-typedef int (*fct_2)(char const *, const char *);
-typedef int (*fct_3)(char const *, const char *, const char *);
-typedef int (*fct_4)(char const *, const char *, const char *, \
-    const char *, const char *);
-
 #define NB_COMMANDS 14
 
 #define COMMANDS_NAME \
@@ -88,9 +69,7 @@ typedef int (*fct_4)(char const *, const char *, const char *, \
 typedef struct client_t client;
 typedef struct server_t server;
 
-typedef int (*command_func)(server **serv, client **cli_list,
-client *current_client, int sd);
-
+typedef int (*command_func)(server **, client **, client *, int sd);
 
 typedef struct fct_server {
     char *name;
@@ -113,8 +92,6 @@ typedef struct server_t {
     int port;
     char **command;
     int addlen;
-    // void *lib; // useless ?
-    void **array_fct;
     struct sockaddr_in address;
     fd_set readfds;
     fct_server_t *fct;
@@ -126,65 +103,51 @@ client *current_client, int sd);
 
 // * Command functions
 // • /login [“user_name”] : set the user_name used by client
-int login_function          (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int login_function          (server **, client **, client *, int);
 
 // • /logout : disconnect the client from the server
-int logout_function         (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int logout_function         (server **, client **, client *, int);
 
 // • /users : get the list of all users that exist on the domain
-int users_function          (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int users_function          (server **, client **, client *, int);
 
 // • /user [“user_uuid”] : get details about the requested user
-int user_function           (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int user_function           (server **, client **, client *, int);
 
 // • /send [“user_uuid”] [“message_body”] : send a message to specific user
-int send_function           (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int send_function           (server **, client **, client *, int);
 
 // • /messages [“user_uuid”] : list all messages exchanged with the specified
 //      user
-int messages_function       (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int messages_function       (server **, client **, client *, int);
 
 // • /subscribe [“team_uuid”] : subscribe to the events of a team and its sub
 //      directories (enable reception of all events from a team)
-int subscribe_function      (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int subscribe_function      (server **, client **, client *, int);
 
 // • /subscribed ?[“team_uuid”] : list all subscribed teams or list all users
 //      subscribed to a team
-int subscribed_function     (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int subscribed_function     (server **, client **, client *, int);
 
 // • /unsubscribe [“team_uuid”] : unsubscribe from a team
-int unsubscribe_function    (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int unsubscribe_function    (server **, client **, client *, int);
 
 // • /use ?[“team_uuid”] ?[“channel_uuid”] ?[“thread_uuid”] : Sets the
 //      command context to a team/channel/thread
-int use_function            (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int use_function            (server **, client **, client *, int);
 
 // • /create : based on the context, create the sub resource (see below)
-int create_function         (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int create_function         (server **, client **, client *, int);
 
 // • /list : based on the context, list all the sub resources (see below)
-int list_function           (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int list_function           (server **, client **, client *, int);
 
 // • /info : based on the context, display details of the current resource
 //      (see below
-int info_function           (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int info_function           (server **, client **, client *, int);
 
 // • /help : show help
-int help_function           (server **serv, client **cli_list,
-                            client *current_client, int sd);
+int help_function           (server **, client **, client *, int);
 
 void remove_client(client *clients, int client_fd);
 
@@ -234,10 +197,6 @@ void login_handler(server **serv, client *current_client, int sd);
 
 //logout
 void logout_handler(server **serv, client *current_client, int sd);
-
-//DLLoader
-void *load_library(void);
-void *load_library_function(void *lib, char *function_name);
 
 //checks
 bool args_check(char **command, int nb_args, int sd);
