@@ -59,8 +59,7 @@ char **find_content(char *file_path, char *loking_for)
     char **infos = NULL;
     FILE *fd = fopen(file_path, "r");
     if (fd == NULL) {
-        perror("fopen");
-        exit(84);
+        return NULL;
     }
     while (getline(&line, &len, fd) != -1) {
         if (strstr(line, loking_for) != NULL) {

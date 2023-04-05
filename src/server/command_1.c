@@ -11,7 +11,6 @@ int login_function          (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
     login_handler(serv, current_client, sd);
-    printf("Client %d logged in.\n", sd);
     return 0;
 }
 
@@ -19,7 +18,6 @@ int logout_function         (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
     logout_handler(serv, current_client, sd);
-    printf("Client %d logged out.\n", sd);
     return 0;
 }
 
@@ -71,7 +69,24 @@ int user_function           (server **serv, client **cli_list,
 }
 
 int send_function           (server **serv, client **cli_list,
-                            client *current_client, int sd)
+                            client *curr_cli, int sd)
 {
+    char **usr, path[1024], *filename = NULL;
+    if (user_not_connected(curr_cli) ||!args_check((*serv)->command, 3, sd))
+        return 0;
+    char *infos[5];
+    sprintf(path, "%s%s", "data/users/", (*serv)->command[1]);
+    if (!check_file_exist(path)) {
+        infos[0] = CODE_503;
+        infos[1] = (*serv)->command[1];
+        infos[2] = NULL;
+    } else {
+        infos[0] = CODE_205;
+        infos[1] = (*serv)->command[1];
+        infos[2] = filename;
+        infos[3] = NULL;
+        server_event_private_message_sended(curr_cli->uuid_text, (*serv)->command[1], (*serv)->command[2]);
+    }
+    send_info_client(infos, sd);
     return 0;
 }

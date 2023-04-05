@@ -49,3 +49,14 @@ bool check_user_already_subscribed(client *current_client)
     }
     return false;
 }
+
+bool check_file_exist(char *file_path)
+{
+    FILE *fd = fopen(file_path, "r");
+    if (fd == NULL) {
+        return false;
+    } else {
+        fclose(fd);
+        return true;
+    }
+}
