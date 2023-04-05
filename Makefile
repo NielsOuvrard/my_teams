@@ -20,10 +20,10 @@ INCLUDE = -I./include -I./libs/myteams
 all: client server
 
 client:
-	gcc $(SRC2) -o $(BIN_CLIENT) $(INCLUDE) -g3 $(LIB)
+	gcc $(SRC2) -o $(BIN_CLIENT) $(INCLUDE) -g3 $(LIB) -DSQLITE_THREADSAFE=0
 
 server:
-	gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -lsqlite3 -g3 $(LIB)
+	gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -lsqlite3 -g3 $(LIB) -DSQLITE_THREADSAFE=0
 
 clean:
 	$rm -rf $(BIN_CLIENT)
