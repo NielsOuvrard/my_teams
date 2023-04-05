@@ -36,12 +36,41 @@ void load_all_users (server *serv, client **clients)
     closedir(dir);
 }
 
+void initialize_db(server **serv)
+{
+    int result;
+    if (sqlite3_open("data/users.db", &(*serv)->users_db) != SQLITE_OK) {
+        fprintf(stderr, "Can't open database: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+        exit (84);
+    }
+    result = sqlite3_prepare16_v2((*serv)->users_db, "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username VARCHAR(32), uuid TEXT);", -1, &(*serv)->stmt, NULL);
+    if (result != SQLITE_OK) {
+        fprintf(stderr, "Failed to execute statement: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+        exit (84);
+    }
+    result = sqlite3_step((*serv)->stmt);
+    if (result != SQLITE_DONE) {
+        fprintf(stderr, "Failed to execute statement: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+        exit (84);
+    }
+    result = sqlite3_finalize((*serv)->stmt);
+    if (result != SQLITE_OK) {
+        fprintf(stderr, "Failed to finalize statement: %s\n",
+        sqlite3_errmsg((*serv)->users_db));
+        exit (84);
+    }
+}
+
 void my_teams(int port)
 {
     server *serv = construct_struct(port);
     client *clients = malloc(sizeof(client) * (MAX_CLIENTS + 1));
     initialize_client(&clients);
     initialize_server(serv->socket_fd, serv->address);
+    initialize_db(&serv);
     load_all_users(serv, &clients);
     server_loop(&serv, &clients);
     close(serv->socket_fd);

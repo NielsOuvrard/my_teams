@@ -31,6 +31,7 @@
 #include <uuid/uuid.h>
 #include <dlfcn.h>
 #include <stdarg.h>
+#include <sqlite3.h>
 
 #define CODE_200 "200 help"
 #define CODE_201 "201 login"
@@ -87,6 +88,8 @@ typedef struct client_t {
 } client;
 
 typedef struct server_t {
+    sqlite3 *users_db;
+    sqlite3_stmt *stmt;
     int socket_fd;
     int max_fds;
     int port;
