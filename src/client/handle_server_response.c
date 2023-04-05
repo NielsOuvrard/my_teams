@@ -16,6 +16,7 @@ void free_my_array (char **array)
 
 int check_all_functions (client *cli, char **array)
 {
+    printf("%s\n", array[0]);
     for (int i = 0; i < NB_COMMANDS; i++) {
         if (strncmp(array[0], cli->funct_client[i].code,
         strlen(cli->funct_client[i].code)) == 0) {

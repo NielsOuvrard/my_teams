@@ -9,14 +9,20 @@
 
 void loop(client *cli)
 {
-    char *message;
+    fd_set read_fds;
+    FD_ZERO(&read_fds);
+    FD_SET(STDIN_FILENO, &read_fds);
+    char *message = malloc(sizeof(char) * 1024);
     while (1) {
+        fd_set tmp_fds = read_fds;
         handle_server_response(cli);
-        if (!(message = loop_get_message()))
-            return;
-        if (send(cli->sock, message, strlen(message), 0) < 0) {
-            puts("Send failed");
-            return;
+        if (select(STDIN_FILENO + 1, &tmp_fds, NULL, NULL, NULL) < 0) {
+            perror("Erro na função select");
+            exit(EXIT_FAILURE);
+        }
+        if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
+            message = loop_get_message();
+            send(cli->sock, message, strlen(message), 0);
         }
     }
 }
