@@ -84,7 +84,6 @@ typedef struct client_t {
     struct sockaddr_in address;
     uuid_t uuid;
     char *uuid_text;
-    bool already_subscribed;
 } client;
 
 typedef struct server_t {
@@ -205,7 +204,6 @@ void logout_handler(server **serv, client *current_client, int sd);
 bool args_check(char **command, int nb_args, int sd);
 bool user_connected(client *current_client);
 bool user_not_connected(client *current_client);
-bool check_user_already_subscribed(client *current_client);
 bool check_file_exist(char *file_path);
 
 //file

@@ -41,15 +41,6 @@ bool user_not_connected(client *current_client)
     return false;
 }
 
-bool check_user_already_subscribed(client *current_client)
-{
-    if (current_client->already_subscribed == true) {
-        send(current_client->socket, "205 already subscribed.\n", 24, 0);
-        return true;
-    }
-    return false;
-}
-
 bool check_file_exist(char *file_path)
 {
     FILE *fd = fopen(file_path, "r");

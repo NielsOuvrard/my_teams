@@ -20,20 +20,22 @@ void server_loop(server **serv, client **clients)
     }
 }
 
-void load_all_users (server *serv, client **clients)
+void load_all_users(server *serv)
 {
-    DIR *dir = open_data_users();
-    struct dirent *ent;
-    char file_path[1024];
-    while ((ent = readdir(dir)) != NULL) {
-        if (strncmp(ent->d_name, ".", 1) != 0) {
-            sprintf(file_path, "%s/%s", "data/users", ent->d_name);
-            char *username = filepath_to_str(file_path);
-            server_event_user_loaded(ent->d_name, username);
-            free(username);
-        }
+    int result = sqlite3_prepare_v2(serv->users_db, "SELECT * FROM users;", -1, &serv->stmt, NULL);
+    char *uuid, *username;
+    if (result != SQLITE_OK) {
+        fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(serv->users_db));
+        return;
     }
-    closedir(dir);
+    while (sqlite3_step(serv->stmt) == SQLITE_ROW) {
+        server_event_user_loaded(sqlite3_column_text(serv->stmt, 1), sqlite3_column_text(serv->stmt, 2));
+    }
+    result = sqlite3_finalize(serv->stmt);
+    if (result != SQLITE_OK) {
+        fprintf(stderr, "Failed to finalize statement: %s\n", sqlite3_errmsg(serv->users_db));
+        return;
+    }
 }
 
 void initialize_db(server **serv)
@@ -44,7 +46,7 @@ void initialize_db(server **serv)
         sqlite3_errmsg((*serv)->users_db));
         exit (84);
     }
-    result = sqlite3_prepare16_v2((*serv)->users_db, "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username VARCHAR(32), uuid TEXT);", -1, &(*serv)->stmt, NULL);
+    result = sqlite3_prepare_v2((*serv)->users_db, "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);", -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK) {
         fprintf(stderr, "Failed to execute statement: %s\n",
         sqlite3_errmsg((*serv)->users_db));
@@ -71,7 +73,7 @@ void my_teams(int port)
     initialize_client(&clients);
     initialize_server(serv->socket_fd, serv->address);
     initialize_db(&serv);
-    load_all_users(serv, &clients);
+    load_all_users(serv);
     server_loop(&serv, &clients);
     close(serv->socket_fd);
     shutdown(serv->socket_fd, SHUT_RDWR);
