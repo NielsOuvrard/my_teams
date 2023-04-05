@@ -38,12 +38,11 @@ int users_function          (server **serv, client **cli_list,
     char to_send[4096];
     strcpy(to_send, CODE_203);
     strcat(to_send, "\n");
-    while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
+    while (sqlite3_step((*serv)->stmt) == SQLITE_ROW)
         snprintf(to_send, sizeof(to_send), "%s%s\n%s\n%d\n", to_send,
         sqlite3_column_text((*serv)->stmt, 1),
         sqlite3_column_text((*serv)->stmt, 2),
         sqlite3_column_int((*serv)->stmt, 3));
-    }
     result = sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Failed to finalize statement: %s\n",

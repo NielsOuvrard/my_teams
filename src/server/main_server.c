@@ -37,7 +37,6 @@ int load_all_users(server *serv)
         sqlite3_errmsg(serv->users_db));
 }
 
-
 void initialize_db(server **serv)
 {
     int result;

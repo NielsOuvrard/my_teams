@@ -25,7 +25,6 @@ int logout_function         (client *cli, char **array)
         free(cli->uuid);
         free(cli->name);
     }
-
     client_event_logged_out(array[1], array[2]);
     exit(0);
 }

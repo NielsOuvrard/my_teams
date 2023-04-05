@@ -34,3 +34,11 @@ void error_sql(server *serv, char *error)
     fprintf(stderr, error, sqlite3_errmsg(serv->users_db));
     exit (84);
 }
+
+void change_status_user (server **serv, const char *uuid_text, int status)
+{
+    char request[1024];
+    sprintf(request, "UPDATE users SET connected = %d WHERE uuid = %s",
+    status, uuid_text);
+    sqlite3_prepare_v2((*serv)->users_db, request, -1, &(*serv)->stmt, NULL);
+}
