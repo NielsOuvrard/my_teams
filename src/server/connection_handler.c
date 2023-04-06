@@ -21,7 +21,7 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     free(to_send);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
-    cur_cli->is_logged = false;
+    remove_client(cur_cli, sd);
 }
 
 void execute_function_login(server **serv, client *current_client, int i)
