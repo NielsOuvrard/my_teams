@@ -78,7 +78,6 @@ int user_function           (server **serv, client **cli_list,
 int send_function           (server **serv, client **cli_list,
                             client *curr_cli, int sd)
 {
-    char **usr, path[1024], *filename = NULL;
     if (user_not_connected(curr_cli) || !args_check((*serv)->command, 3, sd))
         return 0;
     char *infos[5];
@@ -96,7 +95,7 @@ int send_function           (server **serv, client **cli_list,
         infos[3] = NULL;
         server_event_private_message_sended(curr_cli->uuid_text,
         (*serv)->command[1], (*serv)->command[2]);
+        send(sd, CODE_221, strlen(CODE_205) + 1, 0);
     }
     return send_info_client(infos, receiver);
 }
-

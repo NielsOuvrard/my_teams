@@ -54,7 +54,9 @@
 #define CODE_504 "504 client_error_unauthorized"
 #define CODE_505 "505 client_error_already_exist"
 
+// codes that are not functions
 #define CODE_220 "220 connected_to_server"
+#define CODE_221 "221 message_sent_to_receiver"
 #define CODE_331 "331 user_already_logged"
 #define CODE_590 "590 command_invalid_arguments"
 

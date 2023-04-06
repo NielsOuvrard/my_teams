@@ -53,5 +53,5 @@ int user_function           (client *cli, char **array)
 
 int send_function           (client *cli, char **array)
 {
-    return 0;
+    return client_event_private_message_received(array[1], array[2]);
 }

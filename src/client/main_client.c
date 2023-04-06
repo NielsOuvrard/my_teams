@@ -21,7 +21,7 @@ void loop(client *cli)
             exit(EXIT_FAILURE);
         }
         if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
-            message = loop_get_message();
+            message = loop_get_message(NULL);
             send(cli->sock, message, strlen(message), 0);
         }
     }
