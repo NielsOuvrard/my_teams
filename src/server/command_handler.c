@@ -44,37 +44,33 @@ void remove_quotes(server **serv)
     }
 }
 
-int command_handler(server **serv, client **cli_list,
+void command_handler(server **serv, client **cli_list,
 client *current_client, int sd)
 {
-    (*serv)->simple_command = strcat((*serv)->simple_command, get_command(sd));
-    if (!(*serv)->simple_command || !(*serv)->simple_command[0]
-    || (*serv)->simple_command[strlen((*serv)->simple_command) - 1] != '\n')
-        return 0;
-    (*serv)->command = my_str_to_word_array((*serv)->simple_command);
+    if (!(*serv)->command || !(*serv)->command[0])
+        return;
     char msg[100];
     sprintf(msg, "%s\n", CODE_590);
     if (!check_valid_command_args(serv, current_client, sd)) {
         send(sd, msg, strlen(msg), 0);
-        return 1;
+        return;
     }
     remove_quotes(serv);
     for (int i = 0; i < NB_COMMANDS; i++) {
         if (strcmp((*serv)->fct[i].name, (*serv)->command[0]) == 0) {
             (*serv)->fct[i].fct(serv, cli_list, current_client, sd);
-            return 1;
+            return;
         }
     }
     send(sd, msg, strlen(msg), 0);
-    return 1;
 }
 
-char *get_command(int sd)
+char **get_command(int sd)
 {
-    char *buffer = malloc(sizeof(char) * 1024);
-    memset(buffer, 0, 1024);
+    char buffer[1024] = {0};
     recv(sd, buffer, 1024, 0);
-    return buffer;
+    char **command = my_str_to_word_array(buffer);
+    return command;
 }
 
 void error_sql(server *serv, char *error)

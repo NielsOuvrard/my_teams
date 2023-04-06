@@ -99,3 +99,4 @@ int send_function           (server **serv, client **cli_list,
     }
     return send_info_client(infos, receiver);
 }
+

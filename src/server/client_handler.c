@@ -74,7 +74,8 @@ int client_communication(server **serv, client **clients, fd_set copy_fds)
     for (int i = 0; i < MAX_CLIENTS; i++) {
         int sd = (*clients)[i].socket;
         if (FD_ISSET(sd, &copy_fds)) {
-            return command_handler(serv, clients, &(*clients)[i], sd);
+            (*serv)->command = get_command(sd);
+            command_handler(serv, clients, &(*clients)[i], sd);
         }
     }
 }

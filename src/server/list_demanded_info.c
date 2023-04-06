@@ -7,13 +7,30 @@
 
 #include "my_server.h"
 
-int find_message_receiver(server **serv, client **clients)
+int client_is_logged(client **clients, char *uuid_text)
 {
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-        if ((*clients)[i].is_logged && strcmp((*clients)[i].uuid_text,
-        (*serv)->command[1]) == 0) {
-            return (*clients)[i].socket;
-        }
+    for (int i = 0; i != MAX_CLIENTS; i++)
+        if ((*clients)[i].socket != -1 &&
+        strcmp((*clients)[i].uuid_text, uuid_text) == 0)
+            return (*clients)[i].is_logged;
+    return 0;
+}
+
+char **get_infos(server *serv, char *file_path)
+{
+    char *line = NULL;
+    size_t len = 0;
+    FILE *fd = fopen(file_path, "r");
+    char **infos = NULL;
+    int i = 0;
+    while (getline(&line, &len, fd) != -1) {
+        char *tmp = strdup(line);
+        infos = realloc(infos, sizeof(char *) * (i + 1));
+        infos[i] = tmp;
+        i++;
     }
-    return -1;
+    infos = realloc(infos, sizeof(char *) * (i + 1));
+    infos[i] = NULL;
+    fclose(fd);
+    return infos;
 }

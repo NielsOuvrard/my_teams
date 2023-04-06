@@ -11,17 +11,12 @@ void server_loop(server **serv, client **clients)
 {
     while (1) {
         fd_set copy_fds = (*serv)->readfds;
-        printf("here\n");
         if (select((*serv)->max_fds + 1, &copy_fds, NULL, NULL, NULL) == -1) {
             perror("select");
             exit(EXIT_FAILURE);
         }
         handle_new_connection(serv, clients, copy_fds);
-        if (client_communication(serv, clients, copy_fds) == 1) {
-            free((*serv)->simple_command);
-            (*serv)->simple_command = malloc(sizeof(char) * 1024);
-            memset((*serv)->simple_command, 0, 1024);
-        }
+        client_communication(serv, clients, copy_fds);
     }
 }
 

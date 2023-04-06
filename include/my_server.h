@@ -100,14 +100,13 @@ typedef struct server_t {
     int max_fds;
     int port;
     char **command;
-    char *simple_command;
     int addlen;
     struct sockaddr_in address;
     fd_set readfds;
     fct_server_t *fct;
 } server;
 
-int command_handler(server **serv, client **cli_list,
+void command_handler(server **serv, client **cli_list,
 client *current_client, int sd);
 
 
@@ -181,13 +180,11 @@ int client_is_logged(client **clients, char *uuid_text);
 
 int create_socket(void);
 
-char *get_command(int sd);
+char **get_command(int sd);
 
 void error_sql(server *serv, char *error);
 
 void change_status_user (server **serv, const char *uuid_text, int status);
-
-int find_message_receiver(server **serv, client **clients);
 
 // * Utils
 
@@ -243,3 +240,5 @@ int nbr_args);
 
 //send
 void send_info(char **infos, int sd);
+
+int find_message_receiver(server **serv, client **clients);
