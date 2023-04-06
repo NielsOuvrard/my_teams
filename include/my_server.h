@@ -54,6 +54,10 @@
 #define CODE_504 "504 client_error_unauthorized"
 #define CODE_505 "505 client_error_already_exist"
 
+#define CODE_220 "220 connected_to_server"
+#define CODE_331 "331 user_already_logged"
+#define CODE_590 "590 command_invalid_arguments"
+
 #define CREATE_DB "CREATE TABLE IF NOT EXISTS users \
 (id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);"
 
