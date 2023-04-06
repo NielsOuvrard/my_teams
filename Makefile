@@ -9,10 +9,12 @@ SRC1 = $(shell find src/server/*.c)
 
 SRC2 = $(shell find src/client/*.c)
 
+#include <uuid.,>
+
 BIN_SERVER = myteams_server
-LIB = -L./libs/myteams -lmyteams
+LIB = -L./libs/myteams -lmyteams -L./libs/sqlite3 -lsqlite3
 BIN_CLIENT = myteams_cli
-INCLUDE = -I./include -I./libs/myteams
+INCLUDE = -I./include -I./libs/myteams -I./libs/sqlite3
 SQL = -DSQLITE_THREADSAFE=0
 
 all: client server
@@ -21,7 +23,7 @@ client:
 	gcc $(SRC2) -o $(BIN_CLIENT) $(INCLUDE) -g3 $(LIB) $(SQL)
 
 server:
-	gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -lsqlite3 -g3 $(LIB) $(SQL)
+	gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -g3 $(LIB) $(SQL)
 
 clean:
 	rm -rf $(BIN_CLIENT)
