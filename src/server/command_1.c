@@ -31,18 +31,20 @@ int users_function          (server **serv, client **cli_list,
     if (user_not_connected(curr_cli) || !args_check((*serv)->command, 1, sd))
         return 0;
     int result = sqlite3_prepare_v2((*serv)->users_db,
-    "SELECT * FROM users WHERE username = ?;", -1, &(*serv)->stmt, NULL);
+    "SELECT * FROM users", -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Failed to prepare statement: %s\n",
         sqlite3_errmsg((*serv)->users_db));
     char to_send[4096];
     strcpy(to_send, CODE_203);
     strcat(to_send, "\n");
-    while (sqlite3_step((*serv)->stmt) == SQLITE_ROW)
+    while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
         snprintf(to_send, sizeof(to_send), "%s%s\n%s\n%d\n", to_send,
         sqlite3_column_text((*serv)->stmt, 1),
         sqlite3_column_text((*serv)->stmt, 2),
         sqlite3_column_int((*serv)->stmt, 3));
+        printf("%s", to_send);
+    }
     result = sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Failed to finalize statement: %s\n",

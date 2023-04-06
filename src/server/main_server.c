@@ -28,7 +28,7 @@ int load_all_users(server *serv)
         return fprintf(stderr, "Failed to prepare statement: %s\n",
         sqlite3_errmsg(serv->users_db));
     while (sqlite3_step(serv->stmt) == SQLITE_ROW) {
-        return server_event_user_loaded(sqlite3_column_text(serv->stmt, 1),
+        server_event_user_loaded(sqlite3_column_text(serv->stmt, 1),
         sqlite3_column_text(serv->stmt, 2));
     }
     result = sqlite3_finalize(serv->stmt);
