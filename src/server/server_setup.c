@@ -44,6 +44,7 @@ fct_server_t *array_struct(void)
 server *construct_struct(int port)
 {
     server *serv = malloc(sizeof(server));
+    serv->simple_command = malloc(sizeof(char *) * 1024);
     serv->port = port;
     serv->socket_fd = create_socket();
     serv->address.sin_family = AF_INET;

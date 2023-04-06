@@ -82,18 +82,20 @@ int send_function           (server **serv, client **cli_list,
     if (user_not_connected(curr_cli) || !args_check((*serv)->command, 3, sd))
         return 0;
     char *infos[5];
-    sprintf(path, "%s%s", "data/users/", (*serv)->command[1]);
-    if (!check_file_exist(path)) {
+    int receiver = find_message_receiver(serv, cli_list);
+    printf("%d\n", receiver);
+    if (receiver == -1) {
         infos[0] = CODE_503;
         infos[1] = (*serv)->command[1];
         infos[2] = NULL;
+        receiver = sd;
     } else {
         infos[0] = CODE_205;
-        infos[1] = (*serv)->command[1];
-        infos[2] = filename;
+        infos[1] = curr_cli->uuid_text;
+        infos[2] = (*serv)->command[2];
         infos[3] = NULL;
         server_event_private_message_sended(curr_cli->uuid_text,
         (*serv)->command[1], (*serv)->command[2]);
     }
-    return send_info_client(infos, sd);
+    return send_info_client(infos, receiver);
 }
