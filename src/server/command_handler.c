@@ -62,7 +62,7 @@ client *current_client, int sd)
             return;
         }
     }
-    send(sd, "590 Invalid command.\n", 21, 0);
+    send(sd, msg, strlen(msg), 0);
 }
 
 char **get_command(int sd)

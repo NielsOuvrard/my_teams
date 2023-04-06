@@ -59,7 +59,7 @@
 #define CODE_590 "590 command_invalid_arguments"
 
 #define CREATE_DB "CREATE TABLE IF NOT EXISTS users \
-(id INTEGER PRIMARY KEY, uuid TEXT, username VARCHAR(32), connected NUMBER);"
+(id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER);"
 
 #define NB_COMMANDS 14
 
