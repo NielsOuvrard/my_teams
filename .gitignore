@@ -4,3 +4,4 @@ myteams_*
 test.txt
 /data/users/*
 /data/teams/*
+*.db

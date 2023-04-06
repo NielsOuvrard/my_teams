@@ -12,9 +12,9 @@ SRC2 = $(shell find src/client/*.c)
 #include <uuid.,>
 
 BIN_SERVER = myteams_server
-LIB = -L./libs/myteams -lmyteams -L./libs/sqlite3 -lsqlite3
+LIB = -L./libs/myteams -lmyteams -lsqlite3
 BIN_CLIENT = myteams_cli
-INCLUDE = -I./include -I./libs/myteams -I./libs/sqlite3
+INCLUDE = -I./include -I./libs/myteams
 SQL = -DSQLITE_THREADSAFE=0
 
 all: client server
