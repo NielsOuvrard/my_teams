@@ -43,7 +43,6 @@ int users_function          (server **serv, client **cli_list,
         sqlite3_column_text((*serv)->stmt, 1),
         sqlite3_column_text((*serv)->stmt, 2),
         sqlite3_column_int((*serv)->stmt, 3));
-        printf("%s", to_send);
     }
     result = sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_OK)
@@ -82,7 +81,6 @@ int send_function           (server **serv, client **cli_list,
         return 0;
     char *infos[5];
     int receiver = find_message_receiver(serv, cli_list);
-    printf("%d\n", receiver);
     if (receiver == -1) {
         infos[0] = CODE_503;
         infos[1] = (*serv)->command[1];
@@ -97,5 +95,6 @@ int send_function           (server **serv, client **cli_list,
         (*serv)->command[1], (*serv)->command[2]);
         send(sd, CODE_221, strlen(CODE_205) + 1, 0);
     }
+    save_message_in_db(serv, curr_cli);
     return send_info_client(infos, receiver);
 }

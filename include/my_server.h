@@ -32,6 +32,7 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 #include <sqlite3.h>
+#include <time.h>
 
 #define CODE_200 "200 help"
 #define CODE_201 "201 login"
@@ -60,8 +61,11 @@
 #define CODE_331 "331 user_already_logged"
 #define CODE_590 "590 command_invalid_arguments"
 
-#define CREATE_DB "CREATE TABLE IF NOT EXISTS users \
+#define CREATE_USER_DB "CREATE TABLE IF NOT EXISTS users \
 (id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER);"
+
+#define CREATE_MESSAGES_DB "CREATE TABLE IF NOT EXISTS messages \
+(id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, timestamp TEXT);"
 
 #define NB_COMMANDS 14
 
@@ -97,6 +101,7 @@ typedef struct client_t {
 
 typedef struct server_t {
     sqlite3 *users_db;
+    sqlite3 *messages_db;
     sqlite3_stmt *stmt;
     int socket_fd;
     int max_fds;
@@ -244,3 +249,11 @@ int nbr_args);
 void send_info(char **infos, int sd);
 
 int find_message_receiver(server **serv, client **clients);
+
+//mesage into db
+void save_message_in_db(server **serv, client *curr_cli);
+
+//load db
+void initialize_message_db(server **serv);
+void initialize_user_db(server **serv);
+void initialize_db(server **serv);

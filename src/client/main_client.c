@@ -11,14 +11,18 @@ void loop(client *cli)
 {
     fd_set read_fds;
     FD_ZERO(&read_fds);
-    FD_SET(STDIN_FILENO, &read_fds);
+    FD_SET(cli->sock, &read_fds); FD_SET(STDIN_FILENO, &read_fds);
     char *message = malloc(sizeof(char) * 1024);
+    struct timeval tv;
+    tv.tv_sec = 0; tv.tv_usec = 10000;
     while (1) {
         fd_set tmp_fds = read_fds;
-        handle_server_response(cli);
-        if (select(STDIN_FILENO + 1, &tmp_fds, NULL, NULL, NULL) < 0) {
+        if (select(cli->sock + 1, &tmp_fds, NULL, NULL, &tv) < 0) {
             perror("Erro na função select");
             exit(EXIT_FAILURE);
+        }
+        if (FD_ISSET(cli->sock, &tmp_fds)) {
+            handle_server_response(cli);
         }
         if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
             message = loop_get_message(NULL);

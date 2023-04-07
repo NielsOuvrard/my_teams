@@ -31,7 +31,6 @@ char *get_message(void)
 {
     char *line = NULL;
     size_t len = 0;
-    ssize_t read;
     if (getline(&line, &len, stdin) == -1)
         return NULL;
     return line;
