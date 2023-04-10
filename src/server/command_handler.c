@@ -24,9 +24,7 @@ client *current_client, int sd)
         }
     }
     if (count % 2 != 0 || ((count / 2) + 1) != nbr_args || count == 0) {
-        char msg[100];
-        sprintf(msg, "%s\n", CODE_590);
-        send(sd, msg, strlen(msg), 0);
+        send(sd, CODE_590, strlen(CODE_590) + 1, 0);
         return false;
     }
     return true;
@@ -49,12 +47,6 @@ client *current_client, int sd)
 {
     if (!(*serv)->command || !(*serv)->command[0])
         return;
-    char msg[100];
-    sprintf(msg, "%s\n", CODE_590);
-    if (!check_valid_command_args(serv, current_client, sd)) {
-        send(sd, msg, strlen(msg), 0);
-        return;
-    }
     remove_quotes(serv);
     for (int i = 0; i < NB_COMMANDS; i++) {
         if (strcmp((*serv)->fct[i].name, (*serv)->command[0]) == 0) {
@@ -62,7 +54,7 @@ client *current_client, int sd)
             return;
         }
     }
-    send(sd, msg, strlen(msg), 0);
+    send(sd, CODE_590, strlen(CODE_590) + 1, 0);
 }
 
 char **get_command(int sd)
@@ -81,8 +73,12 @@ void error_sql(server *serv, char *error)
 
 void change_status_user (server **serv, const char *uuid_text, int status)
 {
-    char request[1024];
-    sprintf(request, "UPDATE users SET connected = %d WHERE uuid = %s",
+    char request[1024], *err_msg;
+    sprintf(request, "UPDATE users SET connected = %d WHERE uuid = '%s'",
     status, uuid_text);
-    sqlite3_prepare_v2((*serv)->users_db, request, -1, &(*serv)->stmt, NULL);
+    int rc = sqlite3_exec((*serv)->users_db, request, 0, 0, &err_msg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
+    }
 }

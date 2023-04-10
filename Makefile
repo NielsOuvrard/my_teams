@@ -20,10 +20,10 @@ SQL = -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_DEPRECATED -DSQLITE_THREAD_OVERRIDE_LO
 all: client server
 
 client:
-	gcc $(SRC2) -o $(BIN_CLIENT) $(INCLUDE) -g3 $(LIB) $(SQL)
+	@ gcc $(SRC2) -o $(BIN_CLIENT) $(INCLUDE) -g3 $(LIB) $(SQL)
 
 server:
-	gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -g3 $(LIB) $(SQL)
+	@ gcc $(SRC1) -o $(BIN_SERVER) $(INCLUDE) -luuid -g3 $(LIB) $(SQL)
 
 clean:
 	rm -rf $(BIN_CLIENT)

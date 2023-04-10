@@ -5,3 +5,5 @@ test.txt
 /data/users/*
 /data/teams/*
 *.db
+test.*
+a.out

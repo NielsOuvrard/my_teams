@@ -20,12 +20,12 @@ int login_function          (client *cli, char **array)
 // 17 = client_error_unauthorized, type 0
 int logout_function         (client *cli, char **array)
 {
+    client_event_logged_out(cli->uuid, cli->name);
     if (cli->is_connected == 1) {
         cli->is_connected = 0;
         free(cli->uuid);
         free(cli->name);
     }
-    client_event_logged_out(array[1], array[2]);
     exit(0);
 }
 

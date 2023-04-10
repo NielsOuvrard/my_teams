@@ -65,7 +65,7 @@ void handle_new_connection(server **serv, client **clients, fd_set copy_fds)
             (*serv)->max_fds = new_socket_fd;
         }
         add_client(clients, new_socket_fd, (*serv)->address);
-        send(new_socket_fd, "220 Service ready for new user.\n", 32, 0);
+        send(new_socket_fd, "220 Service ready for new user.\n", 33, 0);
     }
 }
 

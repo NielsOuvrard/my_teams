@@ -7,18 +7,7 @@
 
 #include "my_server.h"
 
-void server_loop(server **serv, client **clients)
-{
-    while (1) {
-        fd_set copy_fds = (*serv)->readfds;
-        if (select((*serv)->max_fds + 1, &copy_fds, NULL, NULL, NULL) == -1) {
-            perror("select");
-            exit(EXIT_FAILURE);
-        }
-        handle_new_connection(serv, clients, copy_fds);
-        client_communication(serv, clients, copy_fds);
-    }
-}
+void server_loop(server **serv, client **clients);
 
 int load_all_users(server *serv)
 {

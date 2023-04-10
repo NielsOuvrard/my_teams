@@ -17,7 +17,7 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     char *to_send = malloc(sizeof(char) * 1024);
     sprintf(to_send, "%s\n%s\n%s\n", CODE_202, cur_cli->uuid_text,
     cur_cli->username);
-    send(sd, to_send, strlen(to_send), 0);
+    send(sd, to_send, strlen(to_send) + 1, 0);
     free(to_send);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
@@ -47,7 +47,7 @@ int user_exists(server **serv, client *cli, char *str)
     if (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
         cli->uuid_text = strdup(sqlite3_column_text((*serv)->stmt, 1));
         cli->username = strdup(sqlite3_column_text((*serv)->stmt, 2));
-        sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
+        sprintf(str, "%s%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
     }
     change_status_user(serv, cli->uuid_text, 1);
 }
@@ -59,7 +59,7 @@ int user_doesnt_exist(server **serv, client *cli, char *str)
     uuid_generate(cli->uuid);
     uuid_unparse(cli->uuid, cli->uuid_text);
     execute_function_login(serv, cli, 0);
-    sprintf(str, "%s\n%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
+    sprintf(str, "%s%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
     int result = sqlite3_prepare_v2((*serv)->users_db,
     "INSERT INTO users (uuid, username, connected) VALUES (?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
@@ -95,5 +95,5 @@ int login_handler(server **se, client *cli, int sd)
         user_doesnt_exist(se, cli, str);
     cli->is_logged = true;
     execute_function_login(se, cli, 1);
-    send(sd, str, strlen(str), 0);
+    send(sd, str, strlen(str) + 1, 0);
 }

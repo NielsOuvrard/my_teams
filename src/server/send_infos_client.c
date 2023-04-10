@@ -31,7 +31,7 @@ int send_info_client (char **infos, int sd)
         strcat(str, infos[i]);
         strcat(str, "\n");
     }
-    send(sd, str, strlen(str), 0);
+    send(sd, str, strlen(str) + 1, 0);
     free(str);
     return 0;
 }
@@ -43,7 +43,7 @@ void send_info(char **infos, int sd)
     for (int i = 0; infos[i] != NULL; i++) {
         str = strcat(str, infos[i]);
     }
-    send(sd, str, strlen(str), 0);
+    send(sd, str, strlen(str) + 1, 0);
     free(str);
 }
 

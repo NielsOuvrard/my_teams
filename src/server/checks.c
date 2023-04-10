@@ -14,7 +14,7 @@ bool args_check(char **command, int nb_args, int sd)
     while (command[i] != NULL)
         i++;
     if (i != nb_args) {
-        send(sd, "590 Invalid command.\n", 21, 0);
+        send(sd, "590 Invalid command.\n", 22, 0);
         return false;
     }
     return true;
@@ -24,7 +24,7 @@ bool args_check(char **command, int nb_args, int sd)
 bool user_connected(client *current_client)
 {
     if (current_client->is_logged == true) {
-        send(current_client->socket, "User already logged in.\n", 28, 0);
+        send(current_client->socket, "User already logged in.\n", 25, 0);
         return true;
     }
     return false;
@@ -34,8 +34,8 @@ bool user_not_connected(client *current_client)
 {
     if (current_client->is_logged == false) {
         char msg[100];
-        sprintf(msg, "%s\nU need to be connect.\n", CODE_504);
-        send(current_client->socket, msg, strlen(msg), 0);
+        sprintf(msg, "%sU need to be connect.\n", CODE_504);
+        send(current_client->socket, msg, strlen(msg) + 1, 0);
         return true;
     }
     return false;
