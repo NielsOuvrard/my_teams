@@ -97,7 +97,7 @@ char **my_str_to_word_array(char *str);
 
 void print_array(char **);
 
-char *loop_get_message(void);
+char *loop_get_message(char *str);
 
 void handle_server_response(client *cli);
 
