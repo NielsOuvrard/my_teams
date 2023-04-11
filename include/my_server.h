@@ -221,7 +221,8 @@ void logout_handler(server **serv, client *current_client, int sd);
 bool args_check(char **command, int nb_args, int sd);
 bool user_connected(client *current_client);
 bool user_not_connected(client *current_client);
-bool check_file_exist(char *file_path);
+bool check_if_user_exist(server **se, int sd);
+
 
 //file
 void write_in_file(char *file, char *str);
@@ -246,6 +247,10 @@ int nbr_args);
 
 //send
 void send_info(char **infos, int sd);
+int send_handler(server **serv, client **cli_list,
+client *curr_cli, int sd);
+int messages_handler(server **serv, client **cli_list,
+client *curr_cli, int sd);
 
 int find_message_receiver(server **serv, client **clients);
 

@@ -37,7 +37,6 @@ int users_function          (server **serv, client **cli_list,
         sqlite3_errmsg((*serv)->users_db));
     char to_send[4096];
     strcpy(to_send, CODE_203);
-    strcat(to_send, "\n");
     while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
         char tmp[1024];
         sprintf(tmp, "%s\n%s\n%d\n",
@@ -56,10 +55,10 @@ int users_function          (server **serv, client **cli_list,
 int user_function           (server **serv, client **cli_list,
                             client *curr_cli, int sd)
 {
-    if (user_not_connected(curr_cli) || !args_check((*serv)->command, 2, sd))
+    if (user_not_connected(curr_cli) || !args_check((*serv)->command, 2, sd)
+    || !check_if_user_exist(serv, sd))
         return 0;
-    char filepath[1024], request[1024];
-    sprintf(filepath, "%s%s", "data/users/", (*serv)->command[1]);
+    char request[1024];
     sprintf(request, "SELECT * FROM users WHERE uuid = '%s';",
     (*serv)->command[1]);
     sqlite3_prepare_v2((*serv)->users_db, request, -1,
@@ -79,24 +78,6 @@ int user_function           (server **serv, client **cli_list,
 int send_function           (server **serv, client **cli_list,
                             client *curr_cli, int sd)
 {
-    if (user_not_connected(curr_cli) || !args_check((*serv)->command, 3, sd))
-        return 0;
-    char *infos[5];
-    int receiver = find_message_receiver(serv, cli_list);
-    if (receiver == -1) {
-        infos[0] = CODE_503;
-        infos[1] = (*serv)->command[1];
-        infos[2] = NULL;
-        receiver = sd;
-    } else {
-        infos[0] = CODE_205;
-        infos[1] = curr_cli->uuid_text;
-        infos[2] = (*serv)->command[2];
-        infos[3] = NULL;
-        server_event_private_message_sended(curr_cli->uuid_text,
-        (*serv)->command[1], (*serv)->command[2]);
-        send(sd, CODE_221, strlen(CODE_205) + 1, 0);
-    }
-    save_message_in_db(serv, curr_cli);
-    return send_info_client(infos, receiver);
+    send_handler(serv, cli_list, curr_cli, sd);
+    return 0;
 }

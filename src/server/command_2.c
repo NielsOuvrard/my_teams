@@ -8,8 +8,9 @@
 #include "my_server.h"
 
 int messages_function       (server **serv, client **cli_list,
-                            client *current_client, int sd)
+                            client *curr_cli, int sd)
 {
+    messages_handler(serv, cli_list, curr_cli, sd);
     return 0;
 }
 

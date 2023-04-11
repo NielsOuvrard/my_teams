@@ -34,6 +34,6 @@ fclean:
 	rm -rf $(BIN_SERVER)
 	rm -rf *.o
 	rm -rf vgcore*
-	rm -rf data/users/*
+	rm -rf data/*.db
 
 re: fclean all client server
