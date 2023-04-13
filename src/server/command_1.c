@@ -7,11 +7,6 @@
 
 #include "my_server.h"
 
-// 1|9fcafc38-53bd-4c09-9bed-f0a348950c4c|mac|0
-// 2|1144f000-6cce-4d18-9e91-0c8cdf01babd|mec|0
-// 3|68c83d8d-3252-4476-a32e-edf796c64e30|jb|0
-// 4|83de316e-ecdd-47f3-83d1-86c71c223193|mc|0
-// 5|865d5462-51ff-4bee-beae-85061beb8627|ma|0
 int login_function          (server **serv, client **cli_list,
                             client *current_client, int sd)
 {

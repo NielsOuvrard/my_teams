@@ -64,22 +64,26 @@
 #define CODE_590 "590 command_invalid_arguments\n"
 #define CODE_506 "506 create_command_error\n"
 
-#define CREATE_DB "CREATE TABLE IF NOT EXISTS users \
-(id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER); \
-\
-CREATE TABLE IF NOT EXISTS messages \
+#define CREATE_USERS_DB "CREATE TABLE IF NOT EXISTS users \
+(id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER);"
+
+#define CREATE_MESSAGES_DB " CREATE TABLE IF NOT EXISTS messages \
 (id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, \
-timestamp TEXT); \
-\
-CREATE TABLE IF NOT EXISTS teams \
-(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT); \
-\
-CREATE TABLE IF NOT EXISTS channels \
-(id INTEGER PRIMARY KEY, uuid TEXT, team TEXT, name TEXT, description TEXT); \
-\
-CREATE TABLE IF NOT EXISTS threads \
+timestamp TEXT);"
+
+#define CREATE_TEAMS_DB "CREATE TABLE IF NOT EXISTS teams \
+(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT);"
+
+#define CREATE_CHANNELS_DB "CREATE TABLE IF NOT EXISTS channels \
+(id INTEGER PRIMARY KEY, uuid TEXT, team TEXT, name TEXT, description TEXT);"
+
+#define CREATE_THREADS_DB "CREATE TABLE IF NOT EXISTS threads \
 (id INTEGER PRIMARY KEY, uuid TEXT, channel TEXT, user TEXT, title TEXT,\
 body TEXT, timestamp TEXT);"
+
+#define CREATE_REPLIES_DB "CREATE TABLE IF NOT EXISTS replies \
+(id INTEGER PRIMARY KEY, thread TEXT, user TEXT, body TEXT, \
+timestamp TEXT);"
 
 #define NB_COMMANDS 14
 
@@ -99,13 +103,6 @@ typedef struct server_t server;
 
 typedef int (*command_func)(server **, client **, client *, int sd);
 
-enum use_context {
-    TEAM,
-    CHANNEL,
-    THREAD,
-    REPLY
-};
-
 typedef struct fct_server {
     char *name;
     command_func fct;
@@ -118,11 +115,9 @@ typedef struct client_t {
     struct sockaddr_in address;
     uuid_t uuid;
     char *uuid_text;
-    // context
     char *team;
     char *channel;
     char *thread;
-    enum use_context context;
 } client;
 
 typedef struct server_t {
@@ -300,3 +295,6 @@ int create_thread (server **serv, client **cli_list, client *cli, int sd);
 int create_reply (server **serv, client **cli_list, client *cli, int sd);
 
 char *generate_uuid(void);
+
+//create
+int create_handler(server **se, client **cli_list, client *curr_cli, int sd);
