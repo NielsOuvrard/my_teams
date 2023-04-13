@@ -41,7 +41,7 @@ char to_send[4096], int sd)
     int result = sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Failed to finalize statement: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
+        sqlite3_errmsg((*serv)->db));
     send(sd, to_send, strlen(to_send) + 1, 0);
 }
 
@@ -57,11 +57,11 @@ client *curr_cli, int sd)
     AND receiver = '%s') OR (sender = '%s' AND receiver = '%s');",
     (*serv)->command[1], curr_cli->uuid_text, curr_cli->uuid_text,
     (*serv)->command[1]);
-    int result = sqlite3_prepare_v2((*serv)->messages_db, request,
+    int result = sqlite3_prepare_v2((*serv)->db, request,
     -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Failed to prepare statement: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
+        sqlite3_errmsg((*serv)->db));
     prepare_messages_historic(serv, curr_cli, to_send, sd);
     return 0;
 }

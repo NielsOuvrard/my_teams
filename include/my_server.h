@@ -45,9 +45,12 @@
 #define CODE_208 "208 subscribed\n"
 #define CODE_209 "209 unsubscribe\n"
 #define CODE_210 "210 use\n"
-#define CODE_211 "211 create\n"
-#define CODE_212 "212 list\n"
-#define CODE_213 "213 info\n"
+#define CODE_211 "211 create_team\n"
+#define CODE_212 "212 create_channel\n"
+#define CODE_213 "213 create_thread\n"
+#define CODE_214 "214 create_reply\n"
+#define CODE_215 "215 list\n"
+#define CODE_216 "216 info\n"
 #define CODE_500 "500 client_error_unknown_team\n"
 #define CODE_501 "501 client_error_unknown_channel\n"
 #define CODE_502 "502 client_error_unknown_thread\n"
@@ -59,26 +62,24 @@
 #define CODE_221 "221 message_sent_to_receiver\n"
 #define CODE_331 "331 user_already_logged\n"
 #define CODE_590 "590 command_invalid_arguments\n"
+#define CODE_506 "506 create_command_error\n"
 
-#define CREATE_USER_DB "CREATE TABLE IF NOT EXISTS users \
-(id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER);"
-
-#define CREATE_MESSAGES_DB "CREATE TABLE IF NOT EXISTS messages \
+#define CREATE_DB "CREATE TABLE IF NOT EXISTS users \
+(id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER); \
+\
+CREATE TABLE IF NOT EXISTS messages \
 (id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, \
-timestamp TEXT);"
-
-// team / channel / thread
-#define CREATE_GROUP_DB \
-"CREATE TABLE IF NOT EXISTS teams \
+timestamp TEXT); \
+\
+CREATE TABLE IF NOT EXISTS teams \
 (id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT); \
 \
 CREATE TABLE IF NOT EXISTS channels \
-(id INTEGER PRIMARY KEY, uuid_team TEXT, uuid TEXT, name TEXT, \
-description TEXT, team_uuid TEXT); \
+(id INTEGER PRIMARY KEY, uuid TEXT, team TEXT, name TEXT, description TEXT); \
 \
 CREATE TABLE IF NOT EXISTS threads \
-(id INTEGER PRIMARY KEY, uuid_team TEXT, uuid_channel TEXT, uuid TEXT, \
-name TEXT, description TEXT);"
+(id INTEGER PRIMARY KEY, uuid TEXT, channel TEXT, user TEXT, title TEXT,\
+body TEXT, timestamp TEXT);"
 
 #define NB_COMMANDS 14
 
@@ -98,6 +99,13 @@ typedef struct server_t server;
 
 typedef int (*command_func)(server **, client **, client *, int sd);
 
+enum use_context {
+    TEAM,
+    CHANNEL,
+    THREAD,
+    REPLY
+};
+
 typedef struct fct_server {
     char *name;
     command_func fct;
@@ -114,12 +122,11 @@ typedef struct client_t {
     char *team;
     char *channel;
     char *thread;
+    enum use_context context;
 } client;
 
 typedef struct server_t {
-    sqlite3 *users_db;
-    sqlite3 *messages_db;
-    sqlite3 *groups_db;
+    sqlite3 *db;
     sqlite3_stmt *stmt;
     int socket_fd;
     int max_fds;
@@ -241,21 +248,14 @@ bool args_check(char **command, int nb_args, int sd);
 bool user_connected(client *current_client);
 bool user_not_connected(client *current_client);
 bool check_if_user_exist(server **se, int sd);
-
-
-//file
-void write_in_file(char *file, char *str);
-void replace_line_file(char *find, char *new, char *file);
+bool check_if_uuid_exists(char *uuid, char *table, sqlite3 *db);
+bool check_if_name_exists(char *uuid, char *table, sqlite3 *db);
 
 //user or users
 void users_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
 void user_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
-
-//load infos
-char **load_infos(char *file_path);
-char **find_content(char *file_path, char *loking_for);
 
 void get_folder_files(server *serv, char *path, char *func_name,
 int nbr_args);
@@ -298,3 +298,5 @@ int create_channel (server **serv, client **cli_list, client *cli, int sd);
 int create_thread (server **serv, client **cli_list, client *cli, int sd);
 
 int create_reply (server **serv, client **cli_list, client *cli, int sd);
+
+char *generate_uuid(void);

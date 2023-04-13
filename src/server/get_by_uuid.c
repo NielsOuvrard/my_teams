@@ -10,11 +10,11 @@
 // looking for into sqlite3 database
 char *get_team_by_uuid (server **se, char *uuid)
 {
-    int result = sqlite3_prepare_v2((*se)->groups_db,
+    int result = sqlite3_prepare_v2((*se)->db,
     "SELECT * FROM teams WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
     if (result != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n",
-        sqlite3_errmsg((*se)->groups_db));
+        sqlite3_errmsg((*se)->db));
         return NULL;
     }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
@@ -25,11 +25,11 @@ char *get_team_by_uuid (server **se, char *uuid)
 
 char *get_channel_by_uuid (server **se, char *team_uuid, char *channel_uuid)
 {
-    int result = sqlite3_prepare_v2((*se)->groups_db,
+    int result = sqlite3_prepare_v2((*se)->db,
     "SELECT * FROM channels WHERE uuid = ? AND uuid_team = ?;", -1, &(*se)->stmt, NULL);
     if (result != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n",
-        sqlite3_errmsg((*se)->groups_db));
+        sqlite3_errmsg((*se)->db));
         return NULL;
     }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
@@ -41,12 +41,12 @@ char *get_channel_by_uuid (server **se, char *team_uuid, char *channel_uuid)
 // uuid_team TEXT, uuid_channel TEXT, uuid TEXT, name TEXT, description TEXT
 char *get_thread_by_uuid (server **se, char *team, char *cha, char *thr)
 {
-    int result = sqlite3_prepare_v2((*se)->groups_db,
+    int result = sqlite3_prepare_v2((*se)->db,
     "SELECT * FROM threads WHERE uuid = ? AND uuid_team = ? AND uuid_channel = ?;",
     -1, &(*se)->stmt, NULL);
     if (result != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n",
-        sqlite3_errmsg((*se)->groups_db));
+        sqlite3_errmsg((*se)->db));
         return NULL;
     }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);

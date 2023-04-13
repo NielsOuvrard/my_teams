@@ -35,11 +35,11 @@ int users_function          (server **serv, client **cli_list,
 {
     if (user_not_connected(curr_cli) || !args_check((*serv)->command, 1, sd))
         return 0;
-    int result = sqlite3_prepare_v2((*serv)->users_db,
+    int result = sqlite3_prepare_v2((*serv)->db,
     "SELECT * FROM users", -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
+        sqlite3_errmsg((*serv)->db));
     char to_send[4096];
     strcpy(to_send, CODE_203);
     while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
@@ -53,7 +53,7 @@ int users_function          (server **serv, client **cli_list,
     result = sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Falha ao finalizar a instrução: %s\n",
-        sqlite3_errmsg((*serv)->users_db));
+        sqlite3_errmsg((*serv)->db));
     return send(sd, to_send, strlen(to_send) + 1, 0);
 }
 
@@ -66,7 +66,7 @@ int user_function           (server **serv, client **cli_list,
     char request[1024];
     sprintf(request, "SELECT * FROM users WHERE uuid = '%s';",
     (*serv)->command[1]);
-    sqlite3_prepare_v2((*serv)->users_db, request, -1,
+    sqlite3_prepare_v2((*serv)->db, request, -1,
     &(*serv)->stmt, NULL);
     if (!sqlite3_step((*serv)->stmt) == SQLITE_ROW)
         return send_info_client((char *[]) { CODE_503 , NULL}, sd);

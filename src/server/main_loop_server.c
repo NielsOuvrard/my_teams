@@ -38,7 +38,7 @@ void server_loop(server **serv, client **clients)
         }
     }
     char *err_msg;
-    if (sqlite3_exec((*serv)->users_db, "UPDATE users SET connected = 0", 0, 0, &err_msg) != SQLITE_OK) {
+    if (sqlite3_exec((*serv)->db, "UPDATE users SET connected = 0", 0, 0, &err_msg) != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
         sqlite3_free(err_msg);
     }

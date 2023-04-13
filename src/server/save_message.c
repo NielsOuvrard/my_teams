@@ -12,7 +12,7 @@ void save_message_in_db(server **serv, client *curr_cli)
     char request[1024], timeStamp[20];
     time_t now = time(NULL);
     strftime(timeStamp, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
-    sqlite3_prepare_v2((*serv)->messages_db,
+    sqlite3_prepare_v2((*serv)->db,
     "INSERT INTO messages (sender, receiver, message, timestamp) \
     VALUES (?, ?, ?, ?);",
     -1, &(*serv)->stmt, NULL);

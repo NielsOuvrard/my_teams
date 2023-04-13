@@ -11,11 +11,11 @@ void server_loop(server **serv, client **clients);
 
 int load_all_users(server *serv)
 {
-    int result = sqlite3_prepare_v2(serv->users_db, "SELECT * FROM users;",
+    int result = sqlite3_prepare_v2(serv->db, "SELECT * FROM users;",
     -1, &serv->stmt, NULL);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
-        sqlite3_errmsg(serv->users_db));
+        sqlite3_errmsg(serv->db));
     while (sqlite3_step(serv->stmt) == SQLITE_ROW) {
         server_event_user_loaded(sqlite3_column_text(serv->stmt, 1),
         sqlite3_column_text(serv->stmt, 2));
@@ -23,7 +23,7 @@ int load_all_users(server *serv)
     result = sqlite3_finalize(serv->stmt);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Falha ao finalizar a instrução: %s\n",
-        sqlite3_errmsg(serv->users_db));
+        sqlite3_errmsg(serv->db));
 }
 
 void my_teams(int port)
