@@ -7,6 +7,18 @@
 
 #include "my_server.h"
 
+void initialize_db_2(server **serv)
+{
+    sqlite3_prepare_v2((*serv)->db, CREATE_THREADS_DB, -1,
+    &(*serv)->stmt, NULL);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    sqlite3_prepare_v2((*serv)->db, CREATE_REPLIES_DB, -1,
+    &(*serv)->stmt, NULL);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+}
+
 void initialize_db(server **serv)
 {
     if (sqlite3_open("data/data.db", &(*serv)->db) != SQLITE_OK)
@@ -27,7 +39,5 @@ void initialize_db(server **serv)
     &(*serv)->stmt, NULL);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
-    sqlite3_prepare_v2((*serv)->db, CREATE_THREADS_DB, -1,
-    &(*serv)->stmt, NULL);
-    sqlite3_step((*serv)->stmt); sqlite3_finalize((*serv)->stmt);
+    initialize_db_2(serv);
 }
