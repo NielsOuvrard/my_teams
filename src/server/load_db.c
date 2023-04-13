@@ -10,7 +10,7 @@
 void initialize_db(server **serv)
 {
     int result;
-    if (sqlite3_open("data/groups.db", &(*serv)->db) != SQLITE_OK)
+    if (sqlite3_open("data/data.db", &(*serv)->db) != SQLITE_OK)
         error_sql(*serv, "Can't open database: %s\n");
     result = sqlite3_prepare_v2((*serv)->db, CREATE_DB, -1,
     &(*serv)->stmt, NULL);
