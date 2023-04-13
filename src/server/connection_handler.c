@@ -39,7 +39,7 @@ int user_exists(server **serv, client *cli, char *str)
     int result = sqlite3_prepare_v2((*serv)->users_db,
     "SELECT * FROM users WHERE username = ?;", -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK) {
-        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*serv)->users_db));
     }
     sqlite3_bind_text((*serv)->stmt, 1,
@@ -64,7 +64,7 @@ int user_doesnt_exist(server **serv, client *cli, char *str)
     "INSERT INTO users (uuid, username, connected) VALUES (?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK)
-        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*serv)->users_db));
     sqlite3_bind_text((*serv)->stmt, 1, cli->uuid_text, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 2, cli->username, -1, SQLITE_STATIC);
@@ -84,7 +84,7 @@ int login_handler(server **se, client *cli, int sd)
     "SELECT COUNT(*) FROM users WHERE username = ?;", -1,
     &(*se)->stmt, NULL);
     if (result != SQLITE_OK)
-        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*se)->users_db));
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     if (sqlite3_step((*se)->stmt) == SQLITE_ROW)

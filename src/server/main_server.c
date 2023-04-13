@@ -14,7 +14,7 @@ int load_all_users(server *serv)
     int result = sqlite3_prepare_v2(serv->users_db, "SELECT * FROM users;",
     -1, &serv->stmt, NULL);
     if (result != SQLITE_OK)
-        return fprintf(stderr, "Failed to prepare statement: %s\n",
+        return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg(serv->users_db));
     while (sqlite3_step(serv->stmt) == SQLITE_ROW) {
         server_event_user_loaded(sqlite3_column_text(serv->stmt, 1),
@@ -22,7 +22,7 @@ int load_all_users(server *serv)
     }
     result = sqlite3_finalize(serv->stmt);
     if (result != SQLITE_OK)
-        return fprintf(stderr, "Failed to finalize statement: %s\n",
+        return fprintf(stderr, "Falha ao finalizar a instrução: %s\n",
         sqlite3_errmsg(serv->users_db));
 }
 

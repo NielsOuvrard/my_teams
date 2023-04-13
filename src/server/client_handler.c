@@ -18,6 +18,9 @@ void initialize_client(client **clients)
         (*clients)[i].address.sin_family = AF_INET;
         (*clients)[i].address.sin_port = htons(0);
         (*clients)[i].address.sin_addr.s_addr = htonl(INADDR_ANY);
+        (*clients)[i].channel = NULL;
+        (*clients)[i].thread = NULL;
+        (*clients)[i].team = NULL;
         uuid_clear((*clients)[i].uuid);
     }
 }
@@ -65,7 +68,7 @@ void handle_new_connection(server **serv, client **clients, fd_set copy_fds)
             (*serv)->max_fds = new_socket_fd;
         }
         add_client(clients, new_socket_fd, (*serv)->address);
-        send(new_socket_fd, "220 Service ready for new user.\n", 33, 0);
+        send(new_socket_fd, "220 Serviço pronto para novo usuário.\n", 41, 0);
     }
 }
 

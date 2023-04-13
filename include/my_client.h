@@ -85,12 +85,10 @@ typedef struct fct_client {
 typedef struct client_t {
     char *name;
     char *uuid;
-    char *team;
-    char *channel;
-    char *thread;
     bool is_connected;
     int sock;
     fct_client_t *funct_client;
+    // define context server side my dear
 } client;
 
 char **my_str_to_word_array(char *str);

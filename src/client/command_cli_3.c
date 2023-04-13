@@ -7,8 +7,21 @@
 
 #include "my_client.h"
 
+// did we send the type of create ?
+// 1 = team
+// 2 = channel
+// 3 = thread
 int create_function         (client *cli, char **array)
 {
+    if (array[1] == NULL || array[2] == NULL)
+        return 0;
+    if (!strncmp(array[1], "1", 2)) {
+        client_event_team_created(array[2], array[3], array[4]);
+    } else if (!strncmp(array[1], "2", 2)) {
+        client_event_channel_created(array[2], array[3], array[4]);
+    } else if (!strncmp(array[1], "3", 2)) {
+        client_event_thread_created(array[2], array[3], /* time */0, array[5], array[6]);
+    }
     return 0;
 }
 

@@ -64,7 +64,21 @@
 (id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER);"
 
 #define CREATE_MESSAGES_DB "CREATE TABLE IF NOT EXISTS messages \
-(id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, timestamp TEXT);"
+(id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, \
+timestamp TEXT);"
+
+// team / channel / thread
+#define CREATE_GROUP_DB \
+"CREATE TABLE IF NOT EXISTS teams \
+(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT); \
+\
+CREATE TABLE IF NOT EXISTS channels \
+(id INTEGER PRIMARY KEY, uuid_team TEXT, uuid TEXT, name TEXT, \
+description TEXT, team_uuid TEXT); \
+\
+CREATE TABLE IF NOT EXISTS threads \
+(id INTEGER PRIMARY KEY, uuid_team TEXT, uuid_channel TEXT, uuid TEXT, \
+name TEXT, description TEXT);"
 
 #define NB_COMMANDS 14
 
@@ -96,11 +110,16 @@ typedef struct client_t {
     struct sockaddr_in address;
     uuid_t uuid;
     char *uuid_text;
+    // context
+    char *team;
+    char *channel;
+    char *thread;
 } client;
 
 typedef struct server_t {
     sqlite3 *users_db;
     sqlite3 *messages_db;
+    sqlite3 *groups_db;
     sqlite3_stmt *stmt;
     int socket_fd;
     int max_fds;
@@ -261,3 +280,21 @@ void save_message_in_db(server **serv, client *curr_cli);
 void initialize_message_db(server **serv);
 void initialize_user_db(server **serv);
 void initialize_db(server **serv);
+
+// looking for uuid
+
+char *get_team_by_uuid (server **, char *);
+
+char *get_channel_by_uuid (server **, char *, char *);
+
+char *get_thread_by_uuid (server **, char *, char *, char *);
+
+//create
+
+int create_team (server **serv, client **cli_list, client *cli, int sd);
+
+int create_channel (server **serv, client **cli_list, client *cli, int sd);
+
+int create_thread (server **serv, client **cli_list, client *cli, int sd);
+
+int create_reply (server **serv, client **cli_list, client *cli, int sd);

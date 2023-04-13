@@ -36,6 +36,7 @@ char *get_message(void)
     return line;
 }
 
+// invalid read of size 1 line 44
 char *loop_get_message(char *message)
 {
     if (message == NULL)
