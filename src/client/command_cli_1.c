@@ -10,9 +10,11 @@
 // 0 = client_event_logged_in
 int login_function          (client *cli, char **array)
 {
-    cli->is_connected = 1;
-    cli->uuid = strdup(array[1]);
-    cli->name = strdup(array[2]);
+    if (cli->is_connected == false) {
+        cli->is_connected = true;
+        cli->uuid = strdup(array[1]);
+        cli->name = strdup(array[2]);
+    }
     return client_event_logged_in(array[1], array[2]);
 }
 
@@ -20,13 +22,16 @@ int login_function          (client *cli, char **array)
 // 17 = client_error_unauthorized, type 0
 int logout_function         (client *cli, char **array)
 {
-    client_event_logged_out(cli->uuid, cli->name);
-    if (cli->is_connected == 1) {
-        cli->is_connected = 0;
+    if (strcmp(array[1], cli->uuid) == 0 &&
+    strcmp(array[2], cli->name) == 0) {
+        client_event_logged_out(cli->uuid, cli->name);
         free(cli->uuid);
         free(cli->name);
+        printf("Here\n");
+        exit(0);
+    } else {
+        client_event_logged_out(array[1], array[2]);
     }
-    exit(0);
 }
 
 // 7 = client_print_users

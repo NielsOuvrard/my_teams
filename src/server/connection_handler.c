@@ -8,10 +8,10 @@
 #include "my_server.h"
 
 // CODE_202 = "202 Logged out."
-void logout_handler(server **serv, client *cur_cli, int sd)
+int logout_handler(server **serv, client *cur_cli, int sd)
 {
     if (!args_check((*serv)->command, 1, sd) || user_not_connected(cur_cli))
-        return;
+        return 1;
     change_status_user(serv, cur_cli->uuid_text, 0);
     server_event_user_logged_out(cur_cli->uuid_text);
     char *to_send = malloc(sizeof(char) * 1024);
@@ -21,7 +21,7 @@ void logout_handler(server **serv, client *cur_cli, int sd)
     free(to_send);
     FD_CLR(sd, &(*serv)->readfds);
     close(sd);
-    remove_client(cur_cli, sd);
+    return 0;
 }
 
 void execute_function_login(server **serv, client *current_client, int i)
@@ -79,7 +79,7 @@ int login_handler(server **se, client *cli, int sd)
 {
     char str[1024];
     if (!args_check((*se)->command, 2, sd) || user_connected(cli))
-        return 0;
+        return 1;
     int result = sqlite3_prepare_v2((*se)->db,
     "SELECT COUNT(*) FROM users WHERE username = ?;", -1,
     &(*se)->stmt, NULL);

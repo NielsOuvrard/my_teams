@@ -10,14 +10,19 @@
 int login_function          (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
-    login_handler(serv, current_client, sd);
+    if (login_handler(serv, current_client, sd) == 1)
+        return 0;
+    send_event_logged_in(serv, cli_list, current_client, sd);
     return 0;
 }
 
 int logout_function         (server **serv, client **cli_list,
                             client *current_client, int sd)
 {
-    logout_handler(serv, current_client, sd);
+    if (logout_handler(serv, current_client, sd) == 1)
+        return 0;
+    send_event_logged_out(serv, cli_list, current_client, sd);
+    remove_client(current_client, sd);
     return 0;
 }
 

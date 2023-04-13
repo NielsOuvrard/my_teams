@@ -236,7 +236,7 @@ void preload_users(server *serv);
 int login_handler(server **serv, client *current_client, int sd);
 
 //logout
-void logout_handler(server **serv, client *current_client, int sd);
+int logout_handler(server **serv, client *current_client, int sd);
 
 //checks
 bool args_check(char **command, int nb_args, int sd);
@@ -298,3 +298,7 @@ char *generate_uuid(void);
 
 //create
 int create_handler(server **se, client **cli_list, client *curr_cli, int sd);
+
+//event
+void send_event_logged_in(server **serv, client **cli_list, client *curr_cli, int sd);
+void send_event_logged_out(server **serv, client **cli_list, client *current_client, int sd);
