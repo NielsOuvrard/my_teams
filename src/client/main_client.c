@@ -18,7 +18,6 @@ void loop(client *cli)
     while (1) {
         fd_set tmp_fds = read_fds;
         if (select(cli->sock + 1, &tmp_fds, NULL, NULL, &tv) < 0) {
-            perror("Erro na função select");
             exit(EXIT_FAILURE);
         }
         if (FD_ISSET(cli->sock, &tmp_fds)) {

@@ -29,6 +29,7 @@ void add_client(client **clients, int socket_fd, struct sockaddr_in address)
             (*clients)[i].socket = socket_fd;
             (*clients)[i].address = address;
             (*clients)[i].username = NULL;
+            (*clients)[i].context = TEAM;
             return;
         }
     }
