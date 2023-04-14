@@ -39,8 +39,10 @@ char *get_message(void)
 // invalid read of size 1 line 44
 char *loop_get_message(char *message)
 {
-    if (message == NULL)
+    if (message == NULL) {
         message = malloc(sizeof(char) * 1024);
+        strcpy(message, "");
+    }
     if (!(message = strcat(message, get_message())))
         return NULL;
     if (message[0] == '\n')
