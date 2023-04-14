@@ -42,12 +42,12 @@
 #define CODE_208 "208 subscribed"
 #define CODE_209 "209 unsubscribe"
 #define CODE_210 "210 use"
-#define CODE_211 "211 create_team\n"
-#define CODE_212 "212 create_channel\n"
-#define CODE_213 "213 create_thread\n"
-#define CODE_214 "214 create_reply\n"
-#define CODE_215 "215 list\n"
-#define CODE_216 "216 info\n"
+#define CODE_211 "211 create_team"
+#define CODE_212 "212 create_channel"
+#define CODE_213 "213 create_thread"
+#define CODE_214 "214 create_reply"
+#define CODE_215 "215 list"
+#define CODE_216 "216 info"
 // error
 #define CODE_500 "500 unknown_team"
 #define CODE_501 "501 unknown_channel"
@@ -56,17 +56,18 @@
 #define CODE_504 "504 unauthorized"
 #define CODE_505 "505 already_exist"
 
-#define NB_COMMANDS 20
+#define NB_COMMANDS 23
 
 #define LIST_CODE "200", "201", "202", "203", "204", "205", "206", "207", \
-    "208", "209", "210", "211", "212", "213", "500", "501", "502", "503", \
-    "504", "505"
+    "208", "209", "210", "211", "212", "213", "214", "215", "216", \
+    "500", "501", "502", "503", "504", "505"
 
 #define LIST_FUNC \
     &help_function, &login_function, &logout_function, &users_function, \
     &user_function, &send_function, &messages_function, &subscribe_function, \
     &subscribed_function, &unsubscribe_function, &use_function, \
-    &create_function, &list_function, &info_function, \
+    &create_team_function, &create_channel_function, &create_thread_function, \
+    &create_reply_function, &list_function, &info_function, \
     &unknown_team_function, &unknown_channel_function, \
     &unknown_thread_function, &unknown_user_function, \
     &unauthorized_function, &already_exist_function
@@ -143,7 +144,13 @@ int unsubscribe_function    (client *cli, char **array);
 int use_function            (client *cli, char **array);
 
 // • /create : based on the context, create the sub resource (see below)
-int create_function         (client *cli, char **array);
+int create_team_function    (client *cli, char **array);
+
+int create_channel_function (client *cli, char **array);
+
+int create_thread_function  (client *cli, char **array);
+
+int create_reply_function   (client *cli, char **array);
 
 // • /list : based on the context, list all the sub resources (see below)
 int list_function           (client *cli, char **array);

@@ -24,13 +24,12 @@ int logout_handler(server **serv, client *cur_cli, int sd)
     return 0;
 }
 
-void execute_function_login(server **serv, client *current_client, int i)
+void execute_function_login(server **serv, client *cli, int i)
 {
     if (i == 0)
-        server_event_user_created(current_client->uuid_text,
-        current_client->username);
+        server_event_user_created(cli->uuid_text, cli->username);
     else if (i == 1)
-        server_event_user_logged_in(current_client->uuid_text);
+        server_event_user_logged_in(cli->uuid_text);
 }
 
 // if the user exists
