@@ -22,6 +22,7 @@ int login_function          (client *cli, char **array)
 // 17 = client_error_unauthorized, type 0
 int logout_function         (client *cli, char **array)
 {
+    //fix core dump when quitting server with crtl + c
     if (strcmp(array[1], cli->uuid) == 0 &&
     strcmp(array[2], cli->name) == 0) {
         client_event_logged_out(cli->uuid, cli->name);

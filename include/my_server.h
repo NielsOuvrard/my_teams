@@ -72,7 +72,7 @@
 timestamp TEXT);"
 
 #define CREATE_TEAMS_DB "CREATE TABLE IF NOT EXISTS teams \
-(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT);"
+(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT, user_uuids TEXT);"
 
 #define CREATE_CHANNELS_DB "CREATE TABLE IF NOT EXISTS channels \
 (id INTEGER PRIMARY KEY, uuid TEXT, team TEXT, name TEXT, description TEXT);"

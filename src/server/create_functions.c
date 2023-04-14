@@ -22,9 +22,9 @@ int create_reply(server **serv, client **cli_list,
     char *body = (*serv)->command[1];
     char *user_uuid = curr_cli->uuid_text;
     char *thread_uuid = curr_cli->thread;
-    char timeStamp[20];
+    char *timeStamp;
     time_t now = time(NULL);
-    strftime(timeStamp, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
+    timeStamp = ctime(&now);
     sqlite3_prepare_v2((*serv)->db,
     "INSERT INTO replies (thread, user, title, body, timestamp) VALUES (?, ?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
@@ -46,17 +46,19 @@ int create_reply(server **serv, client **cli_list,
 }
 
 int create_team         (server **serv, client **cli_list,
-                            client *curr_cli, int sd)
+                            client *cur_cli, int sd)
 {
     char *uuid = generate_uuid();
     char *name = (*serv)->command[1];
     char *description = (*serv)->command[2];
     sqlite3_prepare_v2((*serv)->db,
-    "INSERT INTO teams (uuid, name, description) VALUES (?, ?, ?);",
+    "INSERT INTO teams (uuid, name, description, user_uuids)\
+    VALUES (?, ?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
     sqlite3_bind_text((*serv)->stmt, 1, uuid, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 2, name, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 3, description, -1, SQLITE_STATIC);
+    sqlite3_bind_text((*serv)->stmt, 4, cur_cli->uuid_text, -1, SQLITE_STATIC);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
     char to_send[1024];
@@ -64,9 +66,8 @@ int create_team         (server **serv, client **cli_list,
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
-    server_event_team_created(uuid, name, curr_cli->uuid_text);
-    send(sd, to_send, strlen(to_send) + 1, 0);
-    return 0;
+    server_event_team_created(uuid, name, cur_cli->uuid_text);
+    send(sd, to_send, strlen(to_send) + 1, 0); return 0;
 }
 
 int create_channel         (server **serv, client **cli_list,
@@ -99,9 +100,9 @@ int create_thread         (server **serv, client **cli_list,
 {
     char *uuid = generate_uuid(), *title = (*serv)->command[1];
     char *body = (*serv)->command[2], *channel_uuid = cur_cli->channel;
-    char timeStamp[20], *user_uuid = cur_cli->uuid_text;
+    char *timeStamp, *user_uuid = cur_cli->uuid_text;
     time_t now = time(NULL);
-    strftime(timeStamp, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
+    timeStamp = ctime(&now);
     sqlite3_prepare_v2((*serv)->db,
     "INSERT INTO threads (uuid, channel, user, title, body, timestamp) VALUES (?, ?, ?, ?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
