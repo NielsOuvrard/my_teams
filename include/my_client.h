@@ -48,6 +48,8 @@
 #define CODE_214 "214 create_reply\n"
 #define CODE_215 "215 list\n"
 #define CODE_216 "216 info\n"
+#define CODE_230 "230 already_subscribed\n"
+
 // error
 #define CODE_500 "500 unknown_team"
 #define CODE_501 "501 unknown_channel"
