@@ -51,6 +51,7 @@
 #define CODE_214 "214 create_reply\n"
 #define CODE_215 "215 list\n"
 #define CODE_216 "216 info\n"
+#define CODE_230 "230 already_subscribed\n"
 #define CODE_500 "500 client_error_unknown_team\n"
 #define CODE_501 "501 client_error_unknown_channel\n"
 #define CODE_502 "502 client_error_unknown_thread\n"
@@ -302,3 +303,4 @@ int create_handler(server **se, client **cli_list, client *curr_cli, int sd);
 //event
 void send_event_logged_in(server **serv, client **cli_list, client *curr_cli, int sd);
 void send_event_logged_out(server **serv, client **cli_list, client *current_client, int sd);
+bool user_not_subscribed(server **se, client *cli, char *team_uuid, sqlite3 *db);

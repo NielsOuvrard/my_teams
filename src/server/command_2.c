@@ -14,6 +14,19 @@ int messages_function       (server **serv, client **cli_list,
     return 0;
 }
 
+bool user_not_subscribed(server **se, client *cli, char *team_uuid, sqlite3 *db)
+{
+    sqlite3_prepare_v2(db, "SELECT user_uuids FROM teams WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
+    sqlite3_bind_text((*se)->stmt, 1, team_uuid, -1, SQLITE_STATIC);
+    sqlite3_step((*se)->stmt);
+    char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
+    if (strstr(user_uuids, cli->uuid_text) == NULL) {
+        send(cli->socket, CODE_504, strlen(CODE_504) + 1, 0);
+        return true;
+    }
+    return false;
+}
+
 bool user_already_subscribed(server **se, client *cli, char *team_uuid, sqlite3 *db)
 {
     sqlite3_prepare_v2(db, "SELECT user_uuids FROM teams WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
@@ -21,12 +34,12 @@ bool user_already_subscribed(server **se, client *cli, char *team_uuid, sqlite3 
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
     if (strstr(user_uuids, cli->uuid_text)) {
-        //send message to client that he is already subscribed ?
+        send(cli->socket, CODE_230, strlen(CODE_230) + 1, 0);
         return true;
     }
     return false;
 }
-
+//se usuario nao inscrito, n pode criar nada no time
 int subscribe_function      (server **se, client **cli_list,
                             client *cli, int sd)
 {
@@ -38,7 +51,6 @@ int subscribe_function      (server **se, client **cli_list,
         strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
         return 0;
     }
-    //check if user is already subscribed ? protocol value for already subscribed ?
     if (user_already_subscribed(se, cli, (*se)->command[1], (*se)->db)) {
         return 0;
     }
