@@ -39,7 +39,7 @@ bool user_already_subscribed(server **se, client *cli, char *team_uuid, sqlite3 
     }
     return false;
 }
-//se usuario nao inscrito, n pode criar nada no time
+
 int subscribe_function      (server **se, client **cli_list,
                             client *cli, int sd)
 {

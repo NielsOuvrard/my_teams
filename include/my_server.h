@@ -287,13 +287,10 @@ char *get_thread_by_uuid (server **, char *, char *, char *);
 
 //create
 
-int create_team (server **serv, client **cli_list, client *cli, int sd);
-
-int create_channel (server **serv, client **cli_list, client *cli, int sd);
-
-int create_thread (server **serv, client **cli_list, client *cli, int sd);
-
-int create_reply (server **serv, client **cli_list, client *cli, int sd);
+char *create_team (server **serv, client **cli_list, client *cli, int sd);
+char *create_channel (server **serv, client **cli_list, client *cli, int sd);
+char *create_thread (server **serv, client **cli_list, client *cli, int sd);
+char *create_reply (server **serv, client **cli_list, client *cli, int sd);
 
 char *generate_uuid(void);
 

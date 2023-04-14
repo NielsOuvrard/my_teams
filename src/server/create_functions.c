@@ -16,7 +16,7 @@ char *generate_uuid(void)
     return uuid_text;
 }
 
-int create_reply(server **serv, client **cli_list,
+char *create_reply(server **serv, client **cli_list,
                     client *curr_cli, int sd)
 {
     char *body = (*serv)->command[1];
@@ -34,18 +34,18 @@ int create_reply(server **serv, client **cli_list,
     sqlite3_bind_text((*serv)->stmt, 4, timeStamp, -1, SQLITE_STATIC);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
-    char to_send[1024];
+    char *to_send = malloc(sizeof(char) * 1024);
     strcpy(to_send, CODE_214);
     strcat(to_send, thread_uuid); strcat(to_send, "\n");
     strcat(to_send, user_uuid); strcat(to_send, "\n");
     strcat(to_send, timeStamp); strcat(to_send, "\n");
     strcat(to_send, body); strcat(to_send, "\n");
-    send(sd, to_send, strlen(to_send), 0);
+    // send(sd, to_send, strlen(to_send), 0);
     server_event_reply_created(thread_uuid, user_uuid, body);
-    return 0;
+    return to_send;
 }
 
-int create_team         (server **serv, client **cli_list,
+char *create_team         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
     char *uuid = generate_uuid();
@@ -61,16 +61,17 @@ int create_team         (server **serv, client **cli_list,
     sqlite3_bind_text((*serv)->stmt, 4, cur_cli->uuid_text, -1, SQLITE_STATIC);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
-    char to_send[1024];
+    char *to_send = malloc(sizeof(char) * 1024);
     strcpy(to_send, CODE_211);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
     server_event_team_created(uuid, name, cur_cli->uuid_text);
-    send(sd, to_send, strlen(to_send) + 1, 0); return 0;
+    // send(sd, to_send, strlen(to_send) + 1, 0);
+    return to_send;
 }
 
-int create_channel         (server **serv, client **cli_list,
+char *create_channel         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
     char *uuid = generate_uuid(), *name = (*serv)->command[1];
@@ -85,17 +86,17 @@ int create_channel         (server **serv, client **cli_list,
     sqlite3_bind_text((*serv)->stmt, 4, description, -1, SQLITE_STATIC);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
-    char to_send[1024];
+    char *to_send = malloc(sizeof(char) * 1024);
     strcpy(to_send, CODE_212);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
     server_event_channel_created(team_uuid, uuid, name);
-    send(sd, to_send, strlen(to_send) + 1, 0);
-    return 0;
+    // send(sd, to_send, strlen(to_send) + 1, 0);
+    return to_send;
 }
 
-int create_thread         (server **serv, client **cli_list,
+char *create_thread         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
     char *uuid = generate_uuid(), *title = (*serv)->command[1];
@@ -114,7 +115,7 @@ int create_thread         (server **serv, client **cli_list,
     sqlite3_bind_text((*serv)->stmt, 6, timeStamp, -1, SQLITE_STATIC);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
-    char to_send[1024];
+    char *to_send = malloc(sizeof(char) * 1024);
     strcpy(to_send, CODE_213);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, user_uuid); strcat(to_send, "\n");
@@ -123,6 +124,6 @@ int create_thread         (server **serv, client **cli_list,
     strcat(to_send, body); strcat(to_send, "\n");
     server_event_thread_created(channel_uuid, uuid, user_uuid,
     title, body);
-    send(sd, to_send, strlen(to_send) + 1, 0);
-    return 0;
+    // send(sd, to_send, strlen(to_send) + 1, 0);
+    return to_send;
 }
