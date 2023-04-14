@@ -43,6 +43,7 @@ void remove_client(client *clients, int client_fd)
         if (clients->socket == client_fd) {
             clients->socket = -1;
             uuid_clear(clients->uuid);
+            free(clients->uuid_text);
             clients->uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
             clients->username = NULL;
             clients->is_logged = false;

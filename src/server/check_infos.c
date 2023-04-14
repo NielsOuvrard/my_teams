@@ -10,7 +10,7 @@
 bool check_if_name_exists(char *name, char *table, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
-    char *query = malloc(sizeof(char) * 100);
+    char query[1024];
     strcpy(query, "SELECT name FROM ");
     strcat(query, table);
     strcat(query, " WHERE name = ?;");
@@ -27,7 +27,7 @@ bool check_if_name_exists(char *name, char *table, sqlite3 *db)
 bool check_if_uuid_exists(char *uuid, char *table, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
-    char *query = malloc(sizeof(char) * 100);
+    char query[1024];
     strcpy(query, "SELECT uuid FROM ");
     strcat(query, table);
     strcat(query, " WHERE uuid = ?;");

@@ -26,7 +26,7 @@ int load_all_users(server *serv)
         sqlite3_errmsg(serv->db));
 }
 
-void my_teams(int port)
+int my_teams(int port)
 {
     server *serv = construct_struct(port);
     client *clients = malloc(sizeof(client) * (MAX_CLIENTS + 1));
@@ -37,7 +37,13 @@ void my_teams(int port)
     server_loop(&serv, &clients);
     close(serv->socket_fd);
     shutdown(serv->socket_fd, SHUT_RDWR);
+	sqlite3_close(serv->db);
+    free(serv->fct);
+    for (int i = 0; i != MAX_CLIENTS; i++)
+        free(clients[i].uuid_text);
+    free(clients);
     free(serv);
+    return 0;
 }
 
 int main(int ac, char **av)
@@ -56,6 +62,5 @@ int main(int ac, char **av)
             return 84;
         }
     }
-    my_teams(atoi(av[1]));
-    return 0;
+    return my_teams(atoi(av[1]));
 }

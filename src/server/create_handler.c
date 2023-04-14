@@ -25,7 +25,8 @@ client *cli, char *message)
 
 char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
 {
-    char *to_send = malloc(sizeof(char) * 1024);
+    char to_send[1024];
+    memset(to_send, 0, 1024);
     if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
         strcpy(to_send, CODE_500); strcat(to_send, cli->team);
         strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
@@ -40,7 +41,8 @@ char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
         strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
         return 0;
     }
-    to_send = create_reply(se, cli_list, cli, sd);
+    // to_send = why ?
+    create_reply(se, cli_list, cli, sd);
 }
 
 char *create_handler_2(server **se, client **cli_list, client *cli, int sd)
@@ -89,10 +91,13 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
         }
         if (check_if_name_exists((*se)->command[1], "channels", (*se)->db)) {
             send(sd, CODE_505, strlen(CODE_505) + 1, 0); return 0;
-        } else
+        } else {
+            free(to_send);
             to_send = create_channel(se, cli_list, cli, sd);
+        }
     } else
         to_send = create_handler_2(se, cli_list, cli, sd);
     send_message_to_every_one(se, cli_list, cli, to_send);
+    free(to_send);
     return 0;
 }
