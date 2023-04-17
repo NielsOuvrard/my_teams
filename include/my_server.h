@@ -309,3 +309,6 @@ sqlite3 *db);
 
 bool user_already_subscribed(server **se, client *cli, char *team_uuid,
 sqlite3 *db);
+
+void send_message_to_every_one(server **se, client **cli_list,
+client *cli, char *message);

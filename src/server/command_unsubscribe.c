@@ -67,5 +67,9 @@ int unsubscribe_function    (server **se, client **cli_list,
         return 0;
     }
     unsubscribe_sql_commands(se, cli_list, curr_cli, sd);
+    strcpy(to_send, CODE_209); strcat(to_send, curr_cli->uuid_text);
+    strcat(to_send, "\n"); strcat(to_send, (*se)->command[1]);
+    strcat(to_send, "\n");
+    send_message_to_every_one(se, cli_list, curr_cli, to_send);
     return 0;
 }
