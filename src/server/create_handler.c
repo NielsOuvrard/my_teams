@@ -21,6 +21,7 @@ client *cli, char *message)
             send(cli_list[i]->socket, message, strlen(message) + 1, 0);
         }
     }
+    sqlite3_finalize((*se)->stmt);
 }
 
 char *create_handler_3(server **se, client **cli_list, client *cli, int sd)

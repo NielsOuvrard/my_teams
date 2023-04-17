@@ -13,13 +13,18 @@ char *get_team_by_uuid (server **se, char *uuid)
     int result = sqlite3_prepare_v2((*se)->db,
     "SELECT * FROM teams WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
     if (result != SQLITE_OK) {
+        sqlite3_finalize((*se)->stmt);
         fprintf(stderr, "Failed to prepare statement: %s\n",
         sqlite3_errmsg((*se)->db));
         return NULL;
     }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
-    if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
-        return strdup(sqlite3_column_text((*se)->stmt, 0));
+    if (sqlite3_step((*se)->stmt) == SQLITE_ROW) {
+        char *ret = strdup(sqlite3_column_text((*se)->stmt, 0));
+        sqlite3_finalize((*se)->stmt);
+        return ret;
+    }
+    sqlite3_finalize((*se)->stmt);
     return NULL;
 }
 
@@ -34,8 +39,12 @@ char *get_channel_by_uuid (server **se, char *team_uuid, char *channel_uuid)
     }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[2], -1, SQLITE_STATIC);
-    if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
-        return strdup(sqlite3_column_text((*se)->stmt, 0));
+    if (sqlite3_step((*se)->stmt) == SQLITE_ROW) {
+        char *ret = strdup(sqlite3_column_text((*se)->stmt, 0));
+        sqlite3_finalize((*se)->stmt);
+        return ret;
+    }
+    sqlite3_finalize((*se)->stmt);
     return NULL;
 }
 // uuid_team TEXT, uuid_channel TEXT, uuid TEXT, name TEXT, description TEXT
@@ -52,7 +61,11 @@ char *get_thread_by_uuid (server **se, char *team, char *cha, char *thr)
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[2], -1, SQLITE_STATIC);
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[3], -1, SQLITE_STATIC);
-    if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
-        return strdup(sqlite3_column_text((*se)->stmt, 0));
+    if (sqlite3_step((*se)->stmt) == SQLITE_ROW) {
+        char *ret = strdup(sqlite3_column_text((*se)->stmt, 0));
+        sqlite3_finalize((*se)->stmt);
+        return ret;
+    }
+    sqlite3_finalize((*se)->stmt);
     return NULL;
 }

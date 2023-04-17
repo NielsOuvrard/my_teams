@@ -200,7 +200,7 @@ DIR *open_data_users(void);
 
 char **get_infos(server *serv, char *file_path);
 
-void initialize_server(int socket_fd, struct sockaddr_in address);
+int initialize_server(int socket_fd, struct sockaddr_in address);
 
 void initialize_client(client **clients);
 
@@ -273,9 +273,7 @@ int find_message_receiver(server **serv, client **clients);
 void save_message_in_db(server **serv, client *curr_cli);
 
 //load db
-void initialize_message_db(server **serv);
-void initialize_user_db(server **serv);
-void initialize_db(server **serv);
+int initialize_db(server **serv);
 
 // looking for uuid
 

@@ -45,6 +45,8 @@ void remove_client(client *clients, int client_fd)
             uuid_clear(clients->uuid);
             free(clients->uuid_text);
             clients->uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
+            if (clients->username)
+                free(clients->username);
             clients->username = NULL;
             clients->is_logged = false;
             return;
@@ -80,6 +82,8 @@ int client_communication(server **serv, client **clients, fd_set copy_fds)
         if (FD_ISSET(sd, &copy_fds)) {
             (*serv)->command = get_command(sd);
             command_handler(serv, clients, &(*clients)[i], sd);
+            free_my_array((*serv)->command);
+            (*serv)->command = NULL;
         }
     }
 }

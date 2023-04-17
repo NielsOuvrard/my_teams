@@ -7,14 +7,15 @@
 
 #include "my_client.h"
 
-void loop(client *cli)
+int loop(client *cli)
 {
     fd_set read_fds;
     FD_ZERO(&read_fds);
     FD_SET(cli->sock, &read_fds); FD_SET(STDIN_FILENO, &read_fds);
-    char *message = malloc(sizeof(char) * 1024);
+    char *message = NULL;
     struct timeval tv;
     tv.tv_sec = 0; tv.tv_usec = 10000;
+    int server_reply = 0;
     while (1) {
         fd_set tmp_fds = read_fds;
         if (select(cli->sock + 1, &tmp_fds, NULL, NULL, &tv) < 0) {
@@ -22,13 +23,19 @@ void loop(client *cli)
             exit(EXIT_FAILURE);
         }
         if (FD_ISSET(cli->sock, &tmp_fds)) {
-            handle_server_response(cli);
+            server_reply = handle_server_response(cli);
+        }
+        if (server_reply == -1 || server_reply == 84) {
+            printf("Server disconnected\n");
+            return server_reply;
         }
         if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
             message = loop_get_message(NULL);
             send(cli->sock, message, strlen(message), 0);
+            free(message);
         }
     }
+    return 0;
 }
 
 int help (void)
@@ -55,8 +62,12 @@ int client_funct (int ac, char **av)
         return 1;
     }
     cli.funct_client = array_struct();
-    loop(&cli);
+    int server_reply = loop(&cli);
+    free(cli.funct_client);
     close(cli.sock);
+    if (server_reply == 84)
+        return 84;
+    return 0;
 }
 
 int main(int ac, char *av[])

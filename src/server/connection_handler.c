@@ -38,16 +38,20 @@ int user_exists(server **serv, client *cli, char *str)
     int result = sqlite3_prepare_v2((*serv)->db,
     "SELECT * FROM users WHERE username = ?;", -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK) {
+        sqlite3_finalize((*serv)->stmt);
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*serv)->db));
     }
     sqlite3_bind_text((*serv)->stmt, 1,
     (*serv)->command[1], -1, SQLITE_STATIC);
     if (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
+        if (cli->uuid_text)
+            free(cli->uuid_text);
         cli->uuid_text = strdup(sqlite3_column_text((*serv)->stmt, 1));
         cli->username = strdup(sqlite3_column_text((*serv)->stmt, 2));
         sprintf(str, "%s%s\n%s\n", CODE_201, cli->uuid_text, cli->username);
     }
+    sqlite3_finalize((*serv)->stmt);
     change_status_user(serv, cli->uuid_text, 1);
 }
 
@@ -62,13 +66,16 @@ int user_doesnt_exist(server **serv, client *cli, char *str)
     int result = sqlite3_prepare_v2((*serv)->db,
     "INSERT INTO users (uuid, username, connected) VALUES (?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK)
+    if (result != SQLITE_OK) {
+        sqlite3_finalize((*serv)->stmt);
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*serv)->db));
+    }
     sqlite3_bind_text((*serv)->stmt, 1, cli->uuid_text, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 2, cli->username, -1, SQLITE_STATIC);
     sqlite3_bind_int((*serv)->stmt, 3, 1);
     result = sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_DONE)
         return fprintf(stderr, "Failed to insert data: %s\n",
         sqlite3_errmsg((*serv)->db));
@@ -82,12 +89,15 @@ int login_handler(server **se, client *cli, int sd)
     int result = sqlite3_prepare_v2((*se)->db,
     "SELECT COUNT(*) FROM users WHERE username = ?;", -1,
     &(*se)->stmt, NULL);
-    if (result != SQLITE_OK)
+    if (result != SQLITE_OK) {
+        sqlite3_finalize((*se)->stmt);
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*se)->db));
+    }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
         result = sqlite3_column_int((*se)->stmt, 0);
+    sqlite3_finalize((*se)->stmt);
     if (result > 0)
         user_exists(se, cli, str);
     else

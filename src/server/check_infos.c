@@ -49,12 +49,15 @@ bool check_if_user_exist(server **se, int sd)
     int result = sqlite3_prepare_v2((*se)->db,
     "SELECT COUNT(*) FROM users WHERE uuid = ?;", -1,
     &(*se)->stmt, NULL);
-    if (result != SQLITE_OK)
+    if (result != SQLITE_OK) {
+        sqlite3_finalize((*se)->stmt);
         return fprintf(stderr, "Failed to prepare statement: %s\n",
         sqlite3_errmsg((*se)->db));
+    }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
         result = sqlite3_column_int((*se)->stmt, 0);
+    sqlite3_finalize((*se)->stmt);
     if (result > 0) {
         return true;
     } else {

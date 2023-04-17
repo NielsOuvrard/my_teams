@@ -101,7 +101,7 @@ void print_array(char **);
 
 char *loop_get_message(char *str);
 
-void handle_server_response(client *cli);
+int handle_server_response(client *cli);
 
 char **my_str_parse (char *str, char *part);
 
@@ -174,3 +174,5 @@ int unknown_user_function   (client *cli, char **array);
 int unauthorized_function   (client *cli, char **array);
 
 int already_exist_function  (client *cli, char **array);
+
+void free_my_array (char **array);

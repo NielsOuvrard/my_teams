@@ -59,9 +59,12 @@ client *curr_cli, int sd)
     (*serv)->command[1]);
     int result = sqlite3_prepare_v2((*serv)->db, request,
     -1, &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK)
+    if (result != SQLITE_OK) {
+        sqlite3_finalize((*serv)->stmt);
         return fprintf(stderr, "Failed to prepare statement: %s\n",
         sqlite3_errmsg((*serv)->db));
+    }
     prepare_messages_historic(serv, curr_cli, to_send, sd);
+    sqlite3_finalize((*serv)->stmt);
     return 0;
 }

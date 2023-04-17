@@ -10,11 +10,14 @@
 void remove_quotes(server **serv)
 {
     for (int i = 1; (*serv)->command[i] != NULL; i++) {
-        char *tmp = strdup((*serv)->command[i]);
-        tmp = strchr(tmp, '\"');
+        char *tmp = strchr((*serv)->command[i], '\"');
         if (tmp != NULL) {
-            (*serv)->command[i] = &(*serv)->command[i][1];
-            (*serv)->command[i][strlen((*serv)->command[i]) - 1] = '\0';
+            printf("we remove quotes from |%s|\n", (*serv)->command[i]);
+            char *new = malloc(sizeof(char) * strlen((*serv)->command[i]));
+            strcpy(new, (*serv)->command[i] + 1);
+            new[strlen(new) - 1] = '\0';
+            free((*serv)->command[i]);
+            (*serv)->command[i] = new;
         }
     }
 }

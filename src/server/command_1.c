@@ -37,9 +37,11 @@ int users_function          (server **serv, client **cli_list,
         return 0;
     int result = sqlite3_prepare_v2((*serv)->db,
     "SELECT * FROM users", -1, &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK)
+    if (result != SQLITE_OK) {
+        sqlite3_finalize((*serv)->stmt);
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*serv)->db));
+    }
     char to_send[4096];
     strcpy(to_send, CODE_203);
     while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
@@ -68,8 +70,10 @@ int user_function           (server **serv, client **cli_list,
     (*serv)->command[1]);
     sqlite3_prepare_v2((*serv)->db, request, -1,
     &(*serv)->stmt, NULL);
-    if (!sqlite3_step((*serv)->stmt) == SQLITE_ROW)
+    if (!sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
+        sqlite3_finalize((*serv)->stmt);
         return send_info_client((char *[]) { CODE_503 , NULL}, sd);
+    }
     char *infos[5];
     infos[0] = CODE_204;
     infos[1] = (*serv)->command[1];
