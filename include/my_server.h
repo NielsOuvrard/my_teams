@@ -52,6 +52,7 @@
 #define CODE_215 "215 list\n"
 #define CODE_216 "216 info\n"
 #define CODE_230 "230 already_subscribed\n"
+#define CODE_231 "231 already_unsubscribed\n"
 #define CODE_500 "500 client_error_unknown_team\n"
 #define CODE_501 "501 client_error_unknown_channel\n"
 #define CODE_502 "502 client_error_unknown_thread\n"

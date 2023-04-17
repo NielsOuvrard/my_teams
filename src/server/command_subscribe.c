@@ -15,6 +15,10 @@ sqlite3 *db)
     sqlite3_bind_text((*se)->stmt, 1, team_uuid, -1, SQLITE_STATIC);
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
+    if (user_uuids == NULL) {
+        sqlite3_finalize((*se)->stmt);
+        return false;
+    }
     if (strstr(user_uuids, cli->uuid_text)) {
         send(cli->socket, CODE_230, strlen(CODE_230) + 1, 0);
         sqlite3_finalize((*se)->stmt);
