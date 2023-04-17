@@ -86,9 +86,14 @@ int use_function            (server **serv, client **cli_list,
     curr_cli->thread = NULL;
     if (args_check((*serv)->command, 2, sd))
         curr_cli->team = strdup((*serv)->command[1]);
-    if (args_check((*serv)->command, 3, sd))
+    if (args_check((*serv)->command, 3, sd)) {
+        curr_cli->team = strdup((*serv)->command[1]);
         curr_cli->channel = strdup((*serv)->command[2]);
-    if (args_check((*serv)->command, 4, sd))
+    }
+    if (args_check((*serv)->command, 4, sd)) {
+        curr_cli->team = strdup((*serv)->command[1]);
+        curr_cli->channel = strdup((*serv)->command[2]);
         curr_cli->thread = strdup((*serv)->command[3]);
+    }
     return 0;
 }
