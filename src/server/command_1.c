@@ -26,6 +26,16 @@ int logout_function         (server **serv, client **cli_list,
     return 0;
 }
 
+void fill_to_send_users(char *to_send, server **serv)
+{
+    char tmp[1024];
+    sprintf(tmp, "%s\n%s\n%d\n",
+    sqlite3_column_text((*serv)->stmt, 1),
+    sqlite3_column_text((*serv)->stmt, 2),
+    sqlite3_column_int((*serv)->stmt, 3));
+    strcat(to_send, tmp);
+}
+
 // code 203
 // uuid
 // username
@@ -44,14 +54,8 @@ int users_function          (server **serv, client **cli_list,
     }
     char to_send[4096];
     strcpy(to_send, CODE_203);
-    while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
-        char tmp[1024];
-        sprintf(tmp, "%s\n%s\n%d\n",
-        sqlite3_column_text((*serv)->stmt, 1),
-        sqlite3_column_text((*serv)->stmt, 2),
-        sqlite3_column_int((*serv)->stmt, 3));
-        strcat(to_send, tmp);
-    }
+    while (sqlite3_step((*serv)->stmt) == SQLITE_ROW)
+        fill_to_send_users(to_send, serv);
     result = sqlite3_finalize((*serv)->stmt);
     if (result != SQLITE_OK)
         return fprintf(stderr, "Falha ao finalizar a instrução: %s\n",
@@ -82,11 +86,4 @@ int user_function           (server **serv, client **cli_list,
     infos[4] = NULL;
     sqlite3_finalize((*serv)->stmt);
     return send_info_client(infos, sd);
-}
-
-int send_function           (server **serv, client **cli_list,
-                            client *curr_cli, int sd)
-{
-    send_handler(serv, cli_list, curr_cli, sd);
-    return 0;
 }

@@ -58,12 +58,11 @@ bool check_if_user_exist(server **se, int sd)
     if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
         result = sqlite3_column_int((*se)->stmt, 0);
     sqlite3_finalize((*se)->stmt);
-    if (result > 0) {
-        return true;
-    } else {
+    if (result <= 0) {
         send(sd, to_send, strlen(to_send) + 1, 0);
         return false;
     }
+    return true;
 }
 
 int find_message_receiver(server **serv, client **clients)

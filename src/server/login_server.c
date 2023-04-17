@@ -7,23 +7,6 @@
 
 #include "my_server.h"
 
-// CODE_202 = "202 Logged out."
-int logout_handler(server **serv, client *cur_cli, int sd)
-{
-    if (!args_check((*serv)->command, 1, sd) || user_not_connected(cur_cli))
-        return 1;
-    change_status_user(serv, cur_cli->uuid_text, 0);
-    server_event_user_logged_out(cur_cli->uuid_text);
-    char *to_send = malloc(sizeof(char) * 1024);
-    sprintf(to_send, "%s\n%s\n%s\n", CODE_202, cur_cli->uuid_text,
-    cur_cli->username);
-    send(sd, to_send, strlen(to_send) + 1, 0);
-    free(to_send);
-    FD_CLR(sd, &(*serv)->readfds);
-    close(sd);
-    return 0;
-}
-
 void execute_function_login(server **serv, client *cli, int i)
 {
     if (i == 0)
@@ -56,6 +39,7 @@ int user_exists(server **serv, client *cli, char *str)
 }
 
 // If the user doesn't exist
+// limit codding style ?
 int user_doesnt_exist(server **serv, client *cli, char *str)
 {
     cli->username = strdup((*serv)->command[1]);
@@ -81,19 +65,9 @@ int user_doesnt_exist(server **serv, client *cli, char *str)
         sqlite3_errmsg((*serv)->db));
 }
 
-int login_handler(server **se, client *cli, int sd)
+int login_handler_next(server **se, client *cli, int sd, int result)
 {
     char str[1024];
-    if (!args_check((*se)->command, 2, sd) || user_connected(cli))
-        return 1;
-    int result = sqlite3_prepare_v2((*se)->db,
-    "SELECT COUNT(*) FROM users WHERE username = ?;", -1,
-    &(*se)->stmt, NULL);
-    if (result != SQLITE_OK) {
-        sqlite3_finalize((*se)->stmt);
-        return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
-        sqlite3_errmsg((*se)->db));
-    }
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     if (sqlite3_step((*se)->stmt) == SQLITE_ROW)
         result = sqlite3_column_int((*se)->stmt, 0);
@@ -105,4 +79,21 @@ int login_handler(server **se, client *cli, int sd)
     cli->is_logged = true;
     execute_function_login(se, cli, 1);
     send(sd, str, strlen(str) + 1, 0);
+    return 0;
+}
+
+int login_handler(server **se, client *cli, int sd)
+{
+    if (!args_check((*se)->command, 2, sd) || user_connected(cli))
+        return 1;
+    int result = sqlite3_prepare_v2((*se)->db,
+    "SELECT COUNT(*) FROM users WHERE username = ?;", -1,
+    &(*se)->stmt, NULL);
+    if (result != SQLITE_OK) {
+        sqlite3_finalize((*se)->stmt);
+        return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
+        sqlite3_errmsg((*se)->db));
+    }
+    login_handler_next(se, cli, sd, result);
+    return 0;
 }

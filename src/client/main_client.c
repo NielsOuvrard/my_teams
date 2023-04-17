@@ -7,34 +7,41 @@
 
 #include "my_client.h"
 
+int loop_client (client *cli, fd_set read_fds, int *server_reply,
+struct timeval tv)
+{
+    char *message = NULL;
+    fd_set tmp_fds = read_fds;
+    if (select(cli->sock + 1, &tmp_fds, NULL, NULL, &tv) < 0) {
+        perror("Erro na função select");
+        exit(EXIT_FAILURE);
+    }
+    if (FD_ISSET(cli->sock, &tmp_fds)) {
+        *server_reply = handle_server_response(cli);
+    }
+    if (*server_reply == -1 || *server_reply == 84) {
+        printf("Server disconnected\n");
+        return -1;
+    }
+    if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
+        message = loop_get_message(NULL);
+        send(cli->sock, message, strlen(message), 0);
+        free(message);
+    }
+    return 0;
+}
+
 int loop(client *cli)
 {
     fd_set read_fds;
     FD_ZERO(&read_fds);
     FD_SET(cli->sock, &read_fds); FD_SET(STDIN_FILENO, &read_fds);
-    char *message = NULL;
     struct timeval tv;
     tv.tv_sec = 0; tv.tv_usec = 10000;
     int server_reply = 0;
-    while (1) {
-        fd_set tmp_fds = read_fds;
-        if (select(cli->sock + 1, &tmp_fds, NULL, NULL, &tv) < 0) {
-            perror("Erro na função select");
-            exit(EXIT_FAILURE);
-        }
-        if (FD_ISSET(cli->sock, &tmp_fds)) {
-            server_reply = handle_server_response(cli);
-        }
-        if (server_reply == -1 || server_reply == 84) {
-            printf("Server disconnected\n");
+    while (1)
+        if (loop_client(cli, read_fds, &server_reply, tv) == -1)
             return server_reply;
-        }
-        if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
-            message = loop_get_message(NULL);
-            send(cli->sock, message, strlen(message), 0);
-            free(message);
-        }
-    }
     return 0;
 }
 

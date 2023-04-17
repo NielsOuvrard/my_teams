@@ -29,6 +29,5 @@ int unsubscribe_function    (client *cli, char **array)
 
 int use_function            (client *cli, char **array)
 {
-    // here
     return 0;
 }

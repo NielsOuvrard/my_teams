@@ -31,7 +31,8 @@ char *get_team_by_uuid (server **se, char *uuid)
 char *get_channel_by_uuid (server **se, char *team_uuid, char *channel_uuid)
 {
     int result = sqlite3_prepare_v2((*se)->db,
-    "SELECT * FROM channels WHERE uuid = ? AND uuid_team = ?;", -1, &(*se)->stmt, NULL);
+    "SELECT * FROM channels WHERE uuid = ? AND uuid_team = ?;", -1,
+    &(*se)->stmt, NULL);
     if (result != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n",
         sqlite3_errmsg((*se)->db));
@@ -50,8 +51,8 @@ char *get_channel_by_uuid (server **se, char *team_uuid, char *channel_uuid)
 // uuid_team TEXT, uuid_channel TEXT, uuid TEXT, name TEXT, description TEXT
 char *get_thread_by_uuid (server **se, char *team, char *cha, char *thr)
 {
-    int result = sqlite3_prepare_v2((*se)->db,
-    "SELECT * FROM threads WHERE uuid = ? AND uuid_team = ? AND uuid_channel = ?;",
+    int result = sqlite3_prepare_v2((*se)->db, "SELECT * FROM threads WHERE \
+uuid = ? AND uuid_team = ? AND uuid_channel = ?;",
     -1, &(*se)->stmt, NULL);
     if (result != SQLITE_OK) {
         fprintf(stderr, "Failed to prepare statement: %s\n",
