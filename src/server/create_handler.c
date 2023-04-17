@@ -61,7 +61,7 @@ int sd)
             return create_team(se, cli_list, cli, sd);
         }
     }
-    return "";
+    return "next";
 }
 
 char *create_handler_second_cond(server **se, client **cli_list, client *cli,
@@ -92,7 +92,7 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
     char *to_send = create_handler_first_cond(se, cli_list, cli, sd);
     if (to_send == NULL)
         return 0;
-    else if (strcmp(to_send, "") != 0)
+    else if (strcmp(to_send, "next") == 0)
         to_send = create_handler_second_cond(se, cli_list, cli, sd);
     if (to_send == NULL)
         return 0;
