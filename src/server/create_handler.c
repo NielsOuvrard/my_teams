@@ -14,11 +14,11 @@ client *cli, char *message)
     sqlite3_bind_text((*se)->stmt, 1, cli->team, -1, SQLITE_STATIC);
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
-    printf("user_uuids: %s\n", user_uuids);
     for (int i = 0; i < MAX_CLIENTS; i++) {
-        if (cli_list[i]->socket != -1 && strstr(user_uuids, cli_list[i]->uuid_text)) {
-            printf("Sending message to %s\n", cli_list[i]->username);
-            send(cli_list[i]->socket, message, strlen(message) + 1, 0);
+        if (strstr(message, "211") && (*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged) {
+            send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
+        } else if ((*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged && strstr(user_uuids, (*cli_list)[i].uuid_text)) {
+            send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
         }
     }
     sqlite3_finalize((*se)->stmt);
@@ -31,45 +31,44 @@ char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
     if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
         strcpy(to_send, CODE_500); strcat(to_send, cli->team);
         strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
-        return 0;
+        return "error";
     } else if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db)) {
         strcpy(to_send, CODE_501); strcat(to_send, cli->channel);
         strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
-        return 0;
+        return "error";
     }
     if (!check_if_uuid_exists(cli->thread, "threads", (*se)->db)) {
         strcpy(to_send, CODE_502); strcat(to_send, cli->thread);
         strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
-        return 0;
+        return "error";
     }
-    // to_send = why ?
-    create_reply(se, cli_list, cli, sd);
+    return create_reply(se, cli_list, cli, sd);
 }
 
 char *create_handler_2(server **se, client **cli_list, client *cli, int sd)
 {
     char to_send[1024] = {0};
     if (user_not_subscribed(se, cli, cli->team, (*se)->db))
-        return 0;
+        return "error";
     if (cli->team && cli->channel && !cli->thread) {
         if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
             strcpy(to_send, CODE_500); strcat(to_send, cli->team);
             strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
-            return 0;
+            return "error";
         } else if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db)) {
             strcpy(to_send, CODE_501); strcat(to_send, cli->channel);
             strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
-            return 0;
+            return "error";
         }
         if (check_if_name_exists((*se)->command[1], "threads", (*se)->db)) {
-            send(sd, CODE_505, strlen(CODE_505) + 1, 0); return 0;
+            send(sd, CODE_505, strlen(CODE_505) + 1, 0); return "error";
         } else {
             return create_thread(se, cli_list, cli, sd);
         }
     } else if (cli->team && cli->channel && cli->thread) {
         return create_handler_3(se, cli_list, cli, sd);
     }
-    return 0;
+    return "error";
 }
 
 int create_handler(server **se, client **cli_list, client *cli, int sd)
@@ -81,8 +80,7 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
         if (check_if_name_exists((*se)->command[1], "teams", (*se)->db)) {
             send(sd, CODE_505, strlen(CODE_505) + 1, 0); return 0;
         } else {
-            create_team(se, cli_list, cli, sd);
-            return 0;
+            to_send = create_team(se, cli_list, cli, sd);
         }
     } else if (cli->team && !cli->channel && !user_not_subscribed(se, cli, cli->team, (*se)->db)) {
         if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
@@ -98,6 +96,8 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
         }
     } else
         to_send = create_handler_2(se, cli_list, cli, sd);
+    if (strcmp(to_send, "error") == 0)
+        return 0;
     send_message_to_every_one(se, cli_list, cli, to_send);
     free(to_send);
     return 0;

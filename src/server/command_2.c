@@ -21,7 +21,7 @@ bool user_not_subscribed(server **se, client *cli, char *team_uuid, sqlite3 *db)
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
     sqlite3_finalize((*se)->stmt);
-    if (strstr(user_uuids, cli->uuid_text) == NULL) {
+    if (user_uuids == NULL || strstr(user_uuids, cli->uuid_text) == NULL) {
         send(cli->socket, CODE_504, strlen(CODE_504) + 1, 0);
         return true;
     }
