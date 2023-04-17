@@ -306,3 +306,6 @@ client *current_client, int sd);
 
 bool user_not_subscribed(server **se, client *cli, char *team_uuid,
 sqlite3 *db);
+
+bool user_already_subscribed(server **se, client *cli, char *team_uuid,
+sqlite3 *db);

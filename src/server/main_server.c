@@ -32,7 +32,6 @@ int load_all_users(server *serv)
 int free_all(server *serv, client *clients, int return_value)
 {
     shutdown(serv->socket_fd, SHUT_RDWR);
-    printf("Server closed\n");
     free(serv->fct);
     for (int i = 0; i != MAX_CLIENTS; i++) {
         free(clients[i].uuid_text);
