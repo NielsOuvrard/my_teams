@@ -34,13 +34,15 @@ char *get_new_user_uuids(char *user_uuids, char *uuid)
 void unsubscribe_sql_commands (server **se, client **cli_list,
 client *cli, int sd)
 {
-    sqlite3_prepare_v2((*se)->db, "SELECT user_uuids FROM teams WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
+    sqlite3_prepare_v2((*se)->db,
+    "SELECT user_uuids FROM teams WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
     sqlite3_bind_text((*se)->stmt, 1, (*se)->command[1], -1, SQLITE_STATIC);
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
     char *tmp = get_new_user_uuids(user_uuids, cli->uuid_text);
     sqlite3_finalize((*se)->stmt);
-    sqlite3_prepare_v2((*se)->db, "UPDATE teams SET user_uuids = ? WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
+    sqlite3_prepare_v2((*se)->db,
+    "UPDATE teams SET user_uuids = ? WHERE uuid = ?;", -1, &(*se)->stmt, NULL);
     sqlite3_bind_text((*se)->stmt, 1, tmp, -1, SQLITE_STATIC);
     sqlite3_bind_text((*se)->stmt, 2, (*se)->command[1], -1, SQLITE_STATIC);
     sqlite3_step((*se)->stmt);
