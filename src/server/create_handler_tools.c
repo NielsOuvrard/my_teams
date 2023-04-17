@@ -19,7 +19,9 @@ client *cli, char *message)
         if (strstr(message, "211") && (*cli_list)[i].socket != -1 &&
         (*cli_list)[i].is_logged) {
             send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
-        } else if ((*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged &&
+        }
+        if (!strstr(message, "211") && (*cli_list)[i].socket != -1
+        && (*cli_list)[i].is_logged &&
         strstr(user_uuids, (*cli_list)[i].uuid_text)) {
             send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
         }

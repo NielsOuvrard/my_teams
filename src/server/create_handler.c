@@ -35,7 +35,7 @@ char *create_handler_2(server **se, client **cli_list, client *cli, int sd)
     if (cli->team && cli->channel && !cli->thread) {
         if (!check_if_uuid_exists(cli->team, "teams", (*se)->db))
             return send_code_and_value(CODE_500, cli->team, sd);
-        else if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db))
+        if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db))
             return send_code_and_value(CODE_501, cli->channel, sd);
         if (check_if_name_exists((*se)->command[1], "threads", (*se)->db)) {
             send(sd, CODE_505, strlen(CODE_505) + 1, 0);

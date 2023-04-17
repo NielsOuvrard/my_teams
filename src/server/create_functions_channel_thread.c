@@ -31,7 +31,8 @@ char *create_channel         (server **serv, client **cli_list,
     return to_send;
 }
 
-void create_thread_sql (server **se, client *cur_cli, char *timeStamp, char *uuid)
+void create_thread_sql (server **se, client *cur_cli,
+char *timeStamp, char *uuid)
 {
     sqlite3_prepare_v2((*se)->db, "INSERT INTO threads (uuid, channel, \
 user, title, body, timestamp) VALUES (?, ?, ?, ?, ?, ?);",

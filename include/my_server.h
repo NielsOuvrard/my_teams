@@ -73,7 +73,8 @@
 timestamp TEXT);"
 
 #define CREATE_TEAMS_DB "CREATE TABLE IF NOT EXISTS teams \
-(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT, user_uuids TEXT);"
+(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT, \
+user_uuids TEXT);"
 
 #define CREATE_CHANNELS_DB "CREATE TABLE IF NOT EXISTS channels \
 (id INTEGER PRIMARY KEY, uuid TEXT, team TEXT, name TEXT, description TEXT);"
@@ -296,6 +297,11 @@ char *generate_uuid(void);
 int create_handler(server **se, client **cli_list, client *curr_cli, int sd);
 
 //event
-void send_event_logged_in(server **serv, client **cli_list, client *curr_cli, int sd);
-void send_event_logged_out(server **serv, client **cli_list, client *current_client, int sd);
-bool user_not_subscribed(server **se, client *cli, char *team_uuid, sqlite3 *db);
+void send_event_logged_in(server **serv, client **cli_list, client *curr_cli,
+int sd);
+
+void send_event_logged_out(server **serv, client **cli_list,
+client *current_client, int sd);
+
+bool user_not_subscribed(server **se, client *cli, char *team_uuid,
+sqlite3 *db);
