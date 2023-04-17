@@ -14,10 +14,10 @@ client *cli, char *message)
     sqlite3_bind_text((*se)->stmt, 1, cli->team, -1, SQLITE_STATIC);
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
-    printf("user_uuids: %s\n", user_uuids);
-    printf("%s", message);
     for (int i = 0; i < MAX_CLIENTS; i++) {
-        if ((*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged && strstr(user_uuids, (*cli_list)[i].uuid_text)) {
+        if (strstr(message, "211") && (*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged) {
+            send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
+        } else if ((*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged && strstr(user_uuids, (*cli_list)[i].uuid_text)) {
             send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
         }
     }
@@ -79,8 +79,7 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
         if (check_if_name_exists((*se)->command[1], "teams", (*se)->db)) {
             send(sd, CODE_505, strlen(CODE_505) + 1, 0); return 0;
         } else {
-            create_team(se, cli_list, cli, sd);
-            return 0;
+            to_send = create_team(se, cli_list, cli, sd);
         }
     } else if (cli->team && !cli->channel && !user_not_subscribed(se, cli, cli->team, (*se)->db)) {
         if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
