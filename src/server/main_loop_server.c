@@ -8,7 +8,7 @@
 #include "my_server.h"
 #include <signal.h>
 
-// static int keepRunning = 1;
+// static // int // keepRunning = 1;
 
 // void int_handler(int dummy)
 // {
