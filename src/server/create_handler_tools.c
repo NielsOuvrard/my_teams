@@ -16,12 +16,13 @@ client *cli, char *message)
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
     for (int i = 0; i < MAX_CLIENTS; i++) {
-        if (strstr(message, "211") && (*cli_list)[i].socket != -1 &&
+        if ((strstr(message, "211") || strstr(message, "207") ||
+        strstr(message, "209")) && (*cli_list)[i].socket != -1 &&
         (*cli_list)[i].is_logged) {
             send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
+            continue;
         }
-        if (!strstr(message, "211") && (*cli_list)[i].socket != -1
-        && (*cli_list)[i].is_logged &&
+        if ((*cli_list)[i].socket != -1 && (*cli_list)[i].is_logged &&
         strstr(user_uuids, (*cli_list)[i].uuid_text)) {
             send((*cli_list)[i].socket, message, strlen(message) + 1, 0);
         }

@@ -64,7 +64,8 @@ int subscribe_function      (server **se, client **cli_list,
     subscribe_sql_commands(se, cli_list, cli, sd);
     strcpy(to_send, CODE_207); strcat(to_send, cli->uuid_text);
     strcat(to_send, "\n"); strcat(to_send, (*se)->command[1]);
-    strcat(to_send, "\n"); send(sd, to_send, strlen(to_send) + 1, 0);
+    strcat(to_send, "\n");
     server_event_user_subscribed((*se)->command[1], cli->uuid_text);
+    send_message_to_every_one(se, cli_list, cli, to_send);
     return 0;
 }
