@@ -31,6 +31,21 @@ char *create_channel         (server **serv, client **cli_list,
     return to_send;
 }
 
+void create_thread_sql (server **se, client *cur_cli, char *timeStamp, char *uuid)
+{
+    sqlite3_prepare_v2((*se)->db, "INSERT INTO threads (uuid, channel, \
+user, title, body, timestamp) VALUES (?, ?, ?, ?, ?, ?);",
+    -1, &(*se)->stmt, NULL);
+    sqlite3_bind_text((*se)->stmt, 1, uuid, -1, SQLITE_STATIC);
+    sqlite3_bind_text((*se)->stmt, 2, cur_cli->channel, -1, SQLITE_STATIC);
+    sqlite3_bind_text((*se)->stmt, 3, cur_cli->uuid_text, -1, SQLITE_STATIC);
+    sqlite3_bind_text((*se)->stmt, 4, (*se)->command[1], -1, SQLITE_STATIC);
+    sqlite3_bind_text((*se)->stmt, 5, (*se)->command[2], -1, SQLITE_STATIC);
+    sqlite3_bind_text((*se)->stmt, 6, timeStamp, -1, SQLITE_STATIC);
+    sqlite3_step((*se)->stmt);
+    sqlite3_finalize((*se)->stmt);
+}
+
 char *create_thread         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
@@ -39,17 +54,7 @@ char *create_thread         (server **serv, client **cli_list,
     char *timeStamp, *user_uuid = cur_cli->uuid_text;
     time_t now = time(NULL);
     timeStamp = ctime(&now);
-    sqlite3_prepare_v2((*serv)->db,
-    "INSERT INTO threads (uuid, channel, user, title, body, timestamp) VALUES (?, ?, ?, ?, ?, ?);",
-    -1, &(*serv)->stmt, NULL);
-    sqlite3_bind_text((*serv)->stmt, 1, uuid, -1, SQLITE_STATIC);
-    sqlite3_bind_text((*serv)->stmt, 2, channel_uuid, -1, SQLITE_STATIC);
-    sqlite3_bind_text((*serv)->stmt, 3, user_uuid, -1, SQLITE_STATIC);
-    sqlite3_bind_text((*serv)->stmt, 4, title, -1, SQLITE_STATIC);
-    sqlite3_bind_text((*serv)->stmt, 5, body, -1, SQLITE_STATIC);
-    sqlite3_bind_text((*serv)->stmt, 6, timeStamp, -1, SQLITE_STATIC);
-    sqlite3_step((*serv)->stmt);
-    sqlite3_finalize((*serv)->stmt);
+    create_thread_sql(serv, cur_cli, timeStamp, uuid);
     char *to_send = malloc(sizeof(char) * 1024);
     strcpy(to_send, CODE_213);
     strcat(to_send, uuid); strcat(to_send, "\n");

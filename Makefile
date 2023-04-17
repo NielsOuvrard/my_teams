@@ -15,7 +15,8 @@ BIN_SERVER = myteams_server
 LIB = -L./libs/myteams -lmyteams -lsqlite3
 BIN_CLIENT = myteams_cli
 INCLUDE = -I./include -I./libs/myteams
-SQL = -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_DEPRECATED -DSQLITE_THREAD_OVERRIDE_LOCK=-1
+SQL = -DSQLITE_THREADSAFE=0 -DSQLITE_OMIT_DEPRECATED \
+-DSQLITE_THREAD_OVERRIDE_LOCK=-1
 
 all: client server
 

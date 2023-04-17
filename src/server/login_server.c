@@ -50,11 +50,9 @@ int user_doesnt_exist(server **serv, client *cli, char *str)
     int result = sqlite3_prepare_v2((*serv)->db,
     "INSERT INTO users (uuid, username, connected) VALUES (?, ?, ?);",
     -1, &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK) {
-        sqlite3_finalize((*serv)->stmt);
+    if (result != SQLITE_OK)
         return fprintf(stderr, "Falha ao preparar a declaração: %s\n",
         sqlite3_errmsg((*serv)->db));
-    }
     sqlite3_bind_text((*serv)->stmt, 1, cli->uuid_text, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 2, cli->username, -1, SQLITE_STATIC);
     sqlite3_bind_int((*serv)->stmt, 3, 1);

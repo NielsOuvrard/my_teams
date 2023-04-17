@@ -48,6 +48,7 @@ char *get_channel_by_uuid (server **se, char *team_uuid, char *channel_uuid)
     sqlite3_finalize((*se)->stmt);
     return NULL;
 }
+
 // uuid_team TEXT, uuid_channel TEXT, uuid TEXT, name TEXT, description TEXT
 char *get_thread_by_uuid (server **se, char *team, char *cha, char *thr)
 {
