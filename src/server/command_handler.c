@@ -12,7 +12,6 @@ void remove_quotes(server **serv)
     for (int i = 1; (*serv)->command[i] != NULL; i++) {
         char *tmp = strchr((*serv)->command[i], '\"');
         if (tmp != NULL) {
-            printf("we remove quotes from |%s|\n", (*serv)->command[i]);
             char *new = malloc(sizeof(char) * strlen((*serv)->command[i]));
             strcpy(new, (*serv)->command[i] + 1);
             new[strlen(new) - 1] = '\0';
