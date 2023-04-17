@@ -7,7 +7,7 @@
 
 #include "my_server.h"
 
-int send_handler(server **serv, client **cli_list,
+int send_function(server **serv, client **cli_list,
 client *curr_cli, int sd)
 {
     if (user_not_connected(curr_cli) || !args_check((*serv)->command, 3, sd)
@@ -23,7 +23,8 @@ client *curr_cli, int sd)
     (*serv)->command[1], (*serv)->command[2]);
     send(sd, CODE_221, strlen(CODE_205) + 1, 0);
     save_message_in_db(serv, curr_cli);
-    return send_info_client(infos, receiver);
+    send_info_client(infos, receiver);
+    return 0;
 }
 
 int prepare_messages_historic(server **serv, client *curr_cli,
