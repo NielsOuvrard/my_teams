@@ -51,8 +51,14 @@
 #define CODE_217 "217 create_reply_print"
 #define CODE_218 "218 create_reply_event"
 
-#define CODE_222 "222 list"
-#define CODE_223 "223 info"
+#define CODE_222 "222 list_team"
+#define CODE_223 "223 list_channel"
+#define CODE_224 "224 list_thread"
+#define CODE_225 "225 list_reply"
+#define CODE_226 "226 info_team"
+#define CODE_227 "227 info_channel"
+#define CODE_228 "228 info_thread"
+#define CODE_229 "229 info_reply"
 // error
 #define CODE_500 "500 unknown_team"
 #define CODE_501 "501 unknown_channel"
@@ -61,11 +67,11 @@
 #define CODE_504 "504 unauthorized"
 #define CODE_505 "505 already_exist"
 
-#define NB_COMMANDS 27
+#define NB_COMMANDS 33
 
 #define LIST_CODE "200", "201", "202", "203", "204", "205", "206", "207", \
     "208", "209", "210", "211", "212", "213", "214", "215", "216", \
-    "217", "218", "222", "223", \
+    "217", "218", "222", "223", "224", "225", "226", "227", "228", "229", \
     "500", "501", "502", "503", "504", "505"
 
 #define LIST_FUNC \
@@ -78,7 +84,11 @@
     &print_thread_function, &create_thread_function, \
     &print_reply_function, &create_reply_function, \
     /* next 222 */ \
-    &list_function, &info_function, \
+    &list_team_function, &list_channel_function, \
+    &list_thread_function, &list_reply_function, \
+    &info_team_function, &info_channel_function, \
+    &info_thread_function, &info_reply_function, \
+    /* next 500 */ \
     &unknown_team_function, &unknown_channel_function, \
     &unknown_thread_function, &unknown_user_function, \
     &unauthorized_function, &already_exist_function
@@ -188,6 +198,7 @@ int already_exist_function  (client *cli, char **array);
 
 void free_my_array (char **array);
 
+// print function
 
 int print_team_function     (client *cli, char **array);
 
@@ -196,3 +207,23 @@ int print_channel_function  (client *cli, char **array);
 int print_thread_function   (client *cli, char **array);
 
 int print_reply_function    (client *cli, char **array);
+
+// list function
+
+int list_team_function (client *cli, char **array);
+
+int list_channel_function (client *cli, char **array);
+
+int list_thread_function (client *cli, char **array);
+
+int list_reply_function (client *cli, char **array);
+
+// info function
+
+int info_team_function           (client *cli, char **array);
+
+int info_channel_function           (client *cli, char **array);
+
+int info_thread_function           (client *cli, char **array);
+
+int info_reply_function           (client *cli, char **array);

@@ -16,16 +16,6 @@ int create_reply_function   (client *cli, char **array)
     return 0;
 }
 
-int list_function           (client *cli, char **array)
-{
-    return 0;
-}
-
-int info_function           (client *cli, char **array)
-{
-    return 0;
-}
-
 int help_function           (client *cli, char **array)
 {
     printf("list commandes :\n\thelp\n\tlogin\n\t\
