@@ -91,17 +91,14 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
     if (user_not_connected(cli))
         return 0;
     char *to_send = create_handler_first_cond(se, cli_list, cli, sd);
-    printf("create_handler 0, to_send: %s\n", to_send);
     if (to_send == NULL)
         return 0;
     else if (strcmp(to_send, "next") == 0)
         to_send = create_handler_second_cond(se, cli_list, cli, sd);
-    printf("create_handler 1, to_send: %s\n", to_send);
     if (to_send == NULL)
         return 0;
     if (strcmp(to_send, "error") == 0)
         return 0;
-    printf("create_handler 0, to_send: %s\n", to_send);
     send_message_to_every_one(se, cli_list, cli, to_send);
     free(to_send);
     return 0;
