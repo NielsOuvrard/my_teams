@@ -33,8 +33,7 @@ int create_thread_function  (client *cli, char **array)
     strptime(array[3], "%a %b %d %H:%M:%S %Y", &tm);
     time_t t = mktime(&tm);
     if (t == -1) {
-        perror("mktime");
-        exit(EXIT_FAILURE);
+        return 0;
     }
     client_event_thread_created(array[1], array[2], t, array[3], array[4]);
     return 0;

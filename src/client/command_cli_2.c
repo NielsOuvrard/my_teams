@@ -23,8 +23,7 @@ int messages_function       (client *cli, char **array)
         strptime(date, "%a %b %d %H:%M:%S %Y", &tm);
         time_t t = mktime(&tm);
         if (t == -1) {
-            perror("mktime");
-            exit(EXIT_FAILURE);
+            return 0;
         }
         client_private_message_print_messages(sender, t, message);
     }

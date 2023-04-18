@@ -28,8 +28,7 @@ int print_thread_function   (client *cli, char **array)
     strptime(array[3], "%a %b %d %H:%M:%S %Y", &tm);
     time_t t = mktime(&tm);
     if (t == -1) {
-        perror("mktime");
-        exit(EXIT_FAILURE);
+        return 0;
     }
     client_channel_print_threads(array[1], array[2], t,
     array[4], array[5]);
@@ -45,8 +44,7 @@ int print_reply_function    (client *cli, char **array)
     strptime(array[3], "%a %b %d %H:%M:%S %Y", &tm);
     time_t t = mktime(&tm);
     if (t == -1) {
-        perror("mktime");
-        exit(EXIT_FAILURE);
+        return 0;
     }
     client_print_reply_created(array[1], array[2], t, array[4]);
     return 0;

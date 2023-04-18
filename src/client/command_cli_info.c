@@ -33,7 +33,13 @@ int info_thread_function           (client *cli, char **array)
     if (array[1] == NULL || array[2] == NULL || array[3] == NULL ||
         array[4] == NULL || array[5] == NULL)
         return 0;
-    client_print_thread(array[1], array[2], 0, array[4], array[5]);
+    struct tm tm;
+    strptime(array[3], "%a %b %d %H:%M:%S %Y", &tm);
+    time_t t = mktime(&tm);
+    if (t == -1) {
+        return 0;
+    }
+    client_print_thread(array[1], array[2], t, array[4], array[5]);
     return 0;
 }
 
