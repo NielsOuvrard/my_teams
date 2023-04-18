@@ -50,8 +50,9 @@
 #define CODE_216 "216 create_thread_event"
 #define CODE_217 "217 create_reply_print"
 #define CODE_218 "218 create_reply_event"
-#define CODE_222 "222 list\n"
-#define CODE_223 "223 info\n"
+
+#define CODE_222 "222 list"
+#define CODE_223 "223 info"
 // error
 #define CODE_500 "500 unknown_team"
 #define CODE_501 "501 unknown_channel"
@@ -60,18 +61,24 @@
 #define CODE_504 "504 unauthorized"
 #define CODE_505 "505 already_exist"
 
-#define NB_COMMANDS 23
+#define NB_COMMANDS 27
 
 #define LIST_CODE "200", "201", "202", "203", "204", "205", "206", "207", \
     "208", "209", "210", "211", "212", "213", "214", "215", "216", \
+    "217", "218", "222", "223", \
     "500", "501", "502", "503", "504", "505"
 
 #define LIST_FUNC \
     &help_function, &login_function, &logout_function, &users_function, \
     &user_function, &send_function, &messages_function, &subscribe_function, \
     &subscribed_function, &unsubscribe_function, &use_function, \
-    &create_team_function, &create_channel_function, &create_thread_function, \
-    &create_reply_function, &list_function, &info_function, \
+    /* next 211 */ \
+    &print_team_function, &create_team_function, \
+    &print_channel_function, &create_channel_function, \
+    &print_thread_function, &create_thread_function, \
+    &print_reply_function, &create_reply_function, \
+    /* next 222 */ \
+    &list_function, &info_function, \
     &unknown_team_function, &unknown_channel_function, \
     &unknown_thread_function, &unknown_user_function, \
     &unauthorized_function, &already_exist_function
@@ -180,3 +187,12 @@ int unauthorized_function   (client *cli, char **array);
 int already_exist_function  (client *cli, char **array);
 
 void free_my_array (char **array);
+
+
+int print_team_function     (client *cli, char **array);
+
+int print_channel_function  (client *cli, char **array);
+
+int print_thread_function   (client *cli, char **array);
+
+int print_reply_function    (client *cli, char **array);

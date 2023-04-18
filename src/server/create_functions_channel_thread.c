@@ -13,7 +13,6 @@ char *channel_message_to_everyone(char *old_to_send)
     char *rest = &old_to_send[strlen(CODE_213)];
     strcpy(to_send, CODE_214);
     strcat(to_send, rest);
-    printf("to_send: %s\n");
     return to_send;
 }
 
@@ -64,7 +63,6 @@ char *thread_message_to_everyone(char *old_to_send)
     char *rest = &old_to_send[strlen(CODE_215)];
     strcpy(to_send, CODE_216);
     strcat(to_send, rest);
-    printf("to_send: %s\n");
     return to_send;
 }
 
