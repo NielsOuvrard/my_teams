@@ -7,12 +7,13 @@
 
 #include "my_server.h"
 
-char *channel_message_to_everyone(char *old_to_send)
+char *channel_message_to_everyone(char *uuid, char *name, char *description)
 {
     char *to_send = malloc(sizeof(char) * 1024);
-    char *rest = &old_to_send[strlen(CODE_213)];
-    strcpy(to_send, CODE_214);
-    strcat(to_send, rest);
+    strcpy(to_send, CODE_213);
+    strcat(to_send, uuid); strcat(to_send, "\n");
+    strcat(to_send, name); strcat(to_send, "\n");
+    strcat(to_send, description); strcat(to_send, "\n");
     return to_send;
 }
 
@@ -38,7 +39,7 @@ char *create_channel         (server **serv, client **cli_list,
     strcat(to_send, description); strcat(to_send, "\n");
     server_event_channel_created(team_uuid, uuid, name);
     send(sd, to_send, strlen(to_send) + 1, 0);
-    return channel_message_to_everyone(to_send);
+    return channel_message_to_everyone(uuid, name, description);
 }
 
 void create_thread_sql (server **se, client *cur_cli,
@@ -57,12 +58,12 @@ user, title, body, timestamp) VALUES (?, ?, ?, ?, ?, ?);",
     sqlite3_finalize((*se)->stmt);
 }
 
-char *thread_message_to_everyone(char *old_to_send)
+char *thread_message_to_everyone(char *to_send, char *timeStamp, char *title,
+char *body)
 {
-    char *to_send = malloc(sizeof(char) * 1024);
-    char *rest = &old_to_send[strlen(CODE_215)];
-    strcpy(to_send, CODE_216);
-    strcat(to_send, rest);
+    strcat(to_send, timeStamp);
+    strcat(to_send, title); strcat(to_send, "\n");
+    strcat(to_send, body); strcat(to_send, "\n");
     return to_send;
 }
 
@@ -84,6 +85,9 @@ char *create_thread         (server **serv, client **cli_list,
     strcat(to_send, body); strcat(to_send, "\n");
     server_event_thread_created(channel_uuid, uuid, user_uuid,
     title, body);
-    send(sd, to_send, strlen(to_send) + 1, 0);
-    return thread_message_to_everyone(to_send);
+    send(sd, to_send, strlen(to_send) + 1, 0); free(to_send);
+    to_send = malloc(sizeof(char) * 1024); strcpy(to_send, CODE_216);
+    strcat(to_send, uuid); strcat(to_send, "\n");
+    strcat(to_send, user_uuid); strcat(to_send, "\n");
+    return thread_message_to_everyone(to_send, timeStamp, title, body);
 }
