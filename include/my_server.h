@@ -312,3 +312,12 @@ sqlite3 *db);
 
 void send_message_to_every_one(server **se, client **cli_list,
 client *cli, char *message);
+
+//list
+int list_replies(server **serv, client *cli, int sd);
+
+int list_threads(server **serv, client *cli, int sd);
+
+int list_channel(server **serv, client *cli, int sd);
+
+int list_team(server **serv, client *cli, int sd);
