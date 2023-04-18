@@ -7,42 +7,41 @@
 
 #include "my_server.h"
 
-void initialize_message_db(server **serv)
+int initialize_db_2(server **serv)
 {
-    int result;
-    if (sqlite3_open("data/messages.db", &(*serv)->messages_db) != SQLITE_OK)
-        error_sql(*serv, "Can't open database: %s\n");
-    result = sqlite3_prepare_v2((*serv)->messages_db, CREATE_MESSAGES_DB, -1,
+    sqlite3_prepare_v2((*serv)->db, CREATE_CHANNELS_DB, -1,
     &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK)
-        error_sql(*serv, "Failed to prepare statement: %s\n");
-    result = sqlite3_step((*serv)->stmt);
-    if (result != SQLITE_DONE)
-        error_sql(*serv, "Failed to execute statement: %s\n");
-    result = sqlite3_finalize((*serv)->stmt);
-    if (result != SQLITE_OK)
-        error_sql(*serv, "Failed to finalize statement: %s\n");
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    sqlite3_prepare_v2((*serv)->db, CREATE_THREADS_DB, -1,
+    &(*serv)->stmt, NULL);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    sqlite3_prepare_v2((*serv)->db, CREATE_REPLIES_DB, -1,
+    &(*serv)->stmt, NULL);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    return 1;
 }
 
-void initialize_user_db(server **serv)
+int initialize_db(server **serv)
 {
-    int result;
-    if (sqlite3_open("data/users.db", &(*serv)->users_db) != SQLITE_OK)
+    if (sqlite3_open("data/data.db", &(*serv)->db) != SQLITE_OK) {
         error_sql(*serv, "Can't open database: %s\n");
-    result = sqlite3_prepare_v2((*serv)->users_db, CREATE_USER_DB, -1,
+        sqlite3_close((*serv)->db);
+        return -1;
+    }
+    sqlite3_prepare_v2((*serv)->db, CREATE_USERS_DB, -1,
     &(*serv)->stmt, NULL);
-    if (result != SQLITE_OK)
-        error_sql(*serv, "Failed to prepare statement: %s\n");
-    result = sqlite3_step((*serv)->stmt);
-    if (result != SQLITE_DONE)
-        error_sql(*serv, "Failed to execute statement: %s\n");
-    result = sqlite3_finalize((*serv)->stmt);
-    if (result != SQLITE_OK)
-        error_sql(*serv, "Failed to finalize statement: %s\n");
-}
-
-void initialize_db(server **serv)
-{
-    initialize_user_db(serv);
-    initialize_message_db(serv);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    sqlite3_prepare_v2((*serv)->db, CREATE_MESSAGES_DB, -1,
+    &(*serv)->stmt, NULL);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    sqlite3_prepare_v2((*serv)->db, CREATE_TEAMS_DB, -1,
+    &(*serv)->stmt, NULL);
+    sqlite3_step((*serv)->stmt);
+    sqlite3_finalize((*serv)->stmt);
+    return initialize_db_2(serv);
 }

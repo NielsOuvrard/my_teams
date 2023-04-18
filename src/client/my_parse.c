@@ -56,6 +56,8 @@ char **my_str_parse (char *str, char *part)
             tab[index_tab][k] = str[i + k];
         tab[index_tab++][x] = '\0';
         i += x - 1;
+        if (tab[index_tab - 1][0] == '\0')
+            free(tab[index_tab - 1]);
     }
     tab[y] = NULL;
     return tab;

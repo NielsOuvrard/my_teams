@@ -10,11 +10,13 @@
 void remove_quotes(server **serv)
 {
     for (int i = 1; (*serv)->command[i] != NULL; i++) {
-        char *tmp = strdup((*serv)->command[i]);
-        tmp = strchr(tmp, '\"');
+        char *tmp = strchr((*serv)->command[i], '\"');
         if (tmp != NULL) {
-            (*serv)->command[i] = &(*serv)->command[i][1];
-            (*serv)->command[i][strlen((*serv)->command[i]) - 1] = '\0';
+            char *new = malloc(sizeof(char) * strlen((*serv)->command[i]));
+            strcpy(new, (*serv)->command[i] + 1);
+            new[strlen(new) - 1] = '\0';
+            free((*serv)->command[i]);
+            (*serv)->command[i] = new;
         }
     }
 }
@@ -44,7 +46,7 @@ char **get_command(int sd)
 
 void error_sql(server *serv, char *error)
 {
-    fprintf(stderr, error, sqlite3_errmsg(serv->users_db));
+    fprintf(stderr, error, sqlite3_errmsg(serv->db));
     exit (84);
 }
 
@@ -53,7 +55,7 @@ void change_status_user (server **serv, const char *uuid_text, int status)
     char request[1024], *err_msg;
     sprintf(request, "UPDATE users SET connected = %d WHERE uuid = '%s'",
     status, uuid_text);
-    int rc = sqlite3_exec((*serv)->users_db, request, 0, 0, &err_msg);
+    int rc = sqlite3_exec((*serv)->db, request, 0, 0, &err_msg);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "SQL error: %s\n", err_msg);
         sqlite3_free(err_msg);

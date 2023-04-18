@@ -14,10 +14,21 @@ int messages_function       (server **serv, client **cli_list,
     return 0;
 }
 
-int subscribe_function      (server **serv, client **cli_list,
-                            client *current_client, int sd)
+bool user_not_subscribed(server **se, client *cli, char *team_uuid,
+sqlite3 *db)
 {
-    return 0;
+    sqlite3_prepare_v2(db, "SELECT user_uuids FROM teams WHERE uuid = ?;",
+    -1, &(*se)->stmt, NULL);
+    sqlite3_bind_text((*se)->stmt, 1, team_uuid, -1, SQLITE_STATIC);
+    sqlite3_step((*se)->stmt);
+    char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
+    if (user_uuids == NULL || strstr(user_uuids, cli->uuid_text) == NULL) {
+        sqlite3_finalize((*se)->stmt);
+        send(cli->socket, CODE_504, strlen(CODE_504) + 1, 0);
+        return true;
+    }
+    sqlite3_finalize((*se)->stmt);
+    return false;
 }
 
 int subscribed_function     (server **serv, client **cli_list,
@@ -26,14 +37,24 @@ int subscribed_function     (server **serv, client **cli_list,
     return 0;
 }
 
-int unsubscribe_function    (server **serv, client **cli_list,
-                            client *current_client, int sd)
-{
-    return 0;
-}
-
 int use_function            (server **serv, client **cli_list,
-                            client *current_client, int sd)
+                            client *curr_cli, int sd)
 {
+    if (user_not_connected(curr_cli))
+        return 0;
+    curr_cli->team = NULL;
+    curr_cli->channel = NULL;
+    curr_cli->thread = NULL;
+    if (args_check((*serv)->command, 2, sd))
+        curr_cli->team = strdup((*serv)->command[1]);
+    if (args_check((*serv)->command, 3, sd)) {
+        curr_cli->team = strdup((*serv)->command[1]);
+        curr_cli->channel = strdup((*serv)->command[2]);
+    }
+    if (args_check((*serv)->command, 4, sd)) {
+        curr_cli->team = strdup((*serv)->command[1]);
+        curr_cli->channel = strdup((*serv)->command[2]);
+        curr_cli->thread = strdup((*serv)->command[3]);
+    }
     return 0;
 }

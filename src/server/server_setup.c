@@ -7,26 +7,17 @@
 
 #include "my_server.h"
 
-int create_socket(void)
-{
-    int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socket_fd == -1) {
-        perror("socket");
-        exit(EXIT_FAILURE);
-    }
-    return socket_fd;
-}
-
-void initialize_server(int socket_fd, struct sockaddr_in address)
+int initialize_server(int socket_fd, struct sockaddr_in address)
 {
     if (bind(socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("Failed to bind socket");
-        exit(EXIT_FAILURE);
+        return -1;
     }
     if (listen(socket_fd, MAX_CLIENTS) < 0) {
         perror("Failed to listen");
-        exit(EXIT_FAILURE);
+        return -1;
     }
+    return 1;
 }
 
 fct_server_t *array_struct(void)
@@ -45,7 +36,12 @@ server *construct_struct(int port)
 {
     server *serv = malloc(sizeof(server));
     serv->port = port;
-    serv->socket_fd = create_socket();
+    serv->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (serv->socket_fd == -1) {
+        perror("socket");
+        free(serv);
+        return NULL;
+    }
     serv->address.sin_family = AF_INET;
     serv->address.sin_addr.s_addr = INADDR_ANY;
     serv->address.sin_port = htons(port);

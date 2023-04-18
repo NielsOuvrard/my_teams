@@ -18,6 +18,9 @@ void initialize_client(client **clients)
         (*clients)[i].address.sin_family = AF_INET;
         (*clients)[i].address.sin_port = htons(0);
         (*clients)[i].address.sin_addr.s_addr = htonl(INADDR_ANY);
+        (*clients)[i].channel = NULL;
+        (*clients)[i].thread = NULL;
+        (*clients)[i].team = NULL;
         uuid_clear((*clients)[i].uuid);
     }
 }
@@ -37,9 +40,12 @@ void add_client(client **clients, int socket_fd, struct sockaddr_in address)
 void remove_client(client *clients, int client_fd)
 {
     for (int i = 0; i != MAX_CLIENTS; i++) {
+        if (clients->socket == client_fd && clients->username)
+            free(clients->username);
         if (clients->socket == client_fd) {
             clients->socket = -1;
             uuid_clear(clients->uuid);
+            free(clients->uuid_text);
             clients->uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
             clients->username = NULL;
             clients->is_logged = false;
@@ -65,7 +71,7 @@ void handle_new_connection(server **serv, client **clients, fd_set copy_fds)
             (*serv)->max_fds = new_socket_fd;
         }
         add_client(clients, new_socket_fd, (*serv)->address);
-        send(new_socket_fd, "220 Service ready for new user.\n", 33, 0);
+        send(new_socket_fd, "220 Serviço pronto para novo usuário.\n", 41, 0);
     }
 }
 
@@ -76,6 +82,8 @@ int client_communication(server **serv, client **clients, fd_set copy_fds)
         if (FD_ISSET(sd, &copy_fds)) {
             (*serv)->command = get_command(sd);
             command_handler(serv, clients, &(*clients)[i], sd);
+            free_my_array((*serv)->command);
+            (*serv)->command = NULL;
         }
     }
 }

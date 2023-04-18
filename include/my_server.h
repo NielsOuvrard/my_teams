@@ -45,9 +45,25 @@
 #define CODE_208 "208 subscribed\n"
 #define CODE_209 "209 unsubscribe\n"
 #define CODE_210 "210 use\n"
-#define CODE_211 "211 create\n"
-#define CODE_212 "212 list\n"
-#define CODE_213 "213 info\n"
+#define CODE_211 "211 create_team_print\n"
+#define CODE_212 "212 create_team_event\n"
+#define CODE_213 "213 create_channel_print\n"
+#define CODE_214 "214 create_channel_event\n"
+#define CODE_215 "215 create_thread_print\n"
+#define CODE_216 "216 create_thread_event\n"
+#define CODE_217 "217 create_reply_print\n"
+#define CODE_218 "218 create_reply_event\n"
+//need to complete list and info to handle team, channel and thread
+#define CODE_222 "222 list_team\n"
+#define CODE_223 "223 list_channel\n"
+#define CODE_224 "224 list_thread\n"
+#define CODE_225 "225 list_reply\n"
+#define CODE_226 "226 info_team\n"
+#define CODE_227 "227 info_channel\n"
+#define CODE_228 "228 info_thread\n"
+#define CODE_229 "229 info_reply\n"
+#define CODE_230 "230 already_subscribed\n"
+#define CODE_231 "231 already_unsubscribed\n"
 #define CODE_500 "500 client_error_unknown_team\n"
 #define CODE_501 "501 client_error_unknown_channel\n"
 #define CODE_502 "502 client_error_unknown_thread\n"
@@ -59,12 +75,29 @@
 #define CODE_221 "221 message_sent_to_receiver\n"
 #define CODE_331 "331 user_already_logged\n"
 #define CODE_590 "590 command_invalid_arguments\n"
+#define CODE_506 "506 create_command_error\n"
 
-#define CREATE_USER_DB "CREATE TABLE IF NOT EXISTS users \
+#define CREATE_USERS_DB "CREATE TABLE IF NOT EXISTS users \
 (id INTEGER PRIMARY KEY, uuid TEXT, username TEXT, connected NUMBER);"
 
-#define CREATE_MESSAGES_DB "CREATE TABLE IF NOT EXISTS messages \
-(id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, timestamp TEXT);"
+#define CREATE_MESSAGES_DB " CREATE TABLE IF NOT EXISTS messages \
+(id INTEGER PRIMARY KEY, sender TEXT, receiver TEXT, message TEXT, \
+timestamp TEXT);"
+
+#define CREATE_TEAMS_DB "CREATE TABLE IF NOT EXISTS teams \
+(id INTEGER PRIMARY KEY, uuid TEXT, name TEXT, description TEXT, \
+user_uuids TEXT);"
+
+#define CREATE_CHANNELS_DB "CREATE TABLE IF NOT EXISTS channels \
+(id INTEGER PRIMARY KEY, uuid TEXT, team TEXT, name TEXT, description TEXT);"
+
+#define CREATE_THREADS_DB "CREATE TABLE IF NOT EXISTS threads \
+(id INTEGER PRIMARY KEY, uuid TEXT, channel TEXT, user TEXT, title TEXT,\
+body TEXT, timestamp TEXT);"
+
+#define CREATE_REPLIES_DB "CREATE TABLE IF NOT EXISTS replies \
+(id INTEGER PRIMARY KEY, thread TEXT, user TEXT, body TEXT, \
+timestamp TEXT);"
 
 #define NB_COMMANDS 14
 
@@ -96,11 +129,13 @@ typedef struct client_t {
     struct sockaddr_in address;
     uuid_t uuid;
     char *uuid_text;
+    char *team;
+    char *channel;
+    char *thread;
 } client;
 
 typedef struct server_t {
-    sqlite3 *users_db;
-    sqlite3 *messages_db;
+    sqlite3 *db;
     sqlite3_stmt *stmt;
     int socket_fd;
     int max_fds;
@@ -178,7 +213,7 @@ DIR *open_data_users(void);
 
 char **get_infos(server *serv, char *file_path);
 
-void initialize_server(int socket_fd, struct sockaddr_in address);
+int initialize_server(int socket_fd, struct sockaddr_in address);
 
 void initialize_client(client **clients);
 
@@ -215,28 +250,21 @@ void preload_users(server *serv);
 int login_handler(server **serv, client *current_client, int sd);
 
 //logout
-void logout_handler(server **serv, client *current_client, int sd);
+int logout_handler(server **serv, client *current_client, int sd);
 
 //checks
 bool args_check(char **command, int nb_args, int sd);
 bool user_connected(client *current_client);
 bool user_not_connected(client *current_client);
 bool check_if_user_exist(server **se, int sd);
-
-
-//file
-void write_in_file(char *file, char *str);
-void replace_line_file(char *find, char *new, char *file);
+bool check_if_uuid_exists(char *uuid, char *table, sqlite3 *db);
+bool check_if_name_exists(char *uuid, char *table, sqlite3 *db);
 
 //user or users
 void users_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
 void user_list_handler(server **serv, client **cli_list,
 client *current_client, int sd);
-
-//load infos
-char **load_infos(char *file_path);
-char **find_content(char *file_path, char *loking_for);
 
 void get_folder_files(server *serv, char *path, char *func_name,
 int nbr_args);
@@ -258,6 +286,49 @@ int find_message_receiver(server **serv, client **clients);
 void save_message_in_db(server **serv, client *curr_cli);
 
 //load db
-void initialize_message_db(server **serv);
-void initialize_user_db(server **serv);
-void initialize_db(server **serv);
+int initialize_db(server **serv);
+
+// looking for uuid
+
+char *get_team_by_uuid (server **, char *);
+
+char *get_channel_by_uuid (server **, char *, char *);
+
+char *get_thread_by_uuid (server **, char *, char *, char *);
+
+//create
+
+char *create_team (server **serv, client **cli_list, client *cli, int sd);
+char *create_channel (server **serv, client **cli_list, client *cli, int sd);
+char *create_thread (server **serv, client **cli_list, client *cli, int sd);
+char *create_reply (server **serv, client **cli_list, client *cli, int sd);
+
+char *generate_uuid(void);
+
+//create
+int create_handler(server **se, client **cli_list, client *curr_cli, int sd);
+
+//event
+void send_event_logged_in(server **serv, client **cli_list, client *curr_cli,
+int sd);
+
+void send_event_logged_out(server **serv, client **cli_list,
+client *current_client, int sd);
+
+bool user_not_subscribed(server **se, client *cli, char *team_uuid,
+sqlite3 *db);
+
+bool user_already_subscribed(server **se, client *cli, char *team_uuid,
+sqlite3 *db);
+
+void send_message_to_every_one(server **se, client **cli_list,
+client *cli, char *message);
+
+//list
+int list_replies(server **serv, client *cli, int sd);
+
+int list_threads(server **serv, client *cli, int sd);
+
+int list_channel(server **serv, client *cli, int sd);
+
+int list_team(server **serv, client *cli, int sd);

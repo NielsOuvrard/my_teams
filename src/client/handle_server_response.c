@@ -22,17 +22,19 @@ int check_all_functions (client *cli, char **array)
             return cli->funct_client[i].fct(cli, array);
         }
     }
+    return 0;
 }
 
 // print_array(array);
-void handle_server_response(client *cli)
+int handle_server_response(client *cli)
 {
     char server_reply[2000];
     if (recv(cli->sock, server_reply, 2000, 0) < 0) {
         puts("recv failed");
-        return;
+        return 84;
     }
     char **array = my_str_parse(server_reply, "\n");
-    check_all_functions(cli, array);
+    int return_val = check_all_functions(cli, array);
     free_my_array(array);
+    return return_val;
 }

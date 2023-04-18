@@ -24,6 +24,8 @@
 #include <uuid/uuid.h>
 #include <dlfcn.h>
 #include <stdarg.h>
+#define _XOPEN_SOURCE
+#include <time.h>
 
 #include "logging_client.h"
 
@@ -42,9 +44,23 @@
 #define CODE_208 "208 subscribed"
 #define CODE_209 "209 unsubscribe"
 #define CODE_210 "210 use"
-#define CODE_211 "211 create"
-#define CODE_212 "212 list"
-#define CODE_213 "213 info"
+#define CODE_211 "211 create_team_print"
+#define CODE_212 "212 create_team_event"
+#define CODE_213 "213 create_channel_print"
+#define CODE_214 "214 create_channel_event"
+#define CODE_215 "215 create_thread_print"
+#define CODE_216 "216 create_thread_event"
+#define CODE_217 "217 create_reply_print"
+#define CODE_218 "218 create_reply_event"
+
+#define CODE_222 "222 list_team"
+#define CODE_223 "223 list_channel"
+#define CODE_224 "224 list_thread"
+#define CODE_225 "225 list_reply"
+#define CODE_226 "226 info_team"
+#define CODE_227 "227 info_channel"
+#define CODE_228 "228 info_thread"
+#define CODE_229 "229 info_reply"
 // error
 #define CODE_500 "500 unknown_team"
 #define CODE_501 "501 unknown_channel"
@@ -53,17 +69,25 @@
 #define CODE_504 "504 unauthorized"
 #define CODE_505 "505 already_exist"
 
-#define NB_COMMANDS 20
+#define NB_COMMANDS 33
 
 #define LIST_CODE "200", "201", "202", "203", "204", "205", "206", "207", \
-    "208", "209", "210", "211", "212", "213", "500", "501", "502", "503", \
-    "504", "505"
+    "208", "209", "210", "211", "212", "213", "214", "215", "216", \
+    "217", "218", "222", "223", "224", "225", "226", "227", "228", "229", \
+    "500", "501", "502", "503", "504", "505"
 
 #define LIST_FUNC \
     &help_function, &login_function, &logout_function, &users_function, \
     &user_function, &send_function, &messages_function, &subscribe_function, \
     &subscribed_function, &unsubscribe_function, &use_function, \
-    &create_function, &list_function, &info_function, \
+    &print_team_function, &create_team_function, \
+    &print_channel_function, &create_channel_function, \
+    &print_thread_function, &create_thread_function, \
+    &print_reply_function, &create_reply_function, \
+    &list_team_function, &list_channel_function, \
+    &list_thread_function, &list_reply_function, \
+    &info_team_function, &info_channel_function, \
+    &info_thread_function, &info_reply_function, \
     &unknown_team_function, &unknown_channel_function, \
     &unknown_thread_function, &unknown_user_function, \
     &unauthorized_function, &already_exist_function
@@ -85,12 +109,10 @@ typedef struct fct_client {
 typedef struct client_t {
     char *name;
     char *uuid;
-    char *team;
-    char *channel;
-    char *thread;
     bool is_connected;
     int sock;
     fct_client_t *funct_client;
+    // define context server side my dear
 } client;
 
 char **my_str_to_word_array(char *str);
@@ -99,7 +121,7 @@ void print_array(char **);
 
 char *loop_get_message(char *str);
 
-void handle_server_response(client *cli);
+int handle_server_response(client *cli);
 
 char **my_str_parse (char *str, char *part);
 
@@ -142,7 +164,13 @@ int unsubscribe_function    (client *cli, char **array);
 int use_function            (client *cli, char **array);
 
 // • /create : based on the context, create the sub resource (see below)
-int create_function         (client *cli, char **array);
+int create_team_function    (client *cli, char **array);
+
+int create_channel_function (client *cli, char **array);
+
+int create_thread_function  (client *cli, char **array);
+
+int create_reply_function   (client *cli, char **array);
 
 // • /list : based on the context, list all the sub resources (see below)
 int list_function           (client *cli, char **array);
@@ -166,3 +194,37 @@ int unknown_user_function   (client *cli, char **array);
 int unauthorized_function   (client *cli, char **array);
 
 int already_exist_function  (client *cli, char **array);
+
+void free_my_array (char **array);
+
+// print function
+
+int print_team_function     (client *cli, char **array);
+
+int print_channel_function  (client *cli, char **array);
+
+int print_thread_function   (client *cli, char **array);
+
+int print_reply_function    (client *cli, char **array);
+
+// list function
+
+int list_team_function (client *cli, char **array);
+
+int list_channel_function (client *cli, char **array);
+
+int list_thread_function (client *cli, char **array);
+
+int list_reply_function (client *cli, char **array);
+
+// info function
+
+int info_team_function           (client *cli, char **array);
+
+int info_channel_function           (client *cli, char **array);
+
+int info_thread_function           (client *cli, char **array);
+
+int info_reply_function           (client *cli, char **array);
+
+char *strptime(const char *s, const char *format, struct tm *tm);
