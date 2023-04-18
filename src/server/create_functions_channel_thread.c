@@ -7,6 +7,16 @@
 
 #include "my_server.h"
 
+char *channel_message_to_everyone(char *old_to_send)
+{
+    char *to_send = malloc(sizeof(char) * 1024);
+    char *rest = &old_to_send[strlen(CODE_213)];
+    strcpy(to_send, CODE_214);
+    strcat(to_send, rest);
+    printf("to_send: %s\n");
+    return to_send;
+}
+
 char *create_channel         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
@@ -23,12 +33,13 @@ char *create_channel         (server **serv, client **cli_list,
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
     char *to_send = malloc(sizeof(char) * 1024);
-    strcpy(to_send, CODE_212);
+    strcpy(to_send, CODE_213);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
     server_event_channel_created(team_uuid, uuid, name);
-    return to_send;
+    send(sd, to_send, strlen(to_send) + 1, 0);
+    return channel_message_to_everyone(to_send);
 }
 
 void create_thread_sql (server **se, client *cur_cli,
@@ -47,6 +58,16 @@ user, title, body, timestamp) VALUES (?, ?, ?, ?, ?, ?);",
     sqlite3_finalize((*se)->stmt);
 }
 
+char *thread_message_to_everyone(char *old_to_send)
+{
+    char *to_send = malloc(sizeof(char) * 1024);
+    char *rest = &old_to_send[strlen(CODE_215)];
+    strcpy(to_send, CODE_216);
+    strcat(to_send, rest);
+    printf("to_send: %s\n");
+    return to_send;
+}
+
 char *create_thread         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
@@ -57,7 +78,7 @@ char *create_thread         (server **serv, client **cli_list,
     timeStamp = ctime(&now);
     create_thread_sql(serv, cur_cli, timeStamp, uuid);
     char *to_send = malloc(sizeof(char) * 1024);
-    strcpy(to_send, CODE_213);
+    strcpy(to_send, CODE_215);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, user_uuid); strcat(to_send, "\n");
     strcat(to_send, timeStamp);
@@ -65,5 +86,6 @@ char *create_thread         (server **serv, client **cli_list,
     strcat(to_send, body); strcat(to_send, "\n");
     server_event_thread_created(channel_uuid, uuid, user_uuid,
     title, body);
-    return to_send;
+    send(sd, to_send, strlen(to_send) + 1, 0);
+    return thread_message_to_everyone(to_send);
 }

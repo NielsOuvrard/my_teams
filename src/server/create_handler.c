@@ -14,7 +14,7 @@ char *send_code_and_value(char *code, char *value, int sd);
 
 char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
 {
-    char to_send[1024];
+    char *to_send = malloc(sizeof(char) * 1024);
     memset(to_send, 0, 1024);
     if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
         return send_code_and_value(CODE_500, cli->team, sd);
@@ -24,6 +24,7 @@ char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
     if (!check_if_uuid_exists(cli->thread, "threads", (*se)->db)) {
         return send_code_and_value(CODE_502, cli->thread, sd);
     }
+    to_send = create_reply(se, cli_list, cli, sd);
     return create_reply(se, cli_list, cli, sd);
 }
 
