@@ -32,9 +32,8 @@ char to_send[4096], int sd)
 {
     while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
         char tmp[1024];
-        sprintf(tmp, "%s\n%s\n%s\n%s\n",
+        sprintf(tmp, "%s\n%s\n%s",
         sqlite3_column_text((*serv)->stmt, 1),
-        sqlite3_column_text((*serv)->stmt, 2),
         sqlite3_column_text((*serv)->stmt, 3),
         sqlite3_column_text((*serv)->stmt, 4));
         strcat(to_send, tmp);
@@ -55,9 +54,7 @@ client *curr_cli, int sd)
     char request[1024], to_send[4096];
     strcpy(to_send, CODE_206);
     sprintf(request, "SELECT * FROM messages WHERE (sender = '%s'\
-    AND receiver = '%s') OR (sender = '%s' AND receiver = '%s');",
-    (*serv)->command[1], curr_cli->uuid_text, curr_cli->uuid_text,
-    (*serv)->command[1]);
+    AND receiver = '%s');", (*serv)->command[1], curr_cli->uuid_text);
     int result = sqlite3_prepare_v2((*serv)->db, request,
     -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK) {
@@ -66,6 +63,5 @@ client *curr_cli, int sd)
         sqlite3_errmsg((*serv)->db));
     }
     prepare_messages_historic(serv, curr_cli, to_send, sd);
-    sqlite3_finalize((*serv)->stmt);
     return 0;
 }
