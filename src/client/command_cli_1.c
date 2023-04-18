@@ -28,10 +28,11 @@ int logout_function         (client *cli, char **array)
         client_event_logged_out(cli->uuid, cli->name);
         free(cli->uuid);
         free(cli->name);
+        return -1;
     } else {
         client_event_logged_out(array[1], array[2]);
+        return 0;
     }
-    return -1;
 }
 
 // 7 = client_print_users
