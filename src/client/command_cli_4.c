@@ -29,6 +29,13 @@ int create_thread_function  (client *cli, char **array)
     if (array[1] == NULL || array[2] == NULL ||
     array[3] == NULL || array[4] == NULL)
         return 0;
-    client_event_thread_created(array[1], array[2], 0, array[3], array[4]);
+    struct tm tm;
+    strptime(array[3], "%a %b %d %H:%M:%S %Y", &tm);
+    time_t t = mktime(&tm);
+    if (t == -1) {
+        perror("mktime");
+        exit(EXIT_FAILURE);
+    }
+    client_event_thread_created(array[1], array[2], t, array[3], array[4]);
     return 0;
 }

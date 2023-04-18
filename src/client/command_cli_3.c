@@ -9,6 +9,10 @@
 
 int create_reply_function   (client *cli, char **array)
 {
+    if (array[1] == NULL || array[2] == NULL ||
+    array[3] == NULL || array[4] == NULL)
+        return 0;
+    client_event_thread_reply_received(array[1], array[2], array[3], array[4]);
     return 0;
 }
 
