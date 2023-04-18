@@ -55,6 +55,7 @@ int sd)
 {
     if (!cli->team) {
         if (check_if_name_exists((*se)->command[1], "teams", (*se)->db)) {
+            printf("name exist: %s\n", (*se)->command[1]);
             send(sd, CODE_505, strlen(CODE_505) + 1, 0);
             return NULL;
         } else {

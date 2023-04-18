@@ -76,6 +76,10 @@ char *team_message_to_everyone(char *uuid, char *name, char *description)
 char *create_team         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
+    if (user_not_connected(cur_cli) || !args_check((*serv)->command, 3, sd)) {
+        printf("Error: user not connected or not enough args\n");
+        return NULL;
+    }
     char *uuid = generate_uuid(), *name = (*serv)->command[1];
     char *description = (*serv)->command[2];
     sqlite3_prepare_v2((*serv)->db,
@@ -88,7 +92,7 @@ char *create_team         (server **serv, client **cli_list,
     sqlite3_bind_text((*serv)->stmt, 4, NULL, -1, SQLITE_STATIC);
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
-    char *to_send = malloc(sizeof(char) * 1024);
+    char to_send[1024];
     strcpy(to_send, CODE_211);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");

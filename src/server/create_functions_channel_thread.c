@@ -20,6 +20,8 @@ char *channel_message_to_everyone(char *uuid, char *name, char *description)
 char *create_channel         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
+    if (user_not_connected(cur_cli) || !args_check((*serv)->command, 3, sd))
+        return 0;
     char *uuid = generate_uuid(), *name = (*serv)->command[1];
     char *description = (*serv)->command[2], *team_uuid = cur_cli->team;
     sqlite3_prepare_v2((*serv)->db,
@@ -70,6 +72,8 @@ char *body)
 char *create_thread         (server **serv, client **cli_list,
                             client *cur_cli, int sd)
 {
+    if (user_not_connected(cur_cli) || !args_check((*serv)->command, 3, sd))
+        return 0;
     char *uuid = generate_uuid(), *title = (*serv)->command[1];
     char *body = (*serv)->command[2], *channel_uuid = cur_cli->channel;
     char *timeStamp, *user_uuid = cur_cli->uuid_text;
