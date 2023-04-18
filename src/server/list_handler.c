@@ -9,7 +9,7 @@
 
 int list_replies(server **serv, client *cli, int sd)
 {
-    char request[1024], *to_send = malloc(sizeof(char) * 4096);
+    char request[1024], to_send[1024];
     strcpy(request, "SELECT * FROM replies;");
     sqlite3_prepare_v2((*serv)->db, request, -1, &(*serv)->stmt, NULL);
     strcpy(to_send, CODE_225);
@@ -30,8 +30,8 @@ int list_replies(server **serv, client *cli, int sd)
 
 int list_threads(server **serv, client *cli, int sd)
 {
-    char request[1024], *to_send = malloc(sizeof(char) * 4096);
-    strcpy(request, "SELECT * FROM channels;");
+    char request[1024], to_send[1024];
+    strcpy(request, "SELECT * FROM threads;");
     sqlite3_prepare_v2((*serv)->db, request, -1, &(*serv)->stmt, NULL);
     strcpy(to_send, CODE_224);
     while (sqlite3_step((*serv)->stmt) == SQLITE_ROW) {
@@ -53,7 +53,7 @@ int list_threads(server **serv, client *cli, int sd)
 
 int list_channel(server **serv, client *cli, int sd)
 {
-    char request[1024], *to_send = malloc(sizeof(char) * 4096);
+    char request[1024], to_send[1024];
     strcpy(request, "SELECT * FROM channels;");
     sqlite3_prepare_v2((*serv)->db, request, -1, &(*serv)->stmt, NULL);
     strcpy(to_send, CODE_223);
@@ -72,7 +72,7 @@ int list_channel(server **serv, client *cli, int sd)
 
 int list_team(server **serv, client *cli, int sd)
 {
-    char request[1024], *to_send = malloc(sizeof(char) * 4096);
+    char request[1024], to_send[4096];
     strcpy(request, "SELECT * FROM teams;");
     sqlite3_prepare_v2((*serv)->db, request, -1, &(*serv)->stmt, NULL);
     strcpy(to_send, CODE_222);

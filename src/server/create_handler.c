@@ -49,13 +49,11 @@ char *create_handler_2(server **se, client **cli_list, client *cli, int sd)
     return "error";
 }
 
-// here codding style
 char *create_handler_first_cond(server **se, client **cli_list, client *cli,
 int sd)
 {
     if (!cli->team) {
         if (check_if_name_exists((*se)->command[1], "teams", (*se)->db)) {
-            printf("name exist: %s\n", (*se)->command[1]);
             send(sd, CODE_505, strlen(CODE_505) + 1, 0);
             return NULL;
         } else {

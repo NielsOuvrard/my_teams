@@ -36,10 +36,6 @@ void fill_to_send_users(char *to_send, server **serv)
     strcat(to_send, tmp);
 }
 
-// code 203
-// uuid
-// username
-// status
 int users_function          (server **serv, client **cli_list,
                             client *curr_cli, int sd)
 {

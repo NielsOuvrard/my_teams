@@ -25,7 +25,6 @@ sqlite3 *db)
     if (user_uuids == NULL || strstr(user_uuids, cli->uuid_text) == NULL) {
         sqlite3_finalize((*se)->stmt);
         send(cli->socket, CODE_504, strlen(CODE_504) + 1, 0);
-        sqlite3_finalize((*se)->stmt);
         return true;
     }
     sqlite3_finalize((*se)->stmt);
@@ -38,7 +37,6 @@ int subscribed_function     (server **serv, client **cli_list,
     return 0;
 }
 
-// [“team_uuid”] ? [“channel_uuid”] ? [“thread_uuid”]
 int use_function            (server **serv, client **cli_list,
                             client *curr_cli, int sd)
 {

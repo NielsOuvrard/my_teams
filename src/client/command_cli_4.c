@@ -23,7 +23,6 @@ int create_channel_function (client *cli, char **array)
     return 0;
 }
 
-// remplace 0 by time
 int create_thread_function  (client *cli, char **array)
 {
     if (array[1] == NULL || array[2] == NULL ||
