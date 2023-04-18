@@ -10,7 +10,7 @@
 char *channel_message_to_everyone(char *uuid, char *name, char *description)
 {
     char *to_send = malloc(sizeof(char) * 1024);
-    strcpy(to_send, CODE_213);
+    strcpy(to_send, CODE_214);
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");

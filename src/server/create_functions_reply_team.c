@@ -50,7 +50,7 @@ char *create_reply(server **serv, client **cli_list,
     time_t now = time(NULL);
     time_stamp = ctime(&now);
     sqlite3_prepare_v2((*serv)->db, "INSERT INTO replies (thread, user, \
-    title, body, timestamp) VALUES (?, ?, ?, ?);", -1, &(*serv)->stmt, NULL);
+    body, timestamp) VALUES (?, ?, ?, ?);", -1, &(*serv)->stmt, NULL);
     sqlite3_bind_text((*serv)->stmt, 1, thread_uuid, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 2, user_uuid, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 3, body, -1, SQLITE_STATIC);
