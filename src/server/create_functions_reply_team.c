@@ -84,8 +84,7 @@ char *create_team         (server **serv, client **cli_list,
     char *description = (*serv)->command[2];
     sqlite3_prepare_v2((*serv)->db,
     "INSERT INTO teams (uuid, name, description, user_uuids)\
-    VALUES (?, ?, ?, ?);",
-    -1, &(*serv)->stmt, NULL);
+    VALUES (?, ?, ?, ?);", -1, &(*serv)->stmt, NULL);
     sqlite3_bind_text((*serv)->stmt, 1, uuid, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 2, name, -1, SQLITE_STATIC);
     sqlite3_bind_text((*serv)->stmt, 3, description, -1, SQLITE_STATIC);
@@ -93,10 +92,7 @@ char *create_team         (server **serv, client **cli_list,
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
     char to_send[1024];
-    strcpy(to_send, CODE_211);
-    strcat(to_send, uuid); strcat(to_send, "\n");
-    strcat(to_send, name); strcat(to_send, "\n");
-    strcat(to_send, description); strcat(to_send, "\n");
+    sprintf(to_send, "%s%s\n%s\n%s\n", CODE_211, uuid, name, description);
     server_event_team_created(uuid, name, cur_cli->uuid_text);
     send(sd, to_send, strlen(to_send) + 1, 0);
     return team_message_to_everyone(uuid, name, description);

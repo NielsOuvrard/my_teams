@@ -28,7 +28,8 @@ int list_channel_function (client *cli, char **array)
         char *channel_uuid = array[i];
         char *channel_name = array[i + 1];
         char *channel_description = array[i + 2];
-        client_team_print_channels(channel_uuid, channel_name, channel_description);
+        client_team_print_channels(channel_uuid, channel_name,
+        channel_description);
     }
     return 0;
 }

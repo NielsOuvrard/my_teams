@@ -80,17 +80,14 @@
     &help_function, &login_function, &logout_function, &users_function, \
     &user_function, &send_function, &messages_function, &subscribe_function, \
     &subscribed_function, &unsubscribe_function, &use_function, \
-    /* next 211 */ \
     &print_team_function, &create_team_function, \
     &print_channel_function, &create_channel_function, \
     &print_thread_function, &create_thread_function, \
     &print_reply_function, &create_reply_function, \
-    /* next 222 */ \
     &list_team_function, &list_channel_function, \
     &list_thread_function, &list_reply_function, \
     &info_team_function, &info_channel_function, \
     &info_thread_function, &info_reply_function, \
-    /* next 500 */ \
     &unknown_team_function, &unknown_channel_function, \
     &unknown_thread_function, &unknown_user_function, \
     &unauthorized_function, &already_exist_function
