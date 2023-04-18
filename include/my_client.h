@@ -24,6 +24,8 @@
 #include <uuid/uuid.h>
 #include <dlfcn.h>
 #include <stdarg.h>
+#define _XOPEN_SOURCE
+#include <time.h>
 
 #include "logging_client.h"
 
@@ -227,3 +229,5 @@ int info_channel_function           (client *cli, char **array);
 int info_thread_function           (client *cli, char **array);
 
 int info_reply_function           (client *cli, char **array);
+
+char *strptime(const char *s, const char *format, struct tm *tm);
