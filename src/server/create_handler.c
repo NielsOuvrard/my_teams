@@ -24,7 +24,6 @@ char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
     if (!check_if_uuid_exists(cli->thread, "threads", (*se)->db)) {
         return send_code_and_value(CODE_502, cli->thread, sd);
     }
-    to_send = create_reply(se, cli_list, cli, sd);
     return create_reply(se, cli_list, cli, sd);
 }
 
