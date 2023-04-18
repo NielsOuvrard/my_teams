@@ -33,6 +33,8 @@ int messages_function       (client *cli, char **array)
 
 int subscribe_function      (client *cli, char **array)
 {
+    if (array[1] && array[2])
+        client_print_subscribed(array[1], array[2]);
     return 0;
 }
 
@@ -43,6 +45,8 @@ int subscribed_function     (client *cli, char **array)
 
 int unsubscribe_function    (client *cli, char **array)
 {
+    if (array[1] && array[2])
+        client_print_unsubscribed(array[1], array[2]);
     return 0;
 }
 
