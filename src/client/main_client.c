@@ -20,7 +20,6 @@ struct timeval tv)
         *server_reply = handle_server_response(cli);
     }
     if (*server_reply == -1 || *server_reply == 84) {
-        printf("Server disconnected\n");
         return -1;
     }
     if (FD_ISSET(STDIN_FILENO, &tmp_fds)) {
