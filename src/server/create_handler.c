@@ -37,7 +37,9 @@ char *create_handler_2(server **se, client **cli_list, client *cli, int sd)
             return send_code_and_value(CODE_500, cli->team, sd);
         if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db))
             return send_code_and_value(CODE_501, cli->channel, sd);
-        if (check_if_name_exists((*se)->command[1], "threads", (*se)->db)) {
+        if (check_if_name_exists_where((*se)->command[1], cli->channel,
+        "SELECT title FROM threads WHERE title = ? AND channel = ?;",
+        (*se)->db)) {
             send(sd, CODE_505, strlen(CODE_505) + 1, 0);
             return "error";
         } else {
@@ -72,7 +74,9 @@ int sd)
             send_code_and_value(CODE_500, cli->team, sd);
             return NULL;
         }
-        if (check_if_name_exists((*se)->command[1], "channels", (*se)->db)) {
+        if (check_if_name_exists_where((*se)->command[1], cli->team,
+        "SELECT name FROM channels WHERE name = ? AND team = ?;",
+        (*se)->db)) {
             send(sd, CODE_505, strlen(CODE_505) + 1, 0);
             return NULL;
         } else {
@@ -98,6 +102,6 @@ int create_handler(server **se, client **cli_list, client *cli, int sd)
     if (strcmp(to_send, "error") == 0)
         return 0;
     send_message_to_every_one(se, cli_list, cli, to_send);
-    free(to_send);
+    // free(to_send);
     return 0;
 }

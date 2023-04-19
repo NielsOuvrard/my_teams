@@ -35,7 +35,7 @@ char *create_channel         (server **serv, client **cli_list,
     sqlite3_step((*serv)->stmt);
     sqlite3_finalize((*serv)->stmt);
     char to_send[1024];
-    sprintf(to_send, "%s%s\n%s\n%s\n", CODE_214, uuid, name, description);
+    sprintf(to_send, "%s%s\n%s\n%s\n", CODE_213, uuid, name, description);
     server_event_channel_created(team_uuid, uuid, name);
     send(sd, to_send, strlen(to_send) + 1, 0);
     return channel_message_to_everyone(uuid, name, description);
