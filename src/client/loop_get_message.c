@@ -7,29 +7,6 @@
 
 #include "my_client.h"
 
-bool check_valid_command_args(char *message)
-{
-    int count = 0, nbr_args = 0;
-    char **array = my_str_parse(message, " ");
-    for (int i = 0; array[i] != NULL; i++, nbr_args++);
-    if (nbr_args <= 1) {
-        free_my_array(array);
-        return true;
-    }
-    for (int i = 1; array[i] != NULL; i++) {
-        char *tmp = array[i];
-        tmp = strchr(tmp, '\"');
-        while (tmp != NULL) {
-            count++;
-            tmp = strchr(tmp + 1, '\"');
-        }
-    }
-    free_my_array(array);
-    if (count % 2 != 0 || ((count / 2) + 1) != nbr_args || count == 0)
-        return false;
-    return true;
-}
-
 char *get_message(void)
 {
     char *line = NULL;
@@ -41,7 +18,6 @@ char *get_message(void)
     return line;
 }
 
-// invalid read of size 1 line 44
 char *loop_get_message(char *message)
 {
     if (message == NULL) {
@@ -56,8 +32,7 @@ char *loop_get_message(char *message)
         message = NULL;
         return loop_get_message(message);
     }
-    if (message[strlen(message) - 1] != '\n' ||
-    check_valid_command_args(message) == false) {
+    if (message[strlen(message) - 1] != '\n') {
         free(message);
         message = NULL;
         return loop_get_message(message);
