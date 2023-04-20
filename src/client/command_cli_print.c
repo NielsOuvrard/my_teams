@@ -9,13 +9,13 @@
 
 int print_team_function     (client *cli, char **array)
 {
-    client_print_teams(array[1], array[2], array[3]);
+    client_print_team_created(array[1], array[2], array[3]);
     return 0;
 }
 
 int print_channel_function  (client *cli, char **array)
 {
-    client_team_print_channels(array[1], array[2], array[3]);
+    client_print_channel_created(array[1], array[2], array[3]);
     return 0;
 }
 
@@ -30,7 +30,7 @@ int print_thread_function   (client *cli, char **array)
     if (t == -1) {
         return 0;
     }
-    client_channel_print_threads(array[1], array[2], t,
+    client_print_thread_created(array[1], array[2], t,
     array[4], array[5]);
     return 0;
 }

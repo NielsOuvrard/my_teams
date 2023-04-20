@@ -22,21 +22,22 @@ int to_everyone)
     char *to_send = malloc(sizeof(char) * 1024);
     if (to_everyone == 1) {
         strcpy(to_send, CODE_218);
-    } else {
-        strcpy(to_send, CODE_217);
-    }
-    strcat(to_send, curr_cli->team);
-    strcat(to_send, "\n");
-    strcat(to_send, curr_cli->thread);
-    strcat(to_send, "\n");
-    if (to_everyone == 1) {
-        strcat(to_send, curr_cli->username);
+        strcat(to_send, curr_cli->team);
+        strcat(to_send, "\n");
+        strcat(to_send, curr_cli->thread);
+        strcat(to_send, "\n");
+        strcat(to_send, curr_cli->uuid_text);
         strcat(to_send, "\n");
     } else {
+        strcpy(to_send, CODE_217);
+        strcat(to_send, curr_cli->thread);
+        strcat(to_send, "\n");
+        strcat(to_send, curr_cli->uuid_text);
+        strcat(to_send, "\n");
         strcat(to_send, time_stamp);
+        strcat(to_send, "\n");
     }
-    strcat(to_send, (*serv)->command[1]);
-    strcat(to_send, "\n");
+    strcat(to_send, (*serv)->command[1]); strcat(to_send, "\n");
     return to_send;
 }
 
