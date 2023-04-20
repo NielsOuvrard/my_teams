@@ -42,9 +42,7 @@ int use_function            (server **serv, client **cli_list,
 {
     if (user_not_connected(curr_cli))
         return 0;
-    curr_cli->team = NULL;
-    curr_cli->channel = NULL;
-    curr_cli->thread = NULL;
+    clean_use_client(curr_cli);
     if (args_check((*serv)->command, 2, sd))
         curr_cli->team = strdup((*serv)->command[1]);
     if (args_check((*serv)->command, 3, sd)) {

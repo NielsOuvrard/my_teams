@@ -14,6 +14,7 @@ char *channel_message_to_everyone(char *uuid, char *name, char *description)
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
+    free(uuid);
     return to_send;
 }
 
@@ -77,7 +78,7 @@ char *create_thread         (server **serv, client **cli_list,
     time_t now = time(NULL);
     timeStamp = ctime(&now);
     create_thread_sql(serv, cur_cli, timeStamp, uuid);
-    char to_send[1024];
+    char *to_send = malloc(sizeof(char) * 1024);
     sprintf(to_send, "%s%s\n%s\n%s%s\n%s\n", CODE_215, uuid, user_uuid,
     timeStamp, title, body);
     server_event_thread_created(channel_uuid, uuid, user_uuid,
@@ -85,5 +86,6 @@ char *create_thread         (server **serv, client **cli_list,
     send(sd, to_send, strlen(to_send) + 1, 0);
     memset(to_send, 0, 1024);
     sprintf(to_send, "%s%s\n%s\n", CODE_216, uuid, user_uuid);
+    free(uuid);
     return thread_message_to_everyone(to_send, timeStamp, title, body);
 }

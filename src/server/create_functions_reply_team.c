@@ -61,6 +61,7 @@ char *create_reply(server **serv, client **cli_list,
     server_event_reply_created(thread_uuid, user_uuid, body);
     char *to_send = to_send_reply(serv, curr_cli, time_stamp, 0);
     send(sd, to_send, strlen(to_send) + 1, 0);
+    free(to_send);
     return to_send_reply(serv, curr_cli, time_stamp, 1);
 }
 
@@ -71,6 +72,7 @@ char *team_message_to_everyone(char *uuid, char *name, char *description)
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
+    free(uuid);
     return to_send;
 }
 

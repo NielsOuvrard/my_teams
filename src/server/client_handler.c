@@ -40,15 +40,16 @@ void add_client(client **clients, int socket_fd, struct sockaddr_in address)
 void remove_client(client *clients, int client_fd)
 {
     for (int i = 0; i != MAX_CLIENTS; i++) {
-        if (clients->socket == client_fd && clients->username)
-            free(clients->username);
-        if (clients->socket == client_fd) {
-            clients->socket = -1;
-            uuid_clear(clients->uuid);
-            free(clients->uuid_text);
-            clients->uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
-            clients->username = NULL;
-            clients->is_logged = false;
+        if (clients[i].socket == client_fd && clients[i].username)
+            free(clients[i].username);
+        if (clients[i].socket == client_fd) {
+            clean_use_client(&clients[i]);
+            clients[i].socket = -1;
+            uuid_clear(clients[i].uuid);
+            free(clients[i].uuid_text);
+            clients[i].uuid_text = malloc(sizeof(uuid_t) * 2 + 5);
+            clients[i].username = NULL;
+            clients[i].is_logged = false;
             return;
         }
     }

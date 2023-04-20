@@ -57,8 +57,10 @@ char *parse_by_quote(char *str)
     }
     new[i] = '\"';
     new[i + 1] = '\0';
-    if (in_quote != 2)
+    if (in_quote != 2) {
+        free(new);
         return NULL;
+    }
     return new;
 }
 

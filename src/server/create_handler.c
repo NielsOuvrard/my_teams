@@ -12,96 +12,91 @@ client *cli, char *message);
 
 char *send_code_and_value(char *code, char *value, int sd);
 
-char *create_handler_3(server **se, client **cli_list, client *cli, int sd)
+int handler_create_team (server **se, client **cli_list, client *cli, int sd)
 {
-    char *to_send = malloc(sizeof(char) * 1024);
-    memset(to_send, 0, 1024);
+    if (check_if_name_exists((*se)->command[1], "teams", (*se)->db)) {
+        send(sd, CODE_505, strlen(CODE_505) + 1, 0);
+    } else {
+        char *to_send = create_team(se, cli_list, cli, sd);
+        send_message_to_every_one(se, cli_list, cli, to_send);
+        free(to_send);
+    }
+    return 0;
+}
+
+int handler_create_channel (server **se, client **cli_list, client *cli, int sd)
+{
     if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
-        return send_code_and_value(CODE_500, cli->team, sd);
-    } else if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db)) {
-        return send_code_and_value(CODE_501, cli->channel, sd);
+        send_code_and_value(CODE_500, cli->team, sd);
+        return 0;
+    }
+    if (check_if_name_exists_where((*se)->command[1], cli->team,
+    "SELECT name FROM channels WHERE name = ? AND team = ?;",
+    (*se)->db)) {
+        send(sd, CODE_505, strlen(CODE_505) + 1, 0);
+    } else {
+        char *to_send = create_channel(se, cli_list, cli, sd);
+        send_message_to_every_one(se, cli_list, cli, to_send);
+        free(to_send);
+    }
+    return 0;
+}
+
+int handler_create_thread (server **se, client **cli_list, client *cli, int sd)
+{
+    if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
+        send_code_and_value(CODE_500, cli->team, sd);
+        return 0;
+    }
+    if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db)) {
+        send_code_and_value(CODE_501, cli->channel, sd);
+        return 0;
+    }
+    if (check_if_name_exists_where((*se)->command[1], cli->channel,
+    "SELECT title FROM threads WHERE title = ? AND channel = ?;",
+    (*se)->db)) {
+        send(sd, CODE_505, strlen(CODE_505) + 1, 0);
+    } else {
+        char *to_send = create_thread(se, cli_list, cli, sd);
+        send_message_to_every_one(se, cli_list, cli, to_send);
+        free(to_send);
+    }
+    return 0;
+}
+
+int handler_create_reply (server **se, client **cli_list, client *cli, int sd)
+{
+    if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
+        send_code_and_value(CODE_500, cli->team, sd);
+        return 0;
+    }
+    if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db)) {
+        send_code_and_value(CODE_501, cli->channel, sd);
+        return 0;
     }
     if (!check_if_uuid_exists(cli->thread, "threads", (*se)->db)) {
-        return send_code_and_value(CODE_502, cli->thread, sd);
+        send_code_and_value(CODE_502, cli->thread, sd);
+        return 0;
     }
-    return create_reply(se, cli_list, cli, sd);
-}
-
-char *create_handler_2(server **se, client **cli_list, client *cli, int sd)
-{
-    char to_send[1024] = {0};
-    if (user_not_subscribed(se, cli, cli->team, (*se)->db))
-        return "error";
-    if (cli->team && cli->channel && !cli->thread) {
-        if (!check_if_uuid_exists(cli->team, "teams", (*se)->db))
-            return send_code_and_value(CODE_500, cli->team, sd);
-        if (!check_if_uuid_exists(cli->channel, "channels", (*se)->db))
-            return send_code_and_value(CODE_501, cli->channel, sd);
-        if (check_if_name_exists_where((*se)->command[1], cli->channel,
-        "SELECT title FROM threads WHERE title = ? AND channel = ?;",
-        (*se)->db)) {
-            send(sd, CODE_505, strlen(CODE_505) + 1, 0);
-            return "error";
-        } else {
-            return create_thread(se, cli_list, cli, sd);
-        }
-    } else if (cli->team && cli->channel && cli->thread) {
-        return create_handler_3(se, cli_list, cli, sd);
-    }
-    return "error";
-}
-
-char *create_handler_first_cond(server **se, client **cli_list, client *cli,
-int sd)
-{
-    if (!cli->team) {
-        if (check_if_name_exists((*se)->command[1], "teams", (*se)->db)) {
-            send(sd, CODE_505, strlen(CODE_505) + 1, 0);
-            return NULL;
-        } else {
-            return create_team(se, cli_list, cli, sd);
-        }
-    }
-    return "next";
-}
-
-char *create_handler_second_cond(server **se, client **cli_list, client *cli,
-int sd)
-{
-    if (cli->team && !cli->channel &&
-    !user_not_subscribed(se, cli, cli->team, (*se)->db)) {
-        if (!check_if_uuid_exists(cli->team, "teams", (*se)->db)) {
-            send_code_and_value(CODE_500, cli->team, sd);
-            return NULL;
-        }
-        if (check_if_name_exists_where((*se)->command[1], cli->team,
-        "SELECT name FROM channels WHERE name = ? AND team = ?;",
-        (*se)->db)) {
-            send(sd, CODE_505, strlen(CODE_505) + 1, 0);
-            return NULL;
-        } else {
-            return create_channel(se, cli_list, cli, sd);
-        }
-    } else if (cli->team) {
-        return create_handler_2(se, cli_list, cli, sd);
-    }
-    return "error";
+    char *to_send = create_reply(se, cli_list, cli, sd);
+    send_message_to_every_one(se, cli_list, cli, to_send);
+    free(to_send);
+    return 0;
 }
 
 int create_handler(server **se, client **cli_list, client *cli, int sd)
 {
     if (user_not_connected(cli))
         return 0;
-    char *to_send = create_handler_first_cond(se, cli_list, cli, sd);
-    if (to_send == NULL)
-        return 0;
-    else if (strcmp(to_send, "next") == 0)
-        to_send = create_handler_second_cond(se, cli_list, cli, sd);
-    if (to_send == NULL)
-        return 0;
-    if (strcmp(to_send, "error") == 0)
-        return 0;
-    send_message_to_every_one(se, cli_list, cli, to_send);
-    // free(to_send);
+    if (!cli->team)
+        return handler_create_team(se, cli_list, cli, sd);
+    if (cli->team && !cli->channel &&
+    !user_not_subscribed(se, cli, cli->team, (*se)->db))
+        return handler_create_channel(se, cli_list, cli, sd);
+    if (cli->team && cli->channel && !cli->thread &&
+    !user_not_subscribed(se, cli, cli->team, (*se)->db))
+        return handler_create_thread(se, cli_list, cli, sd);
+    if (cli->team && cli->channel && cli->thread)
+        return handler_create_reply(se, cli_list, cli, sd);
     return 0;
 }
