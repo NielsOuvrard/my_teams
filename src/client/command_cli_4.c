@@ -26,7 +26,7 @@ int create_channel_function (client *cli, char **array)
 int create_thread_function  (client *cli, char **array)
 {
     if (array[1] == NULL || array[2] == NULL ||
-    array[3] == NULL || array[4] == NULL)
+    array[3] == NULL || array[4] == NULL || array[5] == NULL)
         return 0;
     struct tm tm;
     strptime(array[3], "%a %b %d %H:%M:%S %Y", &tm);
@@ -34,6 +34,6 @@ int create_thread_function  (client *cli, char **array)
     if (t == -1) {
         return 0;
     }
-    client_event_thread_created(array[1], array[2], t, array[3], array[4]);
+    client_event_thread_created(array[1], array[2], t, array[4], array[5]);
     return 0;
 }

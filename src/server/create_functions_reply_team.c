@@ -22,21 +22,22 @@ int to_everyone)
     char *to_send = malloc(sizeof(char) * 1024);
     if (to_everyone == 1) {
         strcpy(to_send, CODE_218);
-    } else {
-        strcpy(to_send, CODE_217);
-    }
-    strcat(to_send, curr_cli->team);
-    strcat(to_send, "\n");
-    strcat(to_send, curr_cli->thread);
-    strcat(to_send, "\n");
-    if (to_everyone == 1) {
-        strcat(to_send, curr_cli->username);
+        strcat(to_send, curr_cli->team);
+        strcat(to_send, "\n");
+        strcat(to_send, curr_cli->thread);
+        strcat(to_send, "\n");
+        strcat(to_send, curr_cli->uuid_text);
         strcat(to_send, "\n");
     } else {
+        strcpy(to_send, CODE_217);
+        strcat(to_send, curr_cli->thread);
+        strcat(to_send, "\n");
+        strcat(to_send, curr_cli->uuid_text);
+        strcat(to_send, "\n");
         strcat(to_send, time_stamp);
+        strcat(to_send, "\n");
     }
-    strcat(to_send, (*serv)->command[1]);
-    strcat(to_send, "\n");
+    strcat(to_send, (*serv)->command[1]); strcat(to_send, "\n");
     return to_send;
 }
 
@@ -60,6 +61,7 @@ char *create_reply(server **serv, client **cli_list,
     server_event_reply_created(thread_uuid, user_uuid, body);
     char *to_send = to_send_reply(serv, curr_cli, time_stamp, 0);
     send(sd, to_send, strlen(to_send) + 1, 0);
+    free(to_send);
     return to_send_reply(serv, curr_cli, time_stamp, 1);
 }
 
@@ -70,6 +72,7 @@ char *team_message_to_everyone(char *uuid, char *name, char *description)
     strcat(to_send, uuid); strcat(to_send, "\n");
     strcat(to_send, name); strcat(to_send, "\n");
     strcat(to_send, description); strcat(to_send, "\n");
+    free(uuid);
     return to_send;
 }
 

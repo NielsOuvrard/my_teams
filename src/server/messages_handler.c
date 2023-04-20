@@ -54,7 +54,9 @@ client *curr_cli, int sd)
     char request[1024], to_send[4096];
     strcpy(to_send, CODE_206);
     sprintf(request, "SELECT * FROM messages WHERE (sender = '%s'\
-    AND receiver = '%s');", (*serv)->command[1], curr_cli->uuid_text);
+    AND receiver = '%s')  OR (sender = '%s' AND receiver = '%s');",
+    (*serv)->command[1], curr_cli->uuid_text, curr_cli->uuid_text,
+    (*serv)->command[1]);
     int result = sqlite3_prepare_v2((*serv)->db, request,
     -1, &(*serv)->stmt, NULL);
     if (result != SQLITE_OK) {

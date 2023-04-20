@@ -40,6 +40,8 @@ char **get_command(int sd)
 {
     char buffer[1024] = {0};
     recv(sd, buffer, 1024, 0);
+    if (buffer[strlen(buffer) - 1] == '\n')
+        buffer[strlen(buffer) - 1] = '\0';
     char **command = my_str_to_word_array(buffer);
     return command;
 }
