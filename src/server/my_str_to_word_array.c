@@ -30,7 +30,8 @@ int is_condition(char c)
     return 0;
 }
 
-char* substring(char* str, char start, char end) {
+char* substring(char* str, char start, char end)
+{
     char* substr = NULL;
     char* start_ptr = strchr(str, start) - 1;
     char* end_ptr = strchr(str, end);
