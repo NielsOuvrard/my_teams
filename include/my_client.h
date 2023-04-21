@@ -29,6 +29,7 @@
 
 #include "logging_client.h"
 
+#define EXIT_CTRL_C 130
 #define MAX_NAME_LENGTH 32
 #define MAX_DESCRIPTION_LENGTH 255
 #define MAX_BODY_LENGTH 512
