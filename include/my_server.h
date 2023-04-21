@@ -332,3 +332,12 @@ int list_threads(server **serv, client *cli, int sd);
 int list_channel(server **serv, client *cli, int sd);
 
 int list_team(server **serv, client *cli, int sd);
+
+bool check_if_name_exists_where(char *uuid, char *where,
+char *request, sqlite3 *db);
+
+char** str_to_word_array(char* str);
+
+void clean_use_client (client *current_client);
+
+char **my_str_parse(char *str, char *delim);

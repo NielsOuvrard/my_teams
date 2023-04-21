@@ -24,6 +24,21 @@ bool check_if_name_exists(char *name, char *table, sqlite3 *db)
     return false;
 }
 
+bool check_if_name_exists_where(char *uuid, char *where,
+char *request, sqlite3 *db)
+{
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, request, -1, &stmt, NULL);
+    sqlite3_bind_text(stmt, 1, uuid, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, where, -1, SQLITE_STATIC);
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        sqlite3_finalize(stmt);
+        return true;
+    }
+    sqlite3_finalize(stmt);
+    return false;
+}
+
 bool check_if_uuid_exists(char *uuid, char *table, sqlite3 *db)
 {
     sqlite3_stmt *stmt;

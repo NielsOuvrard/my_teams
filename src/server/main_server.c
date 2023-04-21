@@ -84,4 +84,5 @@ int main(int ac, char **av)
         }
     }
     return my_teams(atoi(av[1]));
+    return 0;
 }

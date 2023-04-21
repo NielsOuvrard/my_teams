@@ -37,6 +37,11 @@ int subscribe_function      (client *cli, char **array)
 
 int subscribed_function     (client *cli, char **array)
 {
+    for (int i = 1; array[i] != NULL; i += 3) {
+        if (!array[i + 1] || !array[i + 2])
+            return 0;
+        client_print_users(array[i], array[i + 1], atoi(array[i + 2]));
+    }
     return 0;
 }
 
