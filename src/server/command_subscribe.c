@@ -37,7 +37,10 @@ client *cli, int sd)
     sqlite3_step((*se)->stmt);
     char *user_uuids = (char *)sqlite3_column_text((*se)->stmt, 0);
     char new_user_uuids[4096];
-    sprintf(new_user_uuids, "%s,%s", user_uuids, cli->uuid_text);
+    if (user_uuids == NULL)
+        sprintf(new_user_uuids, "%s", cli->uuid_text);
+    else
+        sprintf(new_user_uuids, "%s,%s", user_uuids, cli->uuid_text);
     sqlite3_finalize((*se)->stmt);
     sqlite3_prepare_v2((*se)->db, "UPDATE teams SET user_uuids = ? WHERE \
 uuid = ?;", -1, &(*se)->stmt, NULL);
