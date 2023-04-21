@@ -24,7 +24,15 @@ void remove_quotes(server **serv)
 void command_handler(server **serv, client **cli_list,
 client *current_client, int sd)
 {
-    if (!(*serv)->command || !(*serv)->command[0])
+    if ((*serv)->command == NULL) {
+        remove_client(current_client, sd);
+        close(sd);
+        FD_CLR(sd, &(*serv)->readfds);
+        (*serv)->command = malloc(sizeof(char *));
+        (*serv)->command[0] = NULL;
+        return;
+    }
+    if (!(*serv)->command[0])
         return;
     remove_quotes(serv);
     for (int i = 0; i < NB_COMMANDS; i++) {
@@ -40,6 +48,8 @@ char **get_command(int sd)
 {
     char buffer[1024] = {0};
     recv(sd, buffer, 1024, 0);
+    if (strlen(buffer) <= 0)
+        return NULL;
     if (buffer[strlen(buffer) - 1] == '\n')
         buffer[strlen(buffer) - 1] = '\0';
     char **command = my_str_to_word_array(buffer);

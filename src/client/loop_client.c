@@ -63,9 +63,10 @@ int free_and_return (client *cli, int server_reply)
     if (server_reply == EXIT_CTRL_C) {
         if (cli->uuid)
             free(cli->uuid);
-        if (cli->name)
+        if (cli->name) {
             free(cli->name);
-        send(cli->sock, "/logout", strlen("/logout\n"), 0);
+            send(cli->sock, "/logout", strlen("/logout\n"), 0);
+        }
     }
     free(cli->funct_client);
     close(cli->sock);

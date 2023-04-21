@@ -82,7 +82,7 @@ int client_communication(server **serv, client **clients, fd_set copy_fds)
         int sd = (*clients)[i].socket;
         if (FD_ISSET(sd, &copy_fds)) {
             (*serv)->command = get_command(sd);
-            command_handler(serv, clients, &(*clients)[i], sd);
+            command_handler(serv, clients, clients[i], sd);
             free_my_array((*serv)->command);
             (*serv)->command = NULL;
         }
